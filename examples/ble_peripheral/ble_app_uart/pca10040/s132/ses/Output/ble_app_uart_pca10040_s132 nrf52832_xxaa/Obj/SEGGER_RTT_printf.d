@@ -1,7 +1,7 @@
 Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/SEGGER_RTT_printf.o: \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/external/segger_rtt/SEGGER_RTT_printf.c \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/external/segger_rtt/SEGGER_RTT.h \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/external/segger_rtt/SEGGER_RTT_Conf.h \
+ /home/hunter/devel/thingySDK/external/segger_rtt/SEGGER_RTT_printf.c \
+ /home/hunter/devel/thingySDK/external/segger_rtt/SEGGER_RTT.h \
+ /home/hunter/devel/thingySDK/external/segger_rtt/SEGGER_RTT_Conf.h \
  ../config/sdk_config.h \
  ../../../../../../components/device/compiler_abstraction.h \
  ../../../../../../components/libraries/util/app_util_platform.h \

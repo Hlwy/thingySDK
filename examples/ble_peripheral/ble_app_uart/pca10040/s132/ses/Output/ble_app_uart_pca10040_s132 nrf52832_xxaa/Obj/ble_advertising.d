@@ -1,5 +1,5 @@
 Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/ble_advertising.o: \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/ble/ble_advertising/ble_advertising.c \
+ /home/hunter/devel/thingySDK/components/ble/ble_advertising/ble_advertising.c \
  ../../../../../../components/libraries/util/sdk_common.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdint.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdbool.h \
@@ -38,7 +38,7 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/ble_advertising.o: \
  ../../../../../../components/softdevice/s132/headers/ble_gattc.h \
  ../../../../../../components/softdevice/s132/headers/ble_gatts.h \
  ../../../../../../components/libraries/util/app_util.h \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/ble/ble_advertising/ble_advertising.h \
+ /home/hunter/devel/thingySDK/components/ble/ble_advertising/ble_advertising.h \
  ../../../../../../components/softdevice/s132/headers/ble_gattc.h \
  ../../../../../../components/softdevice/s132/headers/nrf_soc.h \
  ../../../../../../components/softdevice/s132/headers/nrf_error_soc.h \

@@ -1,6 +1,6 @@
 Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/ble_srv_common.o: \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/ble/common/ble_srv_common.c \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/ble/common/ble_srv_common.h \
+ /home/hunter/devel/thingySDK/components/ble/common/ble_srv_common.c \
+ /home/hunter/devel/thingySDK/components/ble/common/ble_srv_common.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdint.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdbool.h \
  ../../../../../../components/softdevice/s132/headers/ble_types.h \

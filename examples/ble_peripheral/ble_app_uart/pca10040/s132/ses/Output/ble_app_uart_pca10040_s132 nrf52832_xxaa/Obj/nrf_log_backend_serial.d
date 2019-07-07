@@ -1,5 +1,5 @@
 Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/nrf_log_backend_serial.o: \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/libraries/log/src/nrf_log_backend_serial.c \
+ /home/hunter/devel/thingySDK/components/libraries/log/src/nrf_log_backend_serial.c \
  ../../../../../../components/libraries/util/sdk_common.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdint.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdbool.h \

@@ -1,6 +1,6 @@
 Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/nrf_assert.o: \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/libraries/util/nrf_assert.c \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/libraries/util/nrf_assert.h \
+ /home/hunter/devel/thingySDK/components/libraries/util/nrf_assert.c \
+ /home/hunter/devel/thingySDK/components/libraries/util/nrf_assert.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdint.h \
  ../../../../../../components/device/nrf.h \
  ../../../../../../components/device/nrf52.h \
@@ -14,12 +14,12 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/nrf_assert.o: \
  ../../../../../../components/device/nrf51_to_nrf52.h \
  ../../../../../../components/device/nrf52_name_change.h \
  ../../../../../../components/device/compiler_abstraction.h \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/libraries/util/app_error.h \
+ /home/hunter/devel/thingySDK/components/libraries/util/app_error.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdio.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/__crossworks.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdbool.h \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/libraries/util/sdk_errors.h \
+ /home/hunter/devel/thingySDK/components/libraries/util/sdk_errors.h \
  ../../../../../../components/softdevice/s132/headers/nrf_error.h \
  ../config/sdk_config.h \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/libraries/util/nordic_common.h \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/libraries/util/app_error_weak.h
+ /home/hunter/devel/thingySDK/components/libraries/util/nordic_common.h \
+ /home/hunter/devel/thingySDK/components/libraries/util/app_error_weak.h

@@ -1,5 +1,5 @@
 Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/main.o: \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/examples/ble_peripheral/ble_app_uart/main.c \
+ /home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/main.c \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdint.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/string.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/__crossworks.h \
@@ -56,6 +56,7 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/main.o: \
  ../../../../../../components/softdevice/common/softdevice_handler/ant_stack_handler_types.h \
  ../../../../../../components/ble/nrf_ble_gatt/nrf_ble_gatt.h \
  ../../../../../../components/libraries/util/sdk_errors.h \
+ ../../../../../../components/libraries/scheduler/app_scheduler.h \
  ../../../../../../components/libraries/timer/app_timer.h \
  ../../../../../../components/libraries/button/app_button.h \
  ../../../../../../components/drivers_nrf/hal/nrf_gpio.h \
@@ -72,16 +73,16 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/main.o: \
  ../../../../../../components/softdevice/s132/headers/nrf_nvic.h \
  ../../../../../../components/libraries/util/nrf_assert.h \
  ../../../../../../components/libraries/bsp/bsp.h \
- ../../../../../../components/boards/boards.h additions/pca20020.h \
- additions/drivers_ext/drv_ext_light.h additions/drivers_ext/drv_sx1509.h \
+ ../../../../../../components/boards/boards.h additions/addon_defines.h \
+ additions/pca20020.h additions/drivers_ext/drv_ext_light.h \
+ additions/drivers_ext/drv_sx1509.h \
  additions/drivers_ext/drv_sx1509_bitfields.h \
- ../../../../../../components/drivers_nrf/twi_master/nrf_drv_twi.h \
+ additions/drivers_ext/nrf_drv_twi.h \
  ../../../../../../components/drivers_nrf/hal/nrf_twi.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stddef.h \
  additions/drivers_ext/sx150x_led_drv_regs.h \
  additions/drivers_ext/sx150x_led_drv_calc.h \
- additions/drivers_ext/drv_ext_gpio.h \
- ../../../../../../components/drivers_nrf/hal/nrf_saadc.h \
+ additions/drivers_ext/drv_ext_gpio.h additions/drivers_ext/nrf_saadc.h \
  ../../../../../../components/libraries/bsp/bsp_btn_ble.h \
  ../../../../../../components/libraries/bsp/bsp.h \
  ../../../../../../components/libraries/log/nrf_log.h \
@@ -92,4 +93,12 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/main.o: \
  ../../../../../../components/libraries/strerror/nrf_strerror.h \
  ../../../../../../components/libraries/log/src/nrf_log_internal.h \
  ../../../../../../components/libraries/log/nrf_log_ctrl.h \
- ../../../../../../components/libraries/log/src/nrf_log_ctrl_internal.h
+ ../../../../../../components/libraries/log/src/nrf_log_ctrl_internal.h \
+ classes/nrf_motor_driver.h additions/drivers_ext/low_power_pwm.h \
+ ../../../../../../components/drivers_nrf/common/nrf_drv_common.h \
+ classes/nrf_lights.h additions/ble/ble_uis.h \
+ additions/modules/m_ui_demo.h additions/drivers_ext/nrf_drv_twi.h \
+ ../../../../../../components/drivers_nrf/delay/nrf_delay.h \
+ classes/nrf_buzzer.h additions/drivers_ext/drv_speaker.h \
+ classes/nrf_battery_monitor.h additions/modules/m_batt_meas.h \
+ additions/modules/m_ble.h additions/thingy_config.h

@@ -58,6 +58,7 @@
 #include "ble_conn_params.h"
 #include "softdevice_handler.h"
 #include "nrf_ble_gatt.h"
+#include "app_scheduler.h"
 #include "app_timer.h"
 #include "app_button.h"
 #include "ble_nus.h"
@@ -69,6 +70,13 @@
 #define NRF_LOG_MODULE_NAME "APP"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
+
+#include "addon_defines.h"
+#include "nrf_motor_driver.h"
+#include "nrf_lights.h"
+#include "nrf_buzzer.h"
+//#include "nrf_ble_main.h"
+#include "nrf_battery_monitor.h"
 
 #define CONN_CFG_TAG                    1                                           /**< A tag that refers to the BLE stack configuration we set with @ref sd_ble_cfg_set. Default tag is @ref BLE_CONN_CFG_TAG_DEFAULT. */
 
@@ -92,6 +100,9 @@
 
 #define UART_TX_BUF_SIZE                256                                         /**< UART TX buffer size. */
 #define UART_RX_BUF_SIZE                256                                         /**< UART RX buffer size. */
+#define SCHED_MAX_EVENT_DATA_SIZE   MAX(APP_TIMER_SCHED_EVENT_DATA_SIZE, BLE_STACK_HANDLER_SCHED_EVT_SIZE) /**< Maximum size of scheduler events. */
+#define SCHED_QUEUE_SIZE            60  /**< Maximum number of events in the scheduler queue. */
+
 
 static ble_nus_t                        m_nus;                                      /**< Structure to identify the Nordic UART Service. */
 static uint16_t                         m_conn_handle = BLE_CONN_HANDLE_INVALID;    /**< Handle of the current connection. */
@@ -100,6 +111,12 @@ static nrf_ble_gatt_t                   m_gatt;                                 
 static ble_uuid_t                       m_adv_uuids[] = {{BLE_UUID_NUS_SERVICE, NUS_SERVICE_UUID_TYPE}};  /**< Universally unique service identifier. */
 static uint16_t                         m_ble_nus_max_data_len = BLE_GATT_ATT_MTU_DEFAULT - 3;  /**< Maximum length of data (in bytes) that can be transmitted to the peer by the Nordic UART service module. */
 
+static const uint8_t pwm_pin = 2;
+static const uint8_t dir_pin = 3;
+
+static motor_t motor;
+static battery_t battery;
+static char _buffer[4096];
 
 /**@brief Function for assert macro callback.
  *
@@ -147,7 +164,6 @@ static void gap_params_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
-static char _buffer[4096];
 /**@brief Function for handling the data from the Nordic UART Service.
  *
  * @details This function will process the data received from the Nordic UART BLE Service and send
@@ -694,6 +710,29 @@ static void power_manage(void)
 }
 
 
+
+static uint32_t level;
+static uint32_t level2;
+static uint32_t level3;
+static uint32_t level4;
+static uint32_t level5;
+static uint8_t const * altAddr;
+static uint8_t const * tmpAddr;
+static ble_gap_evt_adv_report_t const* temp_report;
+static char const m_target_periph_name[] = "BlueCharm";
+static char const m_target_phone_name[] = "Samsung Galaxy S7";
+static uint8_t const target_mac[] = {0xb0,0x91,0x22,0xf7,0x6d,0x55};
+static uint8_t const target_mac_rvr[] = {0x55,0x6d,0xf7,0x22,0x91,0xb0};
+static const int rssiThresh = -40;
+static char* tmpName;
+
+static bool tags_nearby = false;
+static int curRssi;
+static bool were_tags_nearby = false;
+static bool name_found = false;
+
+int tmpDuty;
+uint8_t new_duty_cycle = 255;
 /**@brief Application main function.
  */
 int main(void)
@@ -702,6 +741,7 @@ int main(void)
     bool     erase_bonds;
 
     // Initialize.
+    APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
     err_code = app_timer_init();
     APP_ERROR_CHECK(err_code);
 
@@ -721,9 +761,62 @@ int main(void)
     err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
     APP_ERROR_CHECK(err_code);
 
+    board_init();
+
+    pwm_init(pwm_pin,dir_pin,&motor);
+    buzzer_init(speaker_handler);
+    battery_monitor_init(60000, battery_monitor_handler, &battery);
+    new_duty_cycle = motor.pwm.period;
+     
+    NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"===== Thingy demo started! =====  \r\n"NRF_LOG_COLOR_CODE_DEFAULT);
+     
+    nrf_gpio_cfg_input(BUTTON, NRF_GPIO_PIN_PULLUP);
+    drv_ext_gpio_cfg_input(SX_IOEXT_0,DRV_EXT_GPIO_PIN_PULLUP);
+    drv_ext_gpio_cfg_input(SX_IOEXT_1,DRV_EXT_GPIO_PIN_PULLUP);
+    drv_ext_gpio_cfg_input(SX_IOEXT_2,DRV_EXT_GPIO_PIN_PULLUP);
+    drv_ext_gpio_cfg_input(SX_IOEXT_3,DRV_EXT_GPIO_PIN_PULLUP);
+    
+    uint32_t tmpLevel;
+
     // Enter main loop.
     for (;;)
     {
+        app_sched_execute();
+
+        level = !nrf_gpio_pin_read(11);
+        tmpLevel = drv_ext_gpio_pin_read(SX_IOEXT_0,&level2);
+        tmpLevel = drv_ext_gpio_pin_read(SX_IOEXT_1,&level3);
+        tmpLevel = drv_ext_gpio_pin_read(SX_IOEXT_2,&level4);
+        tmpLevel = drv_ext_gpio_pin_read(SX_IOEXT_3,&level5);
+
+        if((level == 1) && (level3 == 1)){
+         tmpDuty = new_duty_cycle - 1;
+         drv_ext_light_rgb_intensity_set(0,&color_purple);
+       }else if((level == 0) && (level3 == 0)){
+         tmpDuty = new_duty_cycle + 1;
+         drv_ext_light_rgb_intensity_set(0,&color_darkpurple);
+       }else if((level == 1) && (level3 == 0)){
+          drv_ext_light_rgb_intensity_set(0,&color_aqua);
+          initiate_alarm_sequence(2500,50,5,500,1000);
+       }else{
+         // Nothing
+         drv_ext_light_rgb_intensity_set(0,&color_green);
+//              nrf_delay_ms(500);
+//               drv_ext_light_rgb_intensity_set(0,&color_yellow);
+//               nrf_delay_ms(500);
+//               drv_ext_light_rgb_intensity_set(0,&color_orange);
+//               nrf_delay_ms(500);
+       }
+
+         if(tmpDuty >= 255){
+         new_duty_cycle = 255;
+       }else if(tmpDuty<=0){
+         new_duty_cycle = 0;
+       }else{
+         new_duty_cycle = tmpDuty;
+       }
+
+       err_code = low_power_pwm_duty_set(&motor.pwm, new_duty_cycle);
         power_manage();
     }
 }

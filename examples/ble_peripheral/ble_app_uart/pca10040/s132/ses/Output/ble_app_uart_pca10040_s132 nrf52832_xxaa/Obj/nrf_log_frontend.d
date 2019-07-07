@@ -1,5 +1,5 @@
 Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/nrf_log_frontend.o: \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/libraries/log/src/nrf_log_frontend.c \
+ /home/hunter/devel/thingySDK/components/libraries/log/src/nrf_log_frontend.c \
  ../../../../../../components/libraries/util/sdk_common.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdint.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdbool.h \
@@ -40,7 +40,7 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/nrf_log_frontend.o: \
  ../../../../../../components/libraries/strerror/nrf_strerror.h \
  ../../../../../../components/libraries/util/sdk_errors.h \
  ../../../../../../components/libraries/log/src/nrf_log_internal.h \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/libraries/log/src/nrf_log_internal.h \
+ /home/hunter/devel/thingySDK/components/libraries/log/src/nrf_log_internal.h \
  ../../../../../../components/libraries/log/nrf_log_backend.h \
  ../../../../../../components/libraries/log/nrf_log_ctrl.h \
  ../../../../../../components/libraries/log/src/nrf_log_ctrl_internal.h \

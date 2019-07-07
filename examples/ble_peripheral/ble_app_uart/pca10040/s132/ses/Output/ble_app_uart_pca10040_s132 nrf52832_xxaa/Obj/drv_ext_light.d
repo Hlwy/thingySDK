@@ -1,6 +1,6 @@
 Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/drv_ext_light.o: \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions/drivers_ext/drv_ext_light.c \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions/drivers_ext/drv_ext_light.h \
+ /home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions/drivers_ext/drv_ext_light.c \
+ /home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions/drivers_ext/drv_ext_light.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdint.h \
  ../../../../../../components/libraries/util/app_error.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdio.h \
@@ -23,17 +23,17 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/drv_ext_light.o: \
  ../config/sdk_config.h \
  ../../../../../../components/libraries/util/nordic_common.h \
  ../../../../../../components/libraries/util/app_error_weak.h \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions/drivers_ext/drv_sx1509.h \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions/drivers_ext/drv_sx1509_bitfields.h \
- ../../../../../../components/drivers_nrf/twi_master/nrf_drv_twi.h \
+ /home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions/drivers_ext/drv_sx1509.h \
+ /home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions/drivers_ext/drv_sx1509_bitfields.h \
+ /home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions/drivers_ext/nrf_drv_twi.h \
  ../../../../../../components/libraries/util/nordic_common.h \
  ../../../../../../components/drivers_nrf/hal/nrf_twi.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stddef.h \
  ../../../../../../components/drivers_nrf/hal/nrf_peripherals.h \
  ../../../../../../components/device/nrf52832_peripherals.h \
  ../../../../../../components/libraries/util/sdk_errors.h \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions/drivers_ext/sx150x_led_drv_regs.h \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions/drivers_ext/sx150x_led_drv_calc.h \
+ /home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions/drivers_ext/sx150x_led_drv_regs.h \
+ /home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions/drivers_ext/sx150x_led_drv_calc.h \
  ../../../../../../components/libraries/timer/app_timer.h \
  ../../../../../../components/libraries/util/app_util.h \
  ../../../../../../components/device/compiler_abstraction.h \

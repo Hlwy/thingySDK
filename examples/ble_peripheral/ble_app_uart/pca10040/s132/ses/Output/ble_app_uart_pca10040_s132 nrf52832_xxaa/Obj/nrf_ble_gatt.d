@@ -1,7 +1,7 @@
 Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/nrf_ble_gatt.o: \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/ble/nrf_ble_gatt/nrf_ble_gatt.c \
+ /home/hunter/devel/thingySDK/components/ble/nrf_ble_gatt/nrf_ble_gatt.c \
  ../config/sdk_config.h \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/ble/nrf_ble_gatt/nrf_ble_gatt.h \
+ /home/hunter/devel/thingySDK/components/ble/nrf_ble_gatt/nrf_ble_gatt.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdint.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdbool.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/string.h \

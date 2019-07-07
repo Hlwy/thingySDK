@@ -41,6 +41,7 @@
 #define BOARDS_H
 
 #include "nrf_gpio.h"
+#include "addon_defines.h"
 
 #if defined(BOARD_NRF6310)
   #include "nrf6310.h"

@@ -1,5 +1,5 @@
 Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/nrf_drv_clock.o: \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/drivers_nrf/clock/nrf_drv_clock.c \
+ /home/hunter/devel/thingySDK/components/drivers_nrf/clock/nrf_drv_clock.c \
  ../../../../../../components/libraries/util/sdk_common.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdint.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdbool.h \
@@ -25,7 +25,7 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/nrf_drv_clock.o: \
  ../../../../../../components/device/nrf52_name_change.h \
  ../../../../../../components/device/compiler_abstraction.h \
  ../../../../../../components/libraries/util/sdk_macros.h \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/drivers_nrf/clock/nrf_drv_clock.h \
+ /home/hunter/devel/thingySDK/components/drivers_nrf/clock/nrf_drv_clock.h \
  ../../../../../../components/libraries/util/sdk_errors.h \
  ../../../../../../components/libraries/util/nrf_assert.h \
  ../../../../../../components/libraries/util/app_error.h \

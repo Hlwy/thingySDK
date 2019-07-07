@@ -1,6 +1,6 @@
 Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/ble_conn_params.o: \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/ble/common/ble_conn_params.c \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/ble/common/ble_conn_params.h \
+ /home/hunter/devel/thingySDK/components/ble/common/ble_conn_params.c \
+ /home/hunter/devel/thingySDK/components/ble/common/ble_conn_params.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdint.h \
  ../../../../../../components/softdevice/s132/headers/ble.h \
  ../../../../../../components/softdevice/s132/headers/ble_ranges.h \
@@ -25,7 +25,7 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/ble_conn_params.o: \
  ../../../../../../components/device/nrf52_name_change.h \
  ../../../../../../components/device/compiler_abstraction.h \
  ../../../../../../components/softdevice/s132/headers/ble_gatts.h \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/ble/common/ble_srv_common.h \
+ /home/hunter/devel/thingySDK/components/ble/common/ble_srv_common.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdbool.h \
  ../../../../../../components/softdevice/s132/headers/ble_types.h \
  ../../../../../../components/libraries/util/app_util.h \

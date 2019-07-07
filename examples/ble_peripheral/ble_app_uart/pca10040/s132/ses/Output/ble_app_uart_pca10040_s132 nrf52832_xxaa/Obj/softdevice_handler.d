@@ -1,6 +1,6 @@
 Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/softdevice_handler.o: \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/softdevice/common/softdevice_handler/softdevice_handler.c \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/softdevice/common/softdevice_handler/softdevice_handler.h \
+ /home/hunter/devel/thingySDK/components/softdevice/common/softdevice_handler/softdevice_handler.c \
+ /home/hunter/devel/thingySDK/components/softdevice/common/softdevice_handler/softdevice_handler.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdlib.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/__crossworks.h \
  ../../../../../../components/libraries/util/nordic_common.h \
@@ -33,7 +33,7 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/softdevice_handler.o: \
  ../../../../../../components/libraries/util/app_error_weak.h \
  ../../../../../../components/libraries/util/app_util.h \
  ../../../../../../components/device/compiler_abstraction.h \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/softdevice/common/softdevice_handler/ble_stack_handler_types.h \
+ /home/hunter/devel/thingySDK/components/softdevice/common/softdevice_handler/ble_stack_handler_types.h \
  ../../../../../../components/softdevice/s132/headers/ble.h \
  ../../../../../../components/softdevice/s132/headers/ble_ranges.h \
  ../../../../../../components/softdevice/s132/headers/ble_types.h \
@@ -43,7 +43,7 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/softdevice_handler.o: \
  ../../../../../../components/softdevice/s132/headers/ble_gatt.h \
  ../../../../../../components/softdevice/s132/headers/ble_gattc.h \
  ../../../../../../components/softdevice/s132/headers/ble_gatts.h \
- /home/hunter/Nordic/thingy_ws/nRF5SDK1310/components/softdevice/common/softdevice_handler/ant_stack_handler_types.h \
+ /home/hunter/devel/thingySDK/components/softdevice/common/softdevice_handler/ant_stack_handler_types.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/string.h \
  ../../../../../../components/libraries/util/nrf_assert.h \
  ../../../../../../components/libraries/util/app_error.h \
