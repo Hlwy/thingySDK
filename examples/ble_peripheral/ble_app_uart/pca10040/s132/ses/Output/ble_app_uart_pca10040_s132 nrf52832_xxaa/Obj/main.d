@@ -101,4 +101,4 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/main.o: \
  ../../../../../../components/drivers_nrf/delay/nrf_delay.h \
  classes/nrf_buzzer.h additions/drivers_ext/drv_speaker.h \
  classes/nrf_battery_monitor.h additions/modules/m_batt_meas.h \
- additions/modules/m_ble.h additions/thingy_config.h
+ additions/modules/m_ble.h additions/thingy_config.h additions/vector_c.h

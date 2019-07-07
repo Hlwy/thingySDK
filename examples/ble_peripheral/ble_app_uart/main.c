@@ -77,6 +77,7 @@
 #include "nrf_buzzer.h"
 //#include "nrf_ble_main.h"
 #include "nrf_battery_monitor.h"
+#include "vector_c.h"
 
 #define CONN_CFG_TAG                    1                                           /**< A tag that refers to the BLE stack configuration we set with @ref sd_ble_cfg_set. Default tag is @ref BLE_CONN_CFG_TAG_DEFAULT. */
 
@@ -102,10 +103,22 @@
 #define UART_RX_BUF_SIZE                256                                         /**< UART RX buffer size. */
 #define SCHED_MAX_EVENT_DATA_SIZE   MAX(APP_TIMER_SCHED_EVENT_DATA_SIZE, BLE_STACK_HANDLER_SCHED_EVT_SIZE) /**< Maximum size of scheduler events. */
 #define SCHED_QUEUE_SIZE            60  /**< Maximum number of events in the scheduler queue. */
+#define NRF_BLE_LINK_COUNT              (NRF_BLE_PERIPHERAL_LINK_COUNT + NRF_BLE_CENTRAL_LINK_COUNT)
 
+typedef struct
+{
+    uint8_t  * p_data;    /**< Pointer to data. */
+    uint16_t   data_len;  /**< Length of data. */
+} data_t;
+
+typedef struct{
+    bool           is_connected;
+    ble_gap_addr_t address;
+} conn_peer_t;
 
 static ble_nus_t                        m_nus;                                      /**< Structure to identify the Nordic UART Service. */
 static uint16_t                         m_conn_handle = BLE_CONN_HANDLE_INVALID;    /**< Handle of the current connection. */
+static conn_peer_t                      m_connected_peers[NRF_BLE_LINK_COUNT];
 
 static nrf_ble_gatt_t                   m_gatt;                                     /**< GATT module instance. */
 static ble_uuid_t                       m_adv_uuids[] = {{BLE_UUID_NUS_SERVICE, NUS_SERVICE_UUID_TYPE}};  /**< Universally unique service identifier. */
@@ -117,6 +130,271 @@ static const uint8_t dir_pin = 3;
 static motor_t motor;
 static battery_t battery;
 static char _buffer[4096];
+
+static uint32_t level;
+static uint32_t level2;
+static uint32_t level3;
+static uint32_t level4;
+static uint32_t level5;
+static uint8_t const * altAddr;
+static uint8_t const * tmpAddr;
+static ble_gap_evt_adv_report_t const* temp_report;
+static char const m_target_periph_name[] = "BlueCharm";
+static char const m_target_phone_name[] = "Samsung Galaxy S7";
+static uint8_t const target_mac[] = {0xb0,0x91,0x22,0xf7,0x6d,0x55};
+static uint8_t const target_mac_rvr[] = {0x55,0x6d,0xf7,0x22,0x91,0xb0};
+static const int rssiThresh = -40;
+static char* tmpName;
+
+static bool tags_nearby = false;
+static int curRssi;
+static bool were_tags_nearby = false;
+static bool name_found = false;
+
+typedef vec_t(char*) vec_string_t;
+typedef vec_t(uint8_t) vec_byte_t;
+typedef vec_t(vec_byte_t) vec_bytes_t;
+
+static vec_bytes_t addrs;
+static vec_string_t names;
+
+static vec_byte_t testAddr;
+
+static void check_addr_vec(vec_byte_t* addr, uint8_t const* target){
+  printf("check_addr_vec: \n");
+  for(int i = 0;i<6;i++){
+     printf("\t In [%02x] -- Target [%02x]\n",addr->data[i],target[i]);
+ }
+
+  if (memcmp(target, addr, 6)== 0){
+     printf("check_addr_vec: Addresses Match...\n");
+  }else{
+     printf("check_addr_vec: Addresses Don't Match...\n");
+  }
+}
+
+void print_vec_str(vec_string_t * strings) {
+  size_t i; char * string;
+  vec_foreach(strings, string, i) {
+    printf("Names[%zu] = \"%s\"\n", i, string);
+  }
+}
+
+void print_vec_byte(vec_byte_t * bytes) {
+  size_t i; uint8_t byte;
+  vec_foreach(bytes, byte, i) {
+    printf("Byte[%zu] = \"%02x\"\n", i, byte);
+  }
+}
+
+void print_vec_bytes(vec_bytes_t * bytes) {
+  size_t i;
+  size_t j;
+  uint8_t byte;
+  vec_byte_t byte2;
+  vec_foreach(bytes, byte2, i) {
+    printf("Byte[%zu] = ", i);
+     vec_foreach(&byte2, byte, j) {
+          printf("%02x ", byte);
+     }
+  }
+     printf("\r\n");
+}
+
+static uint32_t parse_nus_data(uint8_t * p_data){
+     int i = 0;
+     char * pch;
+     bool flag_stop = false;
+     vec_string_t strings;
+     vec_byte_t tmps;
+     vec_init(&strings);
+     vec_init(&tmps);
+
+     uint16_t num;
+     printf ("Splitting string \"%s\" into tokens:\n",(char*) p_data);
+     pch = strtok ((char*) p_data," :");
+     while(pch != NULL){
+          if(i == 0){
+               if(strcmp(pch,"add_dev") == 0){
+                    printf("parse_nus_data: --- Adding device\r\n");
+               }else if(strcmp(pch,"del_dev") == 0){
+                    printf("parse_nus_data: --- Removing device\r\n");
+               }else{
+                    flag_stop = true;
+               }
+          }
+          if(i == 1){
+               vec_push(&strings, pch);
+          }
+          if(i>1){
+               num = (uint16_t)strtol(pch, NULL, 16);       // number base 16
+               printf("%d (%X) \n", num,num);                        // print it as decimal
+               vec_push(&tmps, num);
+//               printf ("%s\n", pch);
+          }
+          pch = strtok (NULL, " :");
+          if(flag_stop)
+               break;
+          i++;
+     }
+     
+     vec_push(&addrs,tmps);
+     vec_push(&names,&strings);
+     print_vec_str(&names);
+     print_vec_bytes(&addrs);
+     return NRF_SUCCESS;
+}
+
+
+
+static ble_gap_scan_params_t const m_scan_params =
+{
+    .active   = 1,
+    .interval = 0x00A0,
+    .window   = 0x0050,
+    .timeout  = 0x0000,
+};
+
+static void scan_start(void)
+{
+    ret_code_t ret;
+
+    ret = sd_ble_gap_scan_start(&m_scan_params);
+    APP_ERROR_CHECK(ret);
+}
+
+
+static uint32_t adv_report_parse(uint8_t type, data_t * p_advdata, data_t * p_typedata){
+    uint32_t   index = 0;
+    uint8_t* p_data;
+
+
+    p_data = p_advdata->p_data;
+    while (index < p_advdata->data_len){
+        uint8_t field_length = p_data[index];
+        uint8_t field_type   = p_data[index + 1];
+
+        if (field_type == type){
+            p_typedata->p_data   = &p_data[index + 2];
+            p_typedata->data_len = field_length - 1;
+            return NRF_SUCCESS;
+        }
+        index += field_length + 1;
+    }
+    return NRF_ERROR_NOT_FOUND;
+}
+
+static bool find_adv_name(ble_gap_evt_adv_report_t const * p_adv_report, char const * name_to_find){
+    ret_code_t err_code;
+    data_t     adv_data;
+    data_t     dev_name;
+
+    // Initialize advertisement report for parsing
+    adv_data.p_data   = (uint8_t *)p_adv_report->data;
+    adv_data.data_len = p_adv_report->dlen;
+
+    //search for advertising names
+    err_code = adv_report_parse(BLE_GAP_AD_TYPE_COMPLETE_LOCAL_NAME, &adv_data, &dev_name);
+    if (err_code == NRF_SUCCESS){
+        if (memcmp(name_to_find, dev_name.p_data, dev_name.data_len) == 0){
+            return true;
+        }
+    }else{
+        // Look for the short local name if it was not found as complete
+        err_code = adv_report_parse(BLE_GAP_AD_TYPE_SHORT_LOCAL_NAME, &adv_data, &dev_name);
+        if (err_code != NRF_SUCCESS){
+            return false;
+        }
+        if (memcmp(m_target_periph_name, dev_name.p_data, dev_name.data_len) == 0){
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool find_adv_uuid(ble_gap_evt_adv_report_t const * p_adv_report, uint16_t uuid_to_find){
+    ret_code_t err_code;
+    data_t     adv_data;
+    data_t     type_data;
+
+    // Initialize advertisement report for parsing.
+    adv_data.p_data   = (uint8_t *)p_adv_report->data;
+    adv_data.data_len = p_adv_report->dlen;
+
+    err_code = adv_report_parse(BLE_GAP_AD_TYPE_16BIT_SERVICE_UUID_MORE_AVAILABLE,&adv_data, &type_data);
+
+    if (err_code != NRF_SUCCESS){
+        // Look for the services in 'complete' if it was not found in 'more available'.
+        err_code = adv_report_parse(BLE_GAP_AD_TYPE_16BIT_SERVICE_UUID_COMPLETE, &adv_data, &type_data);
+
+        if (err_code != NRF_SUCCESS){
+            // If we can't parse the data, then exit.
+            return false;
+        }
+    }
+
+    // Verify if any UUID match the given UUID.
+    for (uint32_t i = 0; i < (type_data.data_len / sizeof(uint16_t)); i++){
+        uint16_t extracted_uuid = uint16_decode(&type_data.p_data[i * sizeof(uint16_t)]);
+        if (extracted_uuid == uuid_to_find){
+            return true;
+        }
+    }
+    return false;
+}
+
+
+static bool pet_proximity_check(ble_evt_t const * p_ble_evt){
+     ble_gap_evt_t const * p_gap_evt = &p_ble_evt->evt.gap_evt;
+     were_tags_nearby = tags_nearby;
+     const ble_gap_evt_adv_report_t * p_adv_report = &p_gap_evt->params.adv_report;
+
+     temp_report = &p_gap_evt->params.adv_report;
+     tmpName = (char*)temp_report->peer_addr.addr;
+     tmpAddr = temp_report->peer_addr.addr;
+
+     int tmpRssi = -10000;
+     if (strlen(m_target_periph_name) != 0){
+         if (memcmp(target_mac, tmpAddr, 6)== 0){
+             tmpRssi = temp_report->rssi;
+             NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN" Found Target Device! =====  %d\r\n",temp_report->rssi);
+         }else if (memcmp(target_mac_rvr, tmpAddr, 6)== 0){
+             tmpRssi = temp_report->rssi;
+             NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN" Found Target Device Reverse! =====  %d\r\n",temp_report->rssi);
+         }else if (strlen(_buffer) != 0){
+//                    NRF_LOG_INFO("CENTRAL: Looking for alternative name for advertising peer (\'%s\')...\r\n",_buffer);
+             if (find_adv_name(&p_gap_evt->params.adv_report, _buffer))
+             {
+                 if(!name_found){
+                    NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"CENTRAL: Alternative Target (\'%s\') Found with MAC (\'",_buffer);
+//                            altAddr = &p_gap_evt->params.adv_report.peer_addr.addr;
+                    for (uint8_t i = 0; i < 6; i++)
+                    {
+                         NRF_LOG_RAW_INFO("%02x ", tmpAddr[i]);
+                    }
+
+                    NRF_LOG_RAW_INFO("\')!\r\n");
+                    name_found = true;
+                 }
+                 tmpRssi = temp_report->rssi;
+             }else{
+                 tmpRssi = -10000;
+             }
+         }else{
+             tmpRssi = -10000;
+         }
+
+         if(tmpRssi >= rssiThresh){
+           tags_nearby = true;
+           curRssi = tmpRssi;
+           NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"CENTRAL: Found Target Device Reverse! =====  %d\r\n",tmpRssi);
+         }else{
+           tags_nearby = false;
+         }
+     }
+     return false;
+}
+
 
 /**@brief Function for assert macro callback.
  *
@@ -164,6 +442,9 @@ static void gap_params_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
+
+
+
 /**@brief Function for handling the data from the Nordic UART Service.
  *
  * @details This function will process the data received from the Nordic UART BLE Service and send
@@ -178,8 +459,10 @@ static void nus_data_handler(ble_nus_t * p_nus, uint8_t * p_data, uint16_t lengt
 {
     uint32_t err_code;
 
-    NRF_LOG_INFO("Received data from BLE NUS. Writing data on UART.\r\n");
+    NRF_LOG_INFO("Received data from BLE NUS. Handling data on UART....\r\n");
     NRF_LOG_HEXDUMP_DEBUG(p_data, length);
+
+    err_code = parse_nus_data(p_data);
 
     memset(_buffer, 0, sizeof(_buffer));
     memcpy(&_buffer[0], (char*)p_data, sizeof(uint8_t)*length);
@@ -255,6 +538,18 @@ static void conn_params_error_handler(uint32_t nrf_error)
     APP_ERROR_HANDLER(nrf_error);
 }
 
+static bool is_already_connected(ble_gap_addr_t const * p_connected_adr){
+    for (uint32_t i = 0; i < NRF_BLE_LINK_COUNT; i++){
+        if (m_connected_peers[i].is_connected){
+            if (m_connected_peers[i].address.addr_type == p_connected_adr->addr_type){
+                if (memcmp(m_connected_peers[i].address.addr, p_connected_adr->addr, sizeof(m_connected_peers[i].address.addr)) == 0){
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
 
 /**@brief Function for initializing the Connection Parameters module.
  */
@@ -330,7 +625,9 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
  */
 static void on_ble_evt(ble_evt_t * p_ble_evt)
 {
+    ble_gap_evt_t const * p_gap_evt = &p_ble_evt->evt.gap_evt;
     uint32_t err_code;
+    bool flag_pets_near = false;
 
     switch (p_ble_evt->header.evt_id)
     {
@@ -418,6 +715,30 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
                 }
             }
         } break; // BLE_GATTS_EVT_RW_AUTHORIZE_REQUEST
+        case BLE_GAP_EVT_ADV_REPORT:{
+               bool do_connect = false;
+               NRF_LOG_DEBUG("on_ble_evt: ===== SCANNING ADVERTISING PEERS...\r\n");
+               flag_pets_near = pet_proximity_check(p_ble_evt);
+
+               if (is_already_connected(&p_gap_evt->params.adv_report.peer_addr)){
+                    NRF_LOG_INFO("central Already connected to something...\r\n");
+                    break;
+               }
+
+               if (strlen(m_target_phone_name) != 0){
+                    if (find_adv_name(&p_gap_evt->params.adv_report, m_target_phone_name)){
+                         NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"CENTRAL: Host Phone Found!\r\n");
+                         do_connect = true;
+                    }else{}
+               }else{
+                    // We do not want to connect to two peripherals offering the same service, so when
+                    // a UUID is matched, we check that we are not already connected to a peer which
+                    // offers the same service.
+                    if(find_adv_uuid(&p_gap_evt->params.adv_report, BLE_UUID_NUS_SERVICE) && (m_conn_handle == BLE_CONN_HANDLE_INVALID)){
+                         do_connect = true;
+                    }
+               }
+          } break; // BLE_GAP_ADV_REPORT
 
         default:
             // No implementation needed.
@@ -581,7 +902,7 @@ void uart_event_handle(app_uart_evt_t * p_event)
         case APP_UART_DATA_READY:
             UNUSED_VARIABLE(app_uart_get(&data_array[index]));
             index++;
-
+             NRF_LOG_INFO("uart_event_handle: -----  APP_UART_DATA_READY\r\n");
             if ((data_array[index - 1] == '\n') || (index >= (m_ble_nus_max_data_len)))
             {
                 NRF_LOG_INFO("Ready to send data over BLE NUS\r\n");
@@ -674,24 +995,6 @@ static void advertising_init(void)
 }
 
 
-/**@brief Function for initializing buttons and leds.
- *
- * @param[out] p_erase_bonds  Will be true if the clear bonding button was pressed to wake the application up.
- */
-static void buttons_leds_init(bool * p_erase_bonds)
-{
-    bsp_event_t startup_event;
-
-//    uint32_t err_code = bsp_init(BSP_INIT_LED | BSP_INIT_BUTTONS, bsp_event_handler);
-//    APP_ERROR_CHECK(err_code);
-
-//    err_code = bsp_btn_ble_init(NULL, &startup_event);
-//    APP_ERROR_CHECK(err_code);
-
-//    *p_erase_bonds = (startup_event == BSP_EVENT_CLEAR_BONDING_DATA);
-}
-
-
 /**@brief Function for initializing the nrf log module.
  */
 static void log_init(void)
@@ -709,28 +1012,6 @@ static void power_manage(void)
     APP_ERROR_CHECK(err_code);
 }
 
-
-
-static uint32_t level;
-static uint32_t level2;
-static uint32_t level3;
-static uint32_t level4;
-static uint32_t level5;
-static uint8_t const * altAddr;
-static uint8_t const * tmpAddr;
-static ble_gap_evt_adv_report_t const* temp_report;
-static char const m_target_periph_name[] = "BlueCharm";
-static char const m_target_phone_name[] = "Samsung Galaxy S7";
-static uint8_t const target_mac[] = {0xb0,0x91,0x22,0xf7,0x6d,0x55};
-static uint8_t const target_mac_rvr[] = {0x55,0x6d,0xf7,0x22,0x91,0xb0};
-static const int rssiThresh = -40;
-static char* tmpName;
-
-static bool tags_nearby = false;
-static int curRssi;
-static bool were_tags_nearby = false;
-static bool name_found = false;
-
 int tmpDuty;
 uint8_t new_duty_cycle = 255;
 /**@brief Application main function.
@@ -739,7 +1020,14 @@ int main(void)
 {
     uint32_t err_code;
     bool     erase_bonds;
+    vec_init(&addrs);
+    vec_init(&names);
+    vec_init(&testAddr);
+    vec_push(&testAddr,0xb0); vec_push(&testAddr,0x91); vec_push(&testAddr,0x22);
+    vec_push(&testAddr,0xf7); vec_push(&testAddr,0x6d); vec_push(&testAddr,0x55);
 
+    check_addr_vec(&testAddr,&target_mac);
+    
     // Initialize.
     APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
     err_code = app_timer_init();
@@ -748,7 +1036,6 @@ int main(void)
     uart_init();
     log_init();
 
-    buttons_leds_init(&erase_bonds);
     ble_stack_init();
     gap_params_init();
     gatt_init();
@@ -760,12 +1047,13 @@ int main(void)
     NRF_LOG_INFO("UART Start!\r\n");
     err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
     APP_ERROR_CHECK(err_code);
+    scan_start();
 
     board_init();
 
     pwm_init(pwm_pin,dir_pin,&motor);
     buzzer_init(speaker_handler);
-    battery_monitor_init(60000, battery_monitor_handler, &battery);
+    battery_monitor_init(300000, battery_monitor_handler, &battery);
     new_duty_cycle = motor.pwm.period;
      
     NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"===== Thingy demo started! =====  \r\n"NRF_LOG_COLOR_CODE_DEFAULT);
