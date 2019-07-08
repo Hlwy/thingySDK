@@ -147,6 +147,7 @@ static const int rssiThresh = -40;
 static char* tmpName;
 
 static bool tags_nearby = false;
+static bool tags_detected = false;
 static int curRssi;
 static bool were_tags_nearby = false;
 static bool name_found = false;
@@ -230,6 +231,7 @@ static uint32_t parse_nus_data(uint8_t * p_data){
                }
           }
           if(i == 1){
+               printf ("%s\n", pch);
                vec_push(&strings, pch);
           }
           if(i>1){
@@ -349,7 +351,6 @@ static bool find_adv_uuid(ble_gap_evt_adv_report_t const * p_adv_report, uint16_
     return false;
 }
 
-
 static bool pet_proximity_check(ble_evt_t const * p_ble_evt){
      ble_gap_evt_t const * p_gap_evt = &p_ble_evt->evt.gap_evt;
      were_tags_nearby = tags_nearby;
@@ -363,10 +364,12 @@ static bool pet_proximity_check(ble_evt_t const * p_ble_evt){
      if (strlen(m_target_periph_name) != 0){
          if (memcmp(target_mac, tmpAddr, 6)== 0){
              tmpRssi = temp_report->rssi;
-             NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN" Found Target Device! =====  %d\r\n",temp_report->rssi);
+//             NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN" Found Target Device! =====  %d\r\n",temp_report->rssi);
+               tags_detected = true;
          }else if (memcmp(target_mac_rvr, tmpAddr, 6)== 0){
              tmpRssi = temp_report->rssi;
-             NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN" Found Target Device Reverse! =====  %d\r\n",temp_report->rssi);
+             tags_detected = true;
+//             NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN" Found Target Device Reverse! =====  %d\r\n",temp_report->rssi);
          }else if (strlen(_buffer) != 0){
 //                    NRF_LOG_INFO("CENTRAL: Looking for alternative name for advertising peer (\'%s\')...\r\n",_buffer);
              if (find_adv_name(&p_gap_evt->params.adv_report, _buffer))
@@ -388,12 +391,13 @@ static bool pet_proximity_check(ble_evt_t const * p_ble_evt){
              }
          }else{
              tmpRssi = -10000;
+             tags_detected = false;
          }
 
          if(tmpRssi >= rssiThresh){
            tags_nearby = true;
            curRssi = tmpRssi;
-           NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"CENTRAL: Found Target Device Reverse! =====  %d\r\n",tmpRssi);
+//           NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"CENTRAL: Found Target Device Reverse! =====  %d\r\n",tmpRssi);
          }else{
            tags_nearby = false;
          }
@@ -1094,13 +1098,19 @@ int main(void)
           initiate_alarm_sequence(2500,50,5,500,1000);
        }else{
          // Nothing
-         drv_ext_light_rgb_intensity_set(0,&color_green);
 //              nrf_delay_ms(500);
 //               drv_ext_light_rgb_intensity_set(0,&color_yellow);
 //               nrf_delay_ms(500);
 //               drv_ext_light_rgb_intensity_set(0,&color_orange);
 //               nrf_delay_ms(500);
        }
+          if((tags_detected) && (!tags_nearby)){
+               drv_ext_light_rgb_intensity_set(0,&color_blue);
+          }else if(tags_nearby){
+               drv_ext_light_rgb_intensity_set(0,&color_green);
+          }else{
+               drv_ext_light_rgb_intensity_set(0,&color_black);
+          }
 
          if(tmpDuty >= 255){
          new_duty_cycle = 255;
