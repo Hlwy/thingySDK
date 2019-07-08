@@ -1,16 +1,16 @@
 Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/main.o: \
- /home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/main.c \
- /usr/share/segger_embedded_studio_for_arm_4.16/include/stdint.h \
- /usr/share/segger_embedded_studio_for_arm_4.16/include/string.h \
- /usr/share/segger_embedded_studio_for_arm_4.16/include/__crossworks.h \
+ /home/hyoung/devel/Thingy/thingySDK/examples/ble_peripheral/ble_app_uart/main.c \
+ /usr/share/segger_embedded_studio_for_arm_4.18/include/stdint.h \
+ /usr/share/segger_embedded_studio_for_arm_4.18/include/string.h \
+ /usr/share/segger_embedded_studio_for_arm_4.18/include/__crossworks.h \
  ../../../../../../components/libraries/util/nordic_common.h \
  ../../../../../../components/device/nrf.h \
  ../../../../../../components/device/nrf52.h \
- /home/hunter/.segger/SEGGER\ Embedded\ Studio/v3/packages/CMSIS_4/CMSIS/Include/core_cm4.h \
- /home/hunter/.segger/SEGGER\ Embedded\ Studio/v3/packages/CMSIS_4/CMSIS/Include/core_cmInstr.h \
- /home/hunter/.segger/SEGGER\ Embedded\ Studio/v3/packages/CMSIS_4/CMSIS/Include/cmsis_gcc.h \
- /home/hunter/.segger/SEGGER\ Embedded\ Studio/v3/packages/CMSIS_4/CMSIS/Include/core_cmFunc.h \
- /home/hunter/.segger/SEGGER\ Embedded\ Studio/v3/packages/CMSIS_4/CMSIS/Include/core_cmSimd.h \
+ /home/hyoung/.segger/SEGGER\ Embedded\ Studio/v3/packages/CMSIS_4/CMSIS/Include/core_cm4.h \
+ /home/hyoung/.segger/SEGGER\ Embedded\ Studio/v3/packages/CMSIS_4/CMSIS/Include/core_cmInstr.h \
+ /home/hyoung/.segger/SEGGER\ Embedded\ Studio/v3/packages/CMSIS_4/CMSIS/Include/cmsis_gcc.h \
+ /home/hyoung/.segger/SEGGER\ Embedded\ Studio/v3/packages/CMSIS_4/CMSIS/Include/core_cmFunc.h \
+ /home/hyoung/.segger/SEGGER\ Embedded\ Studio/v3/packages/CMSIS_4/CMSIS/Include/core_cmSimd.h \
  ../../../../../../components/toolchain/system_nrf52.h \
  ../../../../../../components/device/nrf52_bitfields.h \
  ../../../../../../components/device/nrf51_to_nrf52.h \
@@ -18,7 +18,7 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/main.o: \
  ../../../../../../components/device/compiler_abstraction.h \
  ../../../../../../components/softdevice/s132/headers/ble_hci.h \
  ../../../../../../components/ble/common/ble_advdata.h \
- /usr/share/segger_embedded_studio_for_arm_4.16/include/stdbool.h \
+ /usr/share/segger_embedded_studio_for_arm_4.18/include/stdbool.h \
  ../../../../../../components/softdevice/s132/headers/ble.h \
  ../../../../../../components/softdevice/s132/headers/ble_ranges.h \
  ../../../../../../components/softdevice/s132/headers/ble_types.h \
@@ -42,13 +42,13 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/main.o: \
  ../../../../../../components/softdevice/s132/headers/ble_gap.h \
  ../../../../../../components/softdevice/s132/headers/ble_gatt.h \
  ../../../../../../components/softdevice/common/softdevice_handler/softdevice_handler.h \
- /usr/share/segger_embedded_studio_for_arm_4.16/include/stdlib.h \
+ /usr/share/segger_embedded_studio_for_arm_4.18/include/stdlib.h \
  ../../../../../../components/softdevice/s132/headers/nrf_sdm.h \
  ../../../../../../components/softdevice/s132/headers/nrf_soc.h \
  ../../../../../../components/softdevice/s132/headers/nrf_error_soc.h \
  ../../../../../../components/softdevice/s132/headers/nrf_error_sdm.h \
  ../../../../../../components/libraries/util/app_error.h \
- /usr/share/segger_embedded_studio_for_arm_4.16/include/stdio.h \
+ /usr/share/segger_embedded_studio_for_arm_4.18/include/stdio.h \
  ../../../../../../components/libraries/util/sdk_errors.h \
  ../config/sdk_config.h \
  ../../../../../../components/libraries/util/app_error_weak.h \
@@ -79,7 +79,7 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/main.o: \
  additions/drivers_ext/drv_sx1509_bitfields.h \
  additions/drivers_ext/nrf_drv_twi.h \
  ../../../../../../components/drivers_nrf/hal/nrf_twi.h \
- /usr/share/segger_embedded_studio_for_arm_4.16/include/stddef.h \
+ /usr/share/segger_embedded_studio_for_arm_4.18/include/stddef.h \
  additions/drivers_ext/sx150x_led_drv_regs.h \
  additions/drivers_ext/sx150x_led_drv_calc.h \
  additions/drivers_ext/drv_ext_gpio.h additions/drivers_ext/nrf_saadc.h \

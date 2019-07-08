@@ -161,23 +161,9 @@ static vec_string_t names;
 
 static vec_byte_t testAddr;
 
-static void check_addr_vec(vec_byte_t* addr, uint8_t const* target){
-  uint8_t byte; size_t i;
-  bool isMatch = false;
-  printf("check_addr_vec: \n");
-  vec_foreach(addr, byte, i){
-     printf("\t In [%02x] -- Target [%02x]\n",byte,target[i]);
-     if(byte == target[i]){
-          isMatch = true;
-     }else{isMatch = false;}
- }
-
-//  if (memcmp(target, addr, 6)== 0){
-  if (isMatch){
-     printf("check_addr_vec: Addresses Match...\n");
-  }else{
-     printf("check_addr_vec: Addresses Don't Match...\n");
-  }
+static bool check_addr_vec(vec_byte_t* addr, uint8_t const* target){
+  if (memcmp(target, addr->data,6)== 0){return true;
+  }else{return false;}
 }
 
 void print_vec_str(vec_string_t * strings) {
@@ -209,48 +195,44 @@ void print_vec_bytes(vec_bytes_t * bytes) {
 }
 
 static uint32_t parse_nus_data(uint8_t * p_data){
-     int i = 0;
-     char * pch;
-     bool flag_stop = false;
-     vec_string_t strings;
-     vec_byte_t tmps;
-     vec_init(&strings);
-     vec_init(&tmps);
+  int i = 0; uint16_t num;
+  char * pch = (char*) p_data;
+  bool flag_stop = false;
+  vec_string_t strings;
+  vec_byte_t tmps;
+  vec_init(&strings);
+  vec_init(&tmps);
 
-     uint16_t num;
-     printf ("Splitting string \"%s\" into tokens:\n",(char*) p_data);
-     pch = strtok ((char*) p_data," :");
-     while(pch != NULL){
-          if(i == 0){
-               if(strcmp(pch,"add_dev") == 0){
-                    printf("parse_nus_data: --- Adding device\r\n");
-               }else if(strcmp(pch,"del_dev") == 0){
-                    printf("parse_nus_data: --- Removing device\r\n");
-               }else{
-                    flag_stop = true;
-               }
-          }
-          if(i == 1){
-               printf ("%s\n", pch);
-               vec_push(&strings, pch);
-          }
-          if(i>1){
-               num = (uint16_t)strtol(pch, NULL, 16);       // number base 16
-               printf("%d (%X) \n", num,num);                        // print it as decimal
-               vec_push(&tmps, num);
-//               printf ("%s\n", pch);
-          }
-          pch = strtok (NULL, " :");
-          if(flag_stop)
-               break;
-          i++;
-     }
+
+//  NRF_LOG_INFO("Splitting string \"%s\" into tokens:\n",(char*) p_data);
+  pch = strtok(pch," :");
+  while(pch != NULL){
+    if(i == 0){
+      printf ("%s\n", pch);
+      if(strcmp(pch,"add_dev") == 0){printf("parse_nus_data: --- Adding device\r\n");
+      }else if(strcmp(pch,"del_dev") == 0){printf("parse_nus_data: --- Removing device\r\n");
+      }else{flag_stop = true;}
+    }
+    if(i == 1){
+      printf ("%s\n", pch);
+      vec_push(&names, pch);
+    }
+    if(i>1){
+      num = (uint16_t)strtol(pch, NULL, 16);
+      printf("%d (%X) \n", num,num);
+      vec_push(&tmps, num);
+      printf ("%s\n", pch);
+    }
+    pch = strtok (NULL, " :");
+    if(flag_stop)
+      break;
+    i++;
+  }
      
-     vec_push(&addrs,tmps);
-     vec_push(&names,&strings);
-     print_vec_str(&names);
-     print_vec_bytes(&addrs);
-     return NRF_SUCCESS;
+  vec_push(&addrs,tmps);
+  print_vec_str(&names);
+  print_vec_bytes(&addrs);
+  return NRF_SUCCESS;
 }
 
 
@@ -1021,7 +1003,9 @@ static void power_manage(void)
     uint32_t err_code = sd_app_evt_wait();
     APP_ERROR_CHECK(err_code);
 }
-
+static const char* name1 = "add_dev Charge 2 C3:DA:90:96:A3:A5";
+static char* name2 = "add_dev tkr C3:CE:5E:26:AD:0A";
+//static uint8_t* name2 = {61, 64, 64, 5f, 64, 65, 76, 20, 74, 6b, 72, 20, 43, 33, 3a, 43, 45, 3a, 35, 45, 3a, 32, 36, 3a, 41, 44, 3a, 30, 41};
 int tmpDuty;
 uint8_t new_duty_cycle = 255;
 /**@brief Application main function.
@@ -1036,8 +1020,12 @@ int main(void)
     vec_push(&testAddr,0xb0); vec_push(&testAddr,0x91); vec_push(&testAddr,0x22);
     vec_push(&testAddr,0xf7); vec_push(&testAddr,0x6d); vec_push(&testAddr,0x55);
 
-    check_addr_vec(&testAddr,&target_mac);
-    
+//    bool isMatch = check_addr_vec(&testAddr,target_mac);
+//    if (isMatch){printf("check_addr_vec: Addresses Match...\n");
+//    }else{printf("check_addr_vec: Addresses Don't Match...\n");}
+
+//  parse_nus_data(name2);
+
     // Initialize.
     APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
     err_code = app_timer_init();
