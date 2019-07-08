@@ -161,12 +161,18 @@ static vec_string_t names;
 static vec_byte_t testAddr;
 
 static void check_addr_vec(vec_byte_t* addr, uint8_t const* target){
+  uint8_t byte; size_t i;
+  bool isMatch = false;
   printf("check_addr_vec: \n");
-  for(int i = 0;i<6;i++){
-     printf("\t In [%02x] -- Target [%02x]\n",addr->data[i],target[i]);
+  vec_foreach(addr, byte, i){
+     printf("\t In [%02x] -- Target [%02x]\n",byte,target[i]);
+     if(byte == target[i]){
+          isMatch = true;
+     }else{isMatch = false;}
  }
 
-  if (memcmp(target, addr, 6)== 0){
+//  if (memcmp(target, addr, 6)== 0){
+  if (isMatch){
      printf("check_addr_vec: Addresses Match...\n");
   }else{
      printf("check_addr_vec: Addresses Don't Match...\n");
