@@ -65,7 +65,7 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1029" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="1" top="218" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="21" y="228" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="1" top="218" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="5" y="19" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_lights.c" selected="0" top="39" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="22" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_lights.h" selected="0" top="72" codecName="Default"/>
  </Files>
