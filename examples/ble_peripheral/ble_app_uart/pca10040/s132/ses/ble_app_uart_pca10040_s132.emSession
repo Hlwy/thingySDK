@@ -2,6 +2,7 @@
 <session>
  <Bookmarks/>
  <Breakpoints groups="Breakpoints" active_group="Breakpoints">
+  <BreakpointListItem trigger="Execute" line="-1" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="0x1faf0" group="Breakpoints" type="Breakpoint" state="2" filename="" useHWbreakpoint="false"/>
   <BreakpointListItem trigger="" line="53" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="2" filename="../../../../../../components/libraries/util/app_error_weak.c" useHWbreakpoint="false"/>
   <BreakpointListItem trigger="" line="76" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="additions/modules/m_ble.h" useHWbreakpoint="false"/>
   <Exceptions set="MemManage;UsageFault_Coprocessor;UsageFault_CheckingError;UsageFault_StateError;BusFault;ExceptionEntryReturnFault;HardFault"/>
@@ -51,8 +52,10 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Twice a Second">
-   <Watchpoint expression="tags_detected" name="tags_detected" radix="-1" linenumber="1107" filename="../../../main.c"/>
-   <Watchpoint expression="tags_nearby" name="tags_nearby" radix="-1" linenumber="1109" filename="../../../main.c"/>
+   <Watchpoint expression="tags_detected" name="tags_detected" radix="-1" linenumber="1095" filename="../../../main.c"/>
+   <Watchpoint expression="tags_nearby" name="tags_nearby" radix="-1" linenumber="1097" filename="../../../main.c"/>
+   <Watchpoint expression="p_data" name="p_data" radix="1" linenumber="197" filename="../../../main.c"/>
+   <Watchpoint expression="pch" name="pch" radix="1" linenumber="209" filename="../../../main.c"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -65,9 +68,11 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="21" y="228" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="1" top="218" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="5" y="19" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_lights.c" selected="0" top="39" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="19" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_lights.c" selected="0" top="10" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="22" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_lights.h" selected="0" top="72" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="175" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/vector_c.h" selected="0" top="120" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="104" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/vector_c.c" selected="0" top="64" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1013" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="1" top="1013" codecName="Default"/>
  </Files>
- <ARMCrossStudioWindow activeProject="ble_app_uart_pca10040_s132" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="nrf52832_xxaa" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions" debugSearchPath="" autoConnectCapabilities="3711"/>
+ <ARMCrossStudioWindow activeProject="ble_app_uart_pca10040_s132" fileDialogDefaultFilter="*.asm;*.s;*.inc" autoConnectTarget="J-Link" buildConfiguration="nrf52832_xxaa" sessionSettings="" debugSearchFileMap="/home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/ses_nrf52_startup.s&#xa;/home/hyoung/devel/Thingy/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/ses_nrf52_startup.s" fileDialogInitialDirectory="/home/hyoung/devel/Thingy/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>
