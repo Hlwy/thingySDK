@@ -273,7 +273,7 @@ uint32_t ble_nus_init(ble_nus_t * p_nus, const ble_nus_init_t * p_nus_init)
     // Initialize the service structure.
     p_nus->conn_handle             = BLE_CONN_HANDLE_INVALID;
     p_nus->data_handler            = p_nus_init->data_handler;
-    p_nus->is_notification_enabled = false;
+    p_nus->is_notification_enabled = true;
 
     /**@snippet [Adding proprietary Service to S110 SoftDevice] */
     // Add a custom base UUID.

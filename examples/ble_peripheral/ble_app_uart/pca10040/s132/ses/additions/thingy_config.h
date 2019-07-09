@@ -51,13 +51,13 @@
 #define NORDIC_COMPANY_ID               0x0059                                      /**< Nordic Semiconductor ASA company identifier. */
 
 #define APP_ADV_INTERVAL_MS             380                                         /**< The advertising interval in ms. */
-#define APP_ADV_TIMEOUT_IN_SECONDS      0                                         /**< The advertising timeout in s. */
+#define APP_ADV_TIMEOUT_IN_SECONDS      180                                         /**< The advertising timeout in s. */
 
 #define MIN_CONN_INTERVAL_MS            70                                         /**< Minimum acceptable connection interval in ms. */
 #define MAX_CONN_INTERVAL_MS            150                                          /**< Maximum acceptable connection interval in ms. */
 #define SLAVE_LATENCY                   0                                           /**< Slave latency. */
 #define CONN_SUP_TIMEOUT_MS             320                                        /**< Connection supervisory timeout (4 seconds), Supervision Timeout uses 10 ms units. */
-#define FIRST_CONN_PARAMS_UPDATE_DELAY  APP_TIMER_TICKS(1000)  /**< Time from initiating event (connect or start of notification) to first time sd_ble_gap_conn_param_update is called (1 second). */
+#define FIRST_CONN_PARAMS_UPDATE_DELAY  APP_TIMER_TICKS(5000)  /**< Time from initiating event (connect or start of notification) to first time sd_ble_gap_conn_param_update is called (1 second). */
 #define NEXT_CONN_PARAMS_UPDATE_DELAY   APP_TIMER_TICKS(30000) /**< Time between each call to sd_ble_gap_conn_param_update after the first call (30 seconds). */
 #define MAX_CONN_PARAMS_UPDATE_COUNT    3                                           /**< Number of attempts before giving up the connection parameter negotiation. */
 

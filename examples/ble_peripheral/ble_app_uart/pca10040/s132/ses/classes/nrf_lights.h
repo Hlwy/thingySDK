@@ -5,7 +5,8 @@
 #include "pca20020.h"
 #include "drv_ext_light.h"
 #include "ble_uis.h"
-#include "m_ui_demo.h"
+//#include "m_ui_demo.h"
+#include "m_ui.h"
 #include "nrf_delay.h"
 
 static const nrf_drv_twi_t     m_twi_sensors = NRF_DRV_TWI_INSTANCE(TWI_SENSOR_INSTANCE);

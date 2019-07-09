@@ -96,9 +96,10 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/main.o: \
  ../../../../../../components/libraries/log/src/nrf_log_ctrl_internal.h \
  classes/nrf_motor_driver.h additions/drivers_ext/low_power_pwm.h \
  ../../../../../../components/drivers_nrf/common/nrf_drv_common.h \
- classes/nrf_lights.h additions/ble/ble_uis.h \
- additions/modules/m_ui_demo.h additions/drivers_ext/nrf_drv_twi.h \
+ classes/nrf_lights.h additions/ble/ble_uis.h additions/modules/m_ui.h \
+ additions/modules/m_ble.h additions/thingy_config.h \
+ additions/drivers_ext/nrf_drv_twi.h \
  ../../../../../../components/drivers_nrf/delay/nrf_delay.h \
  classes/nrf_buzzer.h additions/drivers_ext/drv_speaker.h \
  classes/nrf_battery_monitor.h additions/modules/m_batt_meas.h \
- additions/modules/m_ble.h additions/thingy_config.h additions/vector_c.h
+ additions/vector_c.h

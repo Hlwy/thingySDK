@@ -1,53 +1,4 @@
-/**
- * Copyright (c) 2014 - 2017, Nordic Semiconductor ASA
- * 
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 
- * 2. Redistributions in binary form, except as embedded into a Nordic
- *    Semiconductor ASA integrated circuit in a product or a software update for
- *    such product, must reproduce the above copyright notice, this list of
- *    conditions and the following disclaimer in the documentation and/or other
- *    materials provided with the distribution.
- * 
- * 3. Neither the name of Nordic Semiconductor ASA nor the names of its
- *    contributors may be used to endorse or promote products derived from this
- *    software without specific prior written permission.
- * 
- * 4. This software, with or without modification, must only be used with a
- *    Nordic Semiconductor ASA integrated circuit.
- * 
- * 5. Any software provided in binary form under this license must not be reverse
- *    engineered, decompiled, modified and/or disassembled.
- * 
- * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
- * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
- */
-/** @file
- *
- * @defgroup ble_sdk_uart_over_ble_main main.c
- * @{
- * @ingroup  ble_sdk_app_nus_eval
- * @brief    UART over BLE application main file.
- *
- * This file contains the source code for a sample application that uses the Nordic UART service.
- * This application uses the @ref srvlib_conn_params module.
- */
-
+#pragma GCC diagnostic ignored "-Wint-conversion"
 #include <stdint.h>
 #include <string.h>
 #include "nordic_common.h"
@@ -83,7 +34,7 @@
 
 #define APP_FEATURE_NOT_SUPPORTED       BLE_GATT_STATUS_ATTERR_APP_BEGIN + 2        /**< Reply when unsupported features are requested. */
 
-#define DEVICE_NAME                     "Nordic_UART"                               /**< Name of device. Will be included in the advertising data. */
+//#define DEVICE_NAME                     "Nordic_UART"                               /**< Name of device. Will be included in the advertising data. */
 #define NUS_SERVICE_UUID_TYPE           BLE_UUID_TYPE_VENDOR_BEGIN                  /**< UUID type for the Nordic UART Service (vendor specific). */
 
 #define APP_ADV_INTERVAL                64                                          /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
@@ -137,11 +88,11 @@ static uint32_t level3;
 static uint32_t level4;
 static uint32_t level5;
 static uint8_t const * altAddr;
-static uint8_t const * tmpAddr;
+static uint8_t * tmpAddr;
 static ble_gap_evt_adv_report_t const* temp_report;
 static char const m_target_periph_name[] = "BlueCharm";
 static char const m_target_phone_name[] = "Samsung Galaxy S7";
-static uint8_t const target_mac[] = {0xb0,0x91,0x22,0xf7,0x6d,0x55};
+static uint8_t target_mac[] = {0xb0,0x91,0x22,0xf7,0x6d,0x55};
 static uint8_t const target_mac_rvr[] = {0x55,0x6d,0xf7,0x22,0x91,0xb0};
 static const int rssiThresh = -40;
 static char* tmpName;
@@ -151,6 +102,7 @@ static bool tags_detected = false;
 static int curRssi;
 static bool were_tags_nearby = false;
 static bool name_found = false;
+static int nDevices = 0;
 
 typedef vec_t(char*) vec_string_t;
 typedef vec_t(uint8_t) vec_byte_t;
@@ -158,54 +110,98 @@ typedef vec_t(vec_byte_t) vec_bytes_t;
 
 static vec_bytes_t addrs;
 static vec_string_t names;
+#define FPU_EXCEPTION_MASK 0x0000009F
 
-static vec_byte_t testAddr;
+static void power_manage(void)
+{
+     __set_FPSCR(__get_FPSCR()  & ~(FPU_EXCEPTION_MASK));
+    (void) __get_FPSCR();
+    NVIC_ClearPendingIRQ(FPU_IRQn);
+    uint32_t err_code = sd_app_evt_wait();
+    APP_ERROR_CHECK(err_code);
+}
 
-static void check_addr_vec(vec_byte_t* addr, uint8_t const* target){
-  uint8_t byte; size_t i;
-  bool isMatch = false;
-  printf("check_addr_vec: \n");
-  vec_foreach(addr, byte, i){
-     printf("\t In [%02x] -- Target [%02x]\n",byte,target[i]);
-     if(byte == target[i]){
-          isMatch = true;
+static bool check_addr_vec(vec_byte_t* addr, uint8_t* target){
+     uint8_t byte; size_t i;
+     bool isMatch = false;
+     if (memcmp(target, addr->data,6)== 0){isMatch = true;
      }else{isMatch = false;}
- }
+     char* tmpMatch;
+     if(!isMatch){
+//          printf("check_addr_vec: checking address in reverse...\r\n");
+          int j = 0;
+          vec_foreach_rev(addr, byte, i){
+               if(i>=6){
+//                    printf("check_addr_vec: Forcing break...\r\n");
+                    break;
+               }
+               if(byte == target[j]){isMatch = true;tmpMatch = "true";
+               }else{isMatch = false;tmpMatch = "false";}
+//               printf("\tByte[%d] - In [%02x] -- Target [%02x] --- Match = %s\n",i,byte,target[j],tmpMatch);
+               j++;
+          }
+     }
+//     if (isMatch){printf("check_addr_vec: Addresses Match...\n");
+//     }else{printf("check_addr_vec: Addresses Don't Match...\n");}
+     return isMatch;
+}
 
-//  if (memcmp(target, addr, 6)== 0){
-  if (isMatch){
-     printf("check_addr_vec: Addresses Match...\n");
-  }else{
-     printf("check_addr_vec: Addresses Don't Match...\n");
-  }
+static void print_addr(uint8_t* addr){
+     for(uint8_t i = 0; i < 6; i++){
+          printf("%02x ", addr[i]);
+     }
 }
 
 void print_vec_str(vec_string_t * strings) {
   size_t i; char * string;
-  vec_foreach(strings, string, i) {
-    printf("Names[%zu] = \"%s\"\n", i, string);
-  }
+  vec_foreach(strings, string, i) {printf("Names[%zu] = \"%s\"\n", i, string);}
 }
 
 void print_vec_byte(vec_byte_t * bytes) {
   size_t i; uint8_t byte;
-  vec_foreach(bytes, byte, i) {
-    printf("Byte[%zu] = \"%02x\"\n", i, byte);
-  }
+  printf("Bytes[%zu] = ", i);
+  vec_foreach(bytes, byte, i) {printf("%02x ", byte);}
 }
 
 void print_vec_bytes(vec_bytes_t * bytes) {
-  size_t i;
-  size_t j;
+  size_t i; size_t j;
   uint8_t byte;
   vec_byte_t byte2;
   vec_foreach(bytes, byte2, i) {
-    printf("Byte[%zu] = ", i);
-     vec_foreach(&byte2, byte, j) {
-          printf("%02x ", byte);
-     }
+    printf("Bytes[%zu] = ", i);
+     vec_foreach(&byte2, byte, j) {printf("%02x ", byte);}
   }
      printf("\r\n");
+}
+//static bool check_addr_vec_rev(const vec_byte_t* addr, uint8_t* target){
+////  const vec_byte_t tmp = &addr;
+////  vec_reserve(&tmp,sizeof(addr));
+////  memset(tmp, 0, sizeof(*addr));
+////  memcpy(&tmp,addr,sizeof(addr));
+//   vec_byte_t* tmpB = (vec_byte_t*)addr;
+//  vec_reverse(tmpB);
+//  if (memcmp(target, tmpB->data,6)== 0){return true;
+//  }else{return false;}
+////  vec_reverse(tmp);
+//}
+
+//static bool check_addr_vec(const vec_byte_t* addr, uint8_t* target){   
+//  if (memcmp(target, addr->data,6)== 0){return true;
+//  }else{return false;}
+//}
+
+
+static bool check_addr_vecs(vec_bytes_t* addrs, uint8_t* target){
+  size_t i;
+  bool isMatch = false;
+  vec_byte_t byte_vec;
+//  printf("check_addr_vecs: Checking Known Addresses for Target - ");
+//  print_addr(target); printf("\r\n");
+  vec_foreach(addrs,byte_vec,i){
+//     printf("\tChecking addr[%d]: ",i);print_addr(byte_vec.data); printf("\r\n");
+     isMatch = check_addr_vec(&byte_vec,target);
+  }
+  return isMatch;
 }
 
 static uint32_t parse_nus_data(uint8_t * p_data){
@@ -218,25 +214,26 @@ static uint32_t parse_nus_data(uint8_t * p_data){
      vec_init(&tmps);
 
      uint16_t num;
-     printf ("Splitting string \"%s\" into tokens:\n",(char*) p_data);
+//     printf ("Splitting string \"%s\" into tokens:\n",(char*) p_data);
      pch = strtok ((char*) p_data," :");
      while(pch != NULL){
           if(i == 0){
                if(strcmp(pch,"add_dev") == 0){
                     printf("parse_nus_data: --- Adding device\r\n");
+                    nDevices++;
                }else if(strcmp(pch,"del_dev") == 0){
                     printf("parse_nus_data: --- Removing device\r\n");
-               }else{
-                    flag_stop = true;
-               }
+                    nDevices--;
+               }else{flag_stop = true;}
           }
           if(i == 1){
                printf ("%s\n", pch);
-               vec_push(&strings, pch);
+               vec_insert(&names,0,pch);
+//               vec_push(&strings, pch);
           }
           if(i>1){
                num = (uint16_t)strtol(pch, NULL, 16);       // number base 16
-               printf("%d (%X) \n", num,num);                        // print it as decimal
+//               printf("%d (%X) \n", num,num);                        // print it as decimal
                vec_push(&tmps, num);
 //               printf ("%s\n", pch);
           }
@@ -246,8 +243,9 @@ static uint32_t parse_nus_data(uint8_t * p_data){
           i++;
      }
      
-     vec_push(&addrs,tmps);
-     vec_push(&names,&strings);
+     vec_insert(&addrs,0,tmps);
+//     vec_push(&addrs,tmps);
+//     vec_push(&names,strings.data[0]);
      print_vec_str(&names);
      print_vec_bytes(&addrs);
      return NRF_SUCCESS;
@@ -275,7 +273,6 @@ static void scan_start(void)
 static uint32_t adv_report_parse(uint8_t type, data_t * p_advdata, data_t * p_typedata){
     uint32_t   index = 0;
     uint8_t* p_data;
-
 
     p_data = p_advdata->p_data;
     while (index < p_advdata->data_len){
@@ -334,74 +331,90 @@ static bool find_adv_uuid(ble_gap_evt_adv_report_t const * p_adv_report, uint16_
     if (err_code != NRF_SUCCESS){
         // Look for the services in 'complete' if it was not found in 'more available'.
         err_code = adv_report_parse(BLE_GAP_AD_TYPE_16BIT_SERVICE_UUID_COMPLETE, &adv_data, &type_data);
-
-        if (err_code != NRF_SUCCESS){
-            // If we can't parse the data, then exit.
-            return false;
-        }
+        if (err_code != NRF_SUCCESS){return false;}
     }
 
     // Verify if any UUID match the given UUID.
     for (uint32_t i = 0; i < (type_data.data_len / sizeof(uint16_t)); i++){
         uint16_t extracted_uuid = uint16_decode(&type_data.p_data[i * sizeof(uint16_t)]);
-        if (extracted_uuid == uuid_to_find){
-            return true;
-        }
+        if (extracted_uuid == uuid_to_find){return true;}
     }
     return false;
 }
 
 static bool pet_proximity_check(ble_evt_t const * p_ble_evt){
+//     NRF_LOG_INFO("pet_proximity_check: --------- \r\n");
      ble_gap_evt_t const * p_gap_evt = &p_ble_evt->evt.gap_evt;
      were_tags_nearby = tags_nearby;
      const ble_gap_evt_adv_report_t * p_adv_report = &p_gap_evt->params.adv_report;
 
      temp_report = &p_gap_evt->params.adv_report;
      tmpName = (char*)temp_report->peer_addr.addr;
-     tmpAddr = temp_report->peer_addr.addr;
+     tmpAddr = (uint8_t*)temp_report->peer_addr.addr;
 
      int tmpRssi = -10000;
-     if (strlen(m_target_periph_name) != 0){
-         if (memcmp(target_mac, tmpAddr, 6)== 0){
-             tmpRssi = temp_report->rssi;
-//             NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN" Found Target Device! =====  %d\r\n",temp_report->rssi);
-               tags_detected = true;
-         }else if (memcmp(target_mac_rvr, tmpAddr, 6)== 0){
-             tmpRssi = temp_report->rssi;
-             tags_detected = true;
-//             NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN" Found Target Device Reverse! =====  %d\r\n",temp_report->rssi);
-         }else if (strlen(_buffer) != 0){
-//                    NRF_LOG_INFO("CENTRAL: Looking for alternative name for advertising peer (\'%s\')...\r\n",_buffer);
-             if (find_adv_name(&p_gap_evt->params.adv_report, _buffer))
-             {
-                 if(!name_found){
-                    NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"CENTRAL: Alternative Target (\'%s\') Found with MAC (\'",_buffer);
-//                            altAddr = &p_gap_evt->params.adv_report.peer_addr.addr;
-                    for (uint8_t i = 0; i < 6; i++)
-                    {
-                         NRF_LOG_RAW_INFO("%02x ", tmpAddr[i]);
-                    }
-
-                    NRF_LOG_RAW_INFO("\')!\r\n");
-                    name_found = true;
-                 }
-                 tmpRssi = temp_report->rssi;
-             }else{
-                 tmpRssi = -10000;
-             }
-         }else{
-             tmpRssi = -10000;
-             tags_detected = false;
-         }
-
-         if(tmpRssi >= rssiThresh){
-           tags_nearby = true;
-           curRssi = tmpRssi;
-//           NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"CENTRAL: Found Target Device Reverse! =====  %d\r\n",tmpRssi);
-         }else{
-           tags_nearby = false;
-         }
+     bool isMatch = check_addr_vecs(&addrs,tmpAddr);
+     if(isMatch){
+          tmpRssi = temp_report->rssi;
+          tags_detected = true;
+          NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN" Found Target Device! =====  %d\r\n"NRF_LOG_COLOR_CODE_DEFAULT,tmpRssi);
+          if(tmpRssi >= rssiThresh){
+               tags_nearby = true;
+               drv_ext_light_rgb_intensity_set(0,&color_green);
+//               m_ui_led_set
+//               led_set(&led_found, NULL);
+               
+          }else{
+               tags_nearby = false;
+               drv_ext_light_rgb_intensity_set(0,&color_blue);
+//               led_set(&led_search, NULL);
+          }
+     }else{
+          tags_detected = false;
+          tmpRssi = -10000;
      }
+
+//     if (strlen(m_target_periph_name) != 0){
+//         if (memcmp(target_mac, tmpAddr, 6)== 0){
+//             tmpRssi = temp_report->rssi;
+////             NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN" Found Target Device! =====  %d\r\n",temp_report->rssi);
+//               tags_detected = true;
+//         }else if (memcmp(target_mac_rvr, tmpAddr, 6)== 0){
+//             tmpRssi = temp_report->rssi;
+//             tags_detected = true;
+////             NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN" Found Target Device Reverse! =====  %d\r\n",temp_report->rssi);
+//         }else if (strlen(_buffer) != 0){
+////                    NRF_LOG_INFO("CENTRAL: Looking for alternative name for advertising peer (\'%s\')...\r\n",_buffer);
+//             if (find_adv_name(&p_gap_evt->params.adv_report, _buffer))
+//             {
+//                 if(!name_found){
+//                    NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"CENTRAL: Alternative Target (\'%s\') Found with MAC (\'",_buffer);
+////                            altAddr = &p_gap_evt->params.adv_report.peer_addr.addr;
+//                    for (uint8_t i = 0; i < 6; i++)
+//                    {
+//                         NRF_LOG_RAW_INFO("%02x ", tmpAddr[i]);
+//                    }
+//
+//                    NRF_LOG_RAW_INFO("\')!\r\n");
+//                    name_found = true;
+//                 }
+//                 tmpRssi = temp_report->rssi;
+//             }else{
+//                 tmpRssi = -10000;
+//             }
+//         }else{
+//             tmpRssi = -10000;
+//             tags_detected = false;
+//         }
+
+//         if(tmpRssi >= rssiThresh){
+//           tags_nearby = true;
+//           curRssi = tmpRssi;
+////           NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"CENTRAL: Found Target Device Reverse! =====  %d\r\n",tmpRssi);
+//         }else{
+//           tags_nearby = false;
+//         }
+//     }
      return false;
 }
 
@@ -728,8 +741,9 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
         case BLE_GAP_EVT_ADV_REPORT:{
                bool do_connect = false;
                NRF_LOG_DEBUG("on_ble_evt: ===== SCANNING ADVERTISING PEERS...\r\n");
-               flag_pets_near = pet_proximity_check(p_ble_evt);
-
+               if(nDevices>0){
+                    flag_pets_near = pet_proximity_check(p_ble_evt);
+               }
                if (is_already_connected(&p_gap_evt->params.adv_report.peer_addr)){
                     NRF_LOG_INFO("central Already connected to something...\r\n");
                     break;
@@ -1013,15 +1027,12 @@ static void log_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
-
 /**@brief Function for placing the application in low power state while waiting for events.
  */
-static void power_manage(void)
-{
-    uint32_t err_code = sd_app_evt_wait();
-    APP_ERROR_CHECK(err_code);
-}
 
+
+static uint8_t target_mac_rev[] = {0x55,0x6d,0xf7,0x22,0x91,0xb0};
+static char* name2 = "add_dev tkr C3:CE:5E:26:AD:0A";
 int tmpDuty;
 uint8_t new_duty_cycle = 255;
 /**@brief Application main function.
@@ -1030,14 +1041,27 @@ int main(void)
 {
     uint32_t err_code;
     bool     erase_bonds;
-    vec_init(&addrs);
-    vec_init(&names);
-    vec_init(&testAddr);
-    vec_push(&testAddr,0xb0); vec_push(&testAddr,0x91); vec_push(&testAddr,0x22);
-    vec_push(&testAddr,0xf7); vec_push(&testAddr,0x6d); vec_push(&testAddr,0x55);
+    vec_deinit(&addrs); vec_deinit(&names);
+    vec_init(&addrs); vec_init(&names);
 
-    check_addr_vec(&testAddr,&target_mac);
-    
+//    vec_byte_t testAddr;
+//    vec_bytes_t testAddrs;
+//    vec_init(&testAddr); vec_init(&testAddrs);
+//    vec_push(&testAddr,0xb0); vec_push(&testAddr,0x91); vec_push(&testAddr,0x22);
+//    vec_push(&testAddr,0xf7); vec_push(&testAddr,0x6d); vec_push(&testAddr,0x55);
+//    vec_push(&testAddrs,testAddr);
+//    bool isMatch;
+//    isMatch = check_addr_vecs(&testAddrs,target_mac);
+//    if (isMatch){printf("check_addr_vec: Addresses Match...\n");
+//    }else{printf("check_addr_vec: Addresses Don't Match...\n");}
+//    vec_deinit(&testAddrs);
+//    vec_init(&testAddrs);
+//    vec_reverse(&testAddr);
+//    vec_push(&testAddrs,testAddr);
+//    isMatch = check_addr_vecs(&testAddrs,target_mac);
+//    if (isMatch){printf("check_addr_vec (Reversed): Addresses Match...\n");
+//    }else{printf("check_addr_vec (Reversed): Addresses Don't Match...\n");}
+
     // Initialize.
     APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
     err_code = app_timer_init();
@@ -1097,6 +1121,7 @@ int main(void)
           drv_ext_light_rgb_intensity_set(0,&color_aqua);
           initiate_alarm_sequence(2500,50,5,500,1000);
        }else{
+//          drv_ext_light_rgb_intensity_set(0,&color_black);
          // Nothing
 //              nrf_delay_ms(500);
 //               drv_ext_light_rgb_intensity_set(0,&color_yellow);

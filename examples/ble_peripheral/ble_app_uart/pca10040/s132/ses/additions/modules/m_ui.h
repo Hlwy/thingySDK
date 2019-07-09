@@ -49,9 +49,10 @@
 #define __M_UI_H__
 
 #include "app_error.h"
+#include "m_ble.h"
 #include "nrf_drv_twi.h"
-#include "drv_ext_light.h"
 #include "ble_uis.h"
+#include "drv_ext_light.h"
 
 #define DEFAULT_LED_INTENSITY_PERCENT     20    ///< Default LED intensity [percent].
 #define DEFAULT_LED_ON_TIME_MS            35    ///< LED on duration [ms].
@@ -76,7 +77,7 @@ enum
     {                                                           \
         .mode_breathe =                                         \
         {                                                       \
-            .color_mix  = (uint8_t)DRV_EXT_LIGHT_COLOR_GREEN ,   \
+            .color_mix  = (uint8_t)DRV_EXT_LIGHT_COLOR_GREEN,   \
             .intensity  = DEFAULT_LED_INTENSITY_PERCENT,        \
             .delay      = DEFAULT_LED_OFF_TIME_MS               \
         }                                                       \
@@ -142,6 +143,9 @@ typedef struct
     nrf_drv_twi_t         const * p_twi_instance;
 }m_ui_init_t;
 
+
+
+ret_code_t led_set(ble_uis_led_t const * const p_config_ui,drv_ext_light_rgb_intensity_t const * const p_color_only);
 /**@brief Function for initializing all UI components (Buttons and LEDs).
  *
  * @param[in] p_handle  Pointer to BLE service handle structure.
@@ -151,7 +155,7 @@ typedef struct
  * @retval NRF_ERROR_NULL   NULL pointer supplied.
  * @retval Other codes from the underlying drivers.
  */
-ret_code_t m_ui_init(m_ui_init_t * p_params);
+ret_code_t m_ui_init(m_ble_service_handle_t * p_handle, m_ui_init_t * p_params);
 
 /**@brief Function for setting the RGB value of an LED.
  *
@@ -176,14 +180,6 @@ ret_code_t m_ui_led_set(uint8_t r, uint8_t g, uint8_t b);
  * @retval Other codes from the underlying drivers.
  */
 ret_code_t m_ui_led_set_event(ui_led_events event_code);
-
-ret_code_t led_set(ble_uis_led_t const * const p_config_ui,
-          drv_ext_light_rgb_intensity_t const * const p_color_only);
-
-
 #endif /*__THINGY_UI_H__*/
-
-
-
 
 /** @} */
