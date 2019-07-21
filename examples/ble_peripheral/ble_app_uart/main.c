@@ -209,7 +209,7 @@ void send_vec_bytes(vec_bytes_t * bytes) {
   uint8_t byte;
   vec_byte_t byte2;
   uint8_t data[128];
-  
+
   vec_foreach(bytes, byte2, i) {
 //    printf("Bytes[%zu] = ", i);
     sprintf((char *)data, "Bytes[%zu] = %02x:%02x:%02x:%02x:%02x:%02x\r\n",i,byte2.data[0],byte2.data[1],byte2.data[2],byte2.data[3],byte2.data[4],byte2.data[5]);
@@ -266,7 +266,7 @@ static void send_stored_info(){
      }else{
           send_vec_bytes(&addrs);
      }
-     
+
 //     ble_nus_string_send(&m_nus, data, sizeof(data));
 }
 
@@ -529,7 +529,7 @@ static void gap_params_init(void)
 static void nus_data_handler(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length)
 {
     uint32_t err_code;
-    
+
     NRF_LOG_INFO("Received data from BLE NUS. Handling data on UART....\r\n");
     NRF_LOG_HEXDUMP_DEBUG(p_data, length);
 
@@ -538,7 +538,7 @@ static void nus_data_handler(ble_nus_t * p_nus, uint8_t * p_data, uint16_t lengt
     memset(_buffer, 0, sizeof(_buffer));
     memcpy(&_buffer[0], (char*)p_data, sizeof(uint8_t)*length);
     NRF_LOG_INFO("nus_data_handler(): ----- Data = %s\r\n",_buffer);
-    
+
     for (uint32_t i = 0; i < length; i++)
     {
         do
@@ -699,14 +699,14 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 {
     ble_gap_evt_t const * p_gap_evt = &p_ble_evt->evt.gap_evt;
     uint32_t err_code;
-    
+
     if(nTimeUpdates == 0){
           last_time = begin;
     }
     tmpT = nrf_cal_get_time_calibrated();
     now = mktime(tmpT);
     dt = (now - last_time)/3925.0;
-    
+
     if(dt >= 1.0){
 //          NRF_LOG_INFO("on_ble_evt(): --- Current Time = %d Time since last BLE update = " NRF_LOG_FLOAT_MARKER "\n", now, NRF_LOG_FLOAT(dt));
          last_time = now;
@@ -1184,17 +1184,17 @@ int main(void)
     buzzer_init(speaker_handler);
     battery_monitor_init(300000, battery_monitor_handler, &battery);
     new_duty_cycle = motor.pwm.period;
-     
+
      drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_LIGHTWELL,&color_green);
 
     NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"===== Thingy demo started! =====  \r\n"NRF_LOG_COLOR_CODE_DEFAULT);
-     
+
     nrf_gpio_cfg_input(BUTTON, NRF_GPIO_PIN_PULLUP);
     drv_ext_gpio_cfg_input(SX_IOEXT_0,DRV_EXT_GPIO_PIN_PULLUP);
     drv_ext_gpio_cfg_input(SX_IOEXT_1,DRV_EXT_GPIO_PIN_PULLUP);
     drv_ext_gpio_cfg_input(SX_IOEXT_2,DRV_EXT_GPIO_PIN_PULLUP);
     drv_ext_gpio_cfg_input(SX_IOEXT_3,DRV_EXT_GPIO_PIN_PULLUP);
-    
+
     uint32_t tmpLevel;
 //     lights_init();
     // Enter main loop.
@@ -1204,14 +1204,14 @@ int main(void)
     struct tm* tmpT2 = nrf_cal_get_time_calibrated();
     begin = mktime(tmpT2);
     printf("Start Time = %d\n",begin);
-    
+
     nrf_delay_ms(1000);
 
     for (;;)
     {
-        
+
         app_sched_execute();
-        
+
         level = !nrf_gpio_pin_read(11);
         tmpLevel = drv_ext_gpio_pin_read(SX_IOEXT_0,&level2);
         tmpLevel = drv_ext_gpio_pin_read(SX_IOEXT_1,&level3);
