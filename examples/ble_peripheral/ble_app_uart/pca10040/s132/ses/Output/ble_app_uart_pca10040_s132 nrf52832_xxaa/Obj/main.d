@@ -3,6 +3,9 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/main.o: \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdint.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/string.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/__crossworks.h \
+ /usr/share/segger_embedded_studio_for_arm_4.16/include/time.h \
+ /usr/share/segger_embedded_studio_for_arm_4.16/include/sys/time.h \
+ /usr/share/segger_embedded_studio_for_arm_4.16/include/stdio.h \
  ../../../../../../components/libraries/util/nordic_common.h \
  ../../../../../../components/device/nrf.h \
  ../../../../../../components/device/nrf52.h \
@@ -48,7 +51,6 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/main.o: \
  ../../../../../../components/softdevice/s132/headers/nrf_error_soc.h \
  ../../../../../../components/softdevice/s132/headers/nrf_error_sdm.h \
  ../../../../../../components/libraries/util/app_error.h \
- /usr/share/segger_embedded_studio_for_arm_4.16/include/stdio.h \
  ../../../../../../components/libraries/util/sdk_errors.h \
  ../config/sdk_config.h \
  ../../../../../../components/libraries/util/app_error_weak.h \
@@ -102,4 +104,4 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/main.o: \
  ../../../../../../components/drivers_nrf/delay/nrf_delay.h \
  classes/nrf_buzzer.h additions/drivers_ext/drv_speaker.h \
  classes/nrf_battery_monitor.h additions/modules/m_batt_meas.h \
- additions/vector_c.h
+ additions/vector_c.h additions/nrf_calender.h

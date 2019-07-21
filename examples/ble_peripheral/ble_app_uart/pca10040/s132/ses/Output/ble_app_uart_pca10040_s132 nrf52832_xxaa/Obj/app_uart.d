@@ -1,5 +1,5 @@
-Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/app_timer.o: \
- /home/hunter/devel/thingySDK/components/libraries/timer/app_timer.c \
+Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/app_uart.o: \
+ /home/hunter/devel/thingySDK/components/libraries/uart/app_uart.c \
  ../../../../../../components/libraries/util/sdk_common.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdint.h \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stdbool.h \
@@ -25,19 +25,22 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/app_timer.o: \
  ../../../../../../components/device/nrf52_name_change.h \
  ../../../../../../components/device/compiler_abstraction.h \
  ../../../../../../components/libraries/util/sdk_macros.h \
- /home/hunter/devel/thingySDK/components/libraries/timer/app_timer.h \
- ../../../../../../components/libraries/util/app_error.h \
- /usr/share/segger_embedded_studio_for_arm_4.16/include/stdio.h \
- ../../../../../../components/libraries/util/app_error_weak.h \
- ../../../../../../components/libraries/util/app_util.h \
- /usr/share/segger_embedded_studio_for_arm_4.16/include/stdlib.h \
+ /home/hunter/devel/thingySDK/components/libraries/uart/app_uart.h \
+ ../../../../../../components/libraries/util/app_util_platform.h \
  ../../../../../../components/softdevice/s132/headers/nrf_soc.h \
  ../../../../../../components/softdevice/s132/headers/nrf_svc.h \
  ../../../../../../components/softdevice/s132/headers/nrf_error_soc.h \
  ../../../../../../components/softdevice/s132/headers/nrf_error.h \
- ../../../../../../components/drivers_nrf/delay/nrf_delay.h \
- ../../../../../../components/libraries/util/app_util_platform.h \
  ../../../../../../components/softdevice/s132/headers/nrf_nvic.h \
  ../../../../../../components/libraries/util/nrf_assert.h \
  ../../../../../../components/libraries/util/app_error.h \
- ../../../../../../components/libraries/scheduler/app_scheduler.h
+ /usr/share/segger_embedded_studio_for_arm_4.16/include/stdio.h \
+ ../../../../../../components/libraries/util/app_error_weak.h \
+ ../../../../../../components/drivers_nrf/uart/nrf_drv_uart.h \
+ ../../../../../../components/drivers_nrf/hal/nrf_uart.h \
+ ../../../../../../components/drivers_nrf/hal/nrf_peripherals.h \
+ ../../../../../../components/device/nrf52832_peripherals.h \
+ /usr/share/segger_embedded_studio_for_arm_4.16/include/stddef.h \
+ ../../../../../../components/drivers_nrf/hal/nrf_uarte.h \
+ ../../../../../../components/libraries/util/sdk_errors.h \
+ ../../../../../../components/libraries/util/nrf_assert.h

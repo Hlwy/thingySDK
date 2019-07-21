@@ -543,8 +543,8 @@ DRV_EXT_LIGHT_DEF(my_led_1);
             .g = SX_LIGHTWELL_G,         \
             .b = SX_LIGHTWELL_B },       \
         .p_data = &my_led_1              \
-    },                                   \
-};
+    }                                   \
+     };
 
 #define BATT_MEAS_INTERVAL_MS            5000 // Measurement interval [ms].
 #define BATT_MEAS_LOW_BATT_LIMIT_MV      3100 // Cutoff voltage [mV].

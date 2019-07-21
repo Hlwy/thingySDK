@@ -748,9 +748,15 @@ static ret_code_t m_ioext_cmd_process(uint32_t id, drv_ext_light_rgb_sequence_t 
                 m_p_light_conf[id].p_data->p_status->active_time_ms = p_sequence_real_vals->sequence_vals.fade_in_time_ms +
                                                                       p_sequence_real_vals->sequence_vals.on_time_ms +
                                                                       p_sequence_real_vals->sequence_vals.fade_out_time_ms;
+                
+                uint32_t ticks = APP_TIMER_TICKS( m_osc_on_margin_calculate(m_p_light_conf[id].p_data->p_status->active_time_ms));
+                if (ticks < APP_TIMER_MIN_TIMEOUT_TICKS)
+                {
+                    ticks = APP_TIMER_MIN_TIMEOUT_TICKS;
+                }
 
-                err_code = app_timer_start(m_p_light_conf[id].p_data->timer,
-                                    APP_TIMER_TICKS( m_osc_on_margin_calculate(m_p_light_conf[id].p_data->p_status->active_time_ms)), (void*)id);
+                err_code = app_timer_start(m_p_light_conf[id].p_data->timer, ticks, (void*)id);
+//                                    APP_TIMER_TICKS( m_osc_on_margin_calculate(m_p_light_conf[id].p_data->p_status->active_time_ms)), (void*)id);
                 RETURN_IF_ERROR(err_code);
             }
 

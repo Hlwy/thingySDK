@@ -1,6 +1,9 @@
 #pragma GCC diagnostic ignored "-Wint-conversion"
 #include <stdint.h>
 #include <string.h>
+#include <time.h>
+#include <stdio.h>
+
 #include "nordic_common.h"
 #include "nrf.h"
 #include "ble_hci.h"
@@ -29,6 +32,7 @@
 //#include "nrf_ble_main.h"
 #include "nrf_battery_monitor.h"
 #include "vector_c.h"
+#include "nrf_calender.h"
 
 #define CONN_CFG_TAG                    1                                           /**< A tag that refers to the BLE stack configuration we set with @ref sd_ble_cfg_set. Default tag is @ref BLE_CONN_CFG_TAG_DEFAULT. */
 
@@ -104,14 +108,40 @@ static bool were_tags_nearby = false;
 static bool name_found = false;
 static int nDevices = 0;
 
-typedef vec_t(char*) vec_string_t;
+static time_t begin;
+static time_t last_time;
+static time_t end;
+static time_t now;
+static struct tm* tmpT;
+
+static float dtD;
+static float dt;
+
+//static clock_t begin;
+//static clock_t last_time;
+//static clock_t end;
+
+static int nTimeUpdates;
+static int closeCounter;
+static int closeCounterThresh = 35;
+static bool flag_close_door = true;
+static bool flag_debug = false;
+
+typedef vec_t(const char*) vec_string_t;
 typedef vec_t(uint8_t) vec_byte_t;
 typedef vec_t(vec_byte_t) vec_bytes_t;
+typedef vec_t(bool) vec_bool_t;
 
 static vec_bytes_t addrs;
 static vec_string_t names;
-#define FPU_EXCEPTION_MASK 0x0000009F
 
+void print_current_time()
+{
+//    printf("Uncalibrated time:\t%s\r\n", nrf_cal_get_time_string(false));
+    printf("Calibrated time:\t%s (%d, %d, %d)\r\n", nrf_cal_get_time_string(true),MSEC_TO_UNITS(1000,UNIT_0_625_MS),MSEC_TO_UNITS(1000,UNIT_1_25_MS),MSEC_TO_UNITS(1000,UNIT_10_MS));
+}
+
+#define FPU_EXCEPTION_MASK 0x0000009F
 static void power_manage(void)
 {
      __set_FPSCR(__get_FPSCR()  & ~(FPU_EXCEPTION_MASK));
@@ -153,7 +183,7 @@ static void print_addr(uint8_t* addr){
 }
 
 void print_vec_str(vec_string_t * strings) {
-  size_t i; char * string;
+  size_t i; const char * string;
   vec_foreach(strings, string, i) {printf("Names[%zu] = \"%s\"\n", i, string);}
 }
 
@@ -173,40 +203,78 @@ void print_vec_bytes(vec_bytes_t * bytes) {
   }
      printf("\r\n");
 }
-//static bool check_addr_vec_rev(const vec_byte_t* addr, uint8_t* target){
-////  const vec_byte_t tmp = &addr;
-////  vec_reserve(&tmp,sizeof(addr));
-////  memset(tmp, 0, sizeof(*addr));
-////  memcpy(&tmp,addr,sizeof(addr));
-//   vec_byte_t* tmpB = (vec_byte_t*)addr;
-//  vec_reverse(tmpB);
-//  if (memcmp(target, tmpB->data,6)== 0){return true;
-//  }else{return false;}
-////  vec_reverse(tmp);
-//}
 
-//static bool check_addr_vec(const vec_byte_t* addr, uint8_t* target){   
-//  if (memcmp(target, addr->data,6)== 0){return true;
-//  }else{return false;}
-//}
+void send_vec_bytes(vec_bytes_t * bytes) {
+  size_t i; size_t j;
+  uint8_t byte;
+  vec_byte_t byte2;
+  uint8_t data[128];
+  
+  vec_foreach(bytes, byte2, i) {
+//    printf("Bytes[%zu] = ", i);
+    sprintf((char *)data, "Bytes[%zu] = %02x:%02x:%02x:%02x:%02x:%02x\r\n",i,byte2.data[0],byte2.data[1],byte2.data[2],byte2.data[3],byte2.data[4],byte2.data[5]);
+    printf("sending string:\r\n\t%s",(char*)data);
+    ble_nus_string_send(&m_nus, data, 32);
+//     vec_foreach(&byte2, byte, j){
+////          printf("%02x ", byte);
+//          sprintf((char *)data, "%02x ", byte);
+//          ble_nus_string_send(&m_nus, data, 3);
+//     }
+//     sprintf((char *)data, "\r\n");
+//     ble_nus_string_send(&m_nus, data, 4);
+////     printf("\r\n");
+  }
+     printf("sending string:\r\n\t%s",(char*)data);
+}
 
-
-static bool check_addr_vecs(vec_bytes_t* addrs, uint8_t* target){
+static bool check_addr_vecs(vec_bytes_t* addrs, uint8_t* target, int* foundIdx){
   size_t i;
+  size_t idx;
+  int idxT;
   bool isMatch = false;
+  vec_bool_t matches;
+  vec_init(&matches);
+
   vec_byte_t byte_vec;
 //  printf("check_addr_vecs: Checking Known Addresses for Target - ");
 //  print_addr(target); printf("\r\n");
   vec_foreach(addrs,byte_vec,i){
 //     printf("\tChecking addr[%d]: ",i);print_addr(byte_vec.data); printf("\r\n");
      isMatch = check_addr_vec(&byte_vec,target);
+     vec_push(&matches, isMatch);
   }
-  return isMatch;
+  vec_find(&matches, true, idxT);
+//  printf("\tvec_find returned = %d\n",idxT);
+  *foundIdx = idxT;
+  if(idxT == -1){
+     vec_deinit(&matches);
+     return false;
+  }else{
+     vec_deinit(&matches);
+     return true;
+  }
+}
+
+static void send_stored_info(){
+     printf("parse_nus_data: --- Sending info\r\n");
+     uint8_t data[32];
+     char* buff;
+     if(nDevices == 0){
+          char* buff = "No Devices Stored\r\n";
+          sprintf((char *)data, buff);
+          ble_nus_string_send(&m_nus, data, strlen(buff));
+     }else{
+          send_vec_bytes(&addrs);
+     }
+     
+//     ble_nus_string_send(&m_nus, data, sizeof(data));
 }
 
 static uint32_t parse_nus_data(uint8_t * p_data){
      int i = 0;
+     int action_id = 0;
      char * pch;
+     char tmpStr[4096];
      bool flag_stop = false;
      vec_string_t strings;
      vec_byte_t tmps;
@@ -218,17 +286,31 @@ static uint32_t parse_nus_data(uint8_t * p_data){
      pch = strtok ((char*) p_data," :");
      while(pch != NULL){
           if(i == 0){
+               printf ("%s", pch);
                if(strcmp(pch,"add_dev") == 0){
                     printf("parse_nus_data: --- Adding device\r\n");
+                    action_id = 1;
                     nDevices++;
                }else if(strcmp(pch,"del_dev") == 0){
                     printf("parse_nus_data: --- Removing device\r\n");
+                    action_id = 2;
                     nDevices--;
-               }else{flag_stop = true;}
+               }else if(strcmp(pch,"query") == 0){
+                    send_stored_info();
+               }else{
+                    action_id = 0;
+                    flag_stop = true;
+               }
           }
           if(i == 1){
-               printf ("%s\n", pch);
-               vec_insert(&names,0,pch);
+               if(action_id == 1){
+                    memset(tmpStr, 0, sizeof(tmpStr));
+                    memcpy(&tmpStr[0], (char*)pch, sizeof(uint8_t)*(strlen(pch)));
+                    const char* tmpName = (const char*)tmpStr;
+                    printf("Adding Device Name: %s\n", tmpStr);
+//                    vec_push(&names,(const char*)tmpStr);
+                    vec_insert(&names,0,tmpName);
+               }
 //               vec_push(&strings, pch);
           }
           if(i>1){
@@ -242,8 +324,20 @@ static uint32_t parse_nus_data(uint8_t * p_data){
                break;
           i++;
      }
-     
-     vec_insert(&addrs,0,tmps);
+     if(action_id == 1){
+          vec_insert(&addrs,0,tmps);
+     }else if(action_id == 2){
+          int tmpIdx;
+          bool isMatch;
+//          uint8_t* hmm = &tmps.data[0];
+          uint8_t hmm[6] = {tmps.data[0],tmps.data[1],tmps.data[2],tmps.data[3],tmps.data[4],tmps.data[5]};
+          isMatch = check_addr_vecs(&addrs,hmm,&tmpIdx);
+          printf("\tvec_find returned = %d\n",tmpIdx);
+          if(isMatch){
+              bool dum = false;
+              vec_splice(&addrs, tmpIdx, 1);
+          }
+     }
 //     vec_push(&addrs,tmps);
 //     vec_push(&names,strings.data[0]);
      print_vec_str(&names);
@@ -353,68 +447,22 @@ static bool pet_proximity_check(ble_evt_t const * p_ble_evt){
      tmpAddr = (uint8_t*)temp_report->peer_addr.addr;
 
      int tmpRssi = -10000;
-     bool isMatch = check_addr_vecs(&addrs,tmpAddr);
+     int dummy;
+     bool isMatch = check_addr_vecs(&addrs,tmpAddr,&dummy);
      if(isMatch){
           tmpRssi = temp_report->rssi;
           tags_detected = true;
-          NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN" Found Target Device! =====  %d\r\n"NRF_LOG_COLOR_CODE_DEFAULT,tmpRssi);
+          if(flag_debug) NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN" Found Target Device! =====  %d\r\n"NRF_LOG_COLOR_CODE_DEFAULT,tmpRssi);
           if(tmpRssi >= rssiThresh){
                tags_nearby = true;
-               drv_ext_light_rgb_intensity_set(0,&color_green);
-//               m_ui_led_set
-//               led_set(&led_found, NULL);
-               
+               return true;
           }else{
                tags_nearby = false;
-               drv_ext_light_rgb_intensity_set(0,&color_blue);
-//               led_set(&led_search, NULL);
           }
      }else{
           tags_detected = false;
           tmpRssi = -10000;
      }
-
-//     if (strlen(m_target_periph_name) != 0){
-//         if (memcmp(target_mac, tmpAddr, 6)== 0){
-//             tmpRssi = temp_report->rssi;
-////             NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN" Found Target Device! =====  %d\r\n",temp_report->rssi);
-//               tags_detected = true;
-//         }else if (memcmp(target_mac_rvr, tmpAddr, 6)== 0){
-//             tmpRssi = temp_report->rssi;
-//             tags_detected = true;
-////             NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN" Found Target Device Reverse! =====  %d\r\n",temp_report->rssi);
-//         }else if (strlen(_buffer) != 0){
-////                    NRF_LOG_INFO("CENTRAL: Looking for alternative name for advertising peer (\'%s\')...\r\n",_buffer);
-//             if (find_adv_name(&p_gap_evt->params.adv_report, _buffer))
-//             {
-//                 if(!name_found){
-//                    NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"CENTRAL: Alternative Target (\'%s\') Found with MAC (\'",_buffer);
-////                            altAddr = &p_gap_evt->params.adv_report.peer_addr.addr;
-//                    for (uint8_t i = 0; i < 6; i++)
-//                    {
-//                         NRF_LOG_RAW_INFO("%02x ", tmpAddr[i]);
-//                    }
-//
-//                    NRF_LOG_RAW_INFO("\')!\r\n");
-//                    name_found = true;
-//                 }
-//                 tmpRssi = temp_report->rssi;
-//             }else{
-//                 tmpRssi = -10000;
-//             }
-//         }else{
-//             tmpRssi = -10000;
-//             tags_detected = false;
-//         }
-
-//         if(tmpRssi >= rssiThresh){
-//           tags_nearby = true;
-//           curRssi = tmpRssi;
-////           NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"CENTRAL: Found Target Device Reverse! =====  %d\r\n",tmpRssi);
-//         }else{
-//           tags_nearby = false;
-//         }
-//     }
      return false;
 }
 
@@ -481,7 +529,7 @@ static void gap_params_init(void)
 static void nus_data_handler(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length)
 {
     uint32_t err_code;
-
+    
     NRF_LOG_INFO("Received data from BLE NUS. Handling data on UART....\r\n");
     NRF_LOG_HEXDUMP_DEBUG(p_data, length);
 
@@ -490,12 +538,13 @@ static void nus_data_handler(ble_nus_t * p_nus, uint8_t * p_data, uint16_t lengt
     memset(_buffer, 0, sizeof(_buffer));
     memcpy(&_buffer[0], (char*)p_data, sizeof(uint8_t)*length);
     NRF_LOG_INFO("nus_data_handler(): ----- Data = %s\r\n",_buffer);
-
+    
     for (uint32_t i = 0; i < length; i++)
     {
         do
         {
             err_code = app_uart_put(p_data[i]);
+            err_code = NRF_SUCCESS;
             if ((err_code != NRF_SUCCESS) && (err_code != NRF_ERROR_BUSY))
             {
                 NRF_LOG_ERROR("Failed receiving NUS message. Error 0x%x. \r\n", err_code);
@@ -650,8 +699,19 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
 {
     ble_gap_evt_t const * p_gap_evt = &p_ble_evt->evt.gap_evt;
     uint32_t err_code;
-    bool flag_pets_near = false;
-
+    
+    if(nTimeUpdates == 0){
+          last_time = begin;
+    }
+    tmpT = nrf_cal_get_time_calibrated();
+    now = mktime(tmpT);
+    dt = (now - last_time)/3925.0;
+    
+    if(dt >= 1.0){
+//          NRF_LOG_INFO("on_ble_evt(): --- Current Time = %d Time since last BLE update = " NRF_LOG_FLOAT_MARKER "\n", now, NRF_LOG_FLOAT(dt));
+         last_time = now;
+    }
+    nTimeUpdates++;
     switch (p_ble_evt->header.evt_id)
     {
         case BLE_GAP_EVT_CONNECTED:
@@ -740,9 +800,24 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
         } break; // BLE_GATTS_EVT_RW_AUTHORIZE_REQUEST
         case BLE_GAP_EVT_ADV_REPORT:{
                bool do_connect = false;
+               bool flag_pets_near = false;
                NRF_LOG_DEBUG("on_ble_evt: ===== SCANNING ADVERTISING PEERS...\r\n");
                if(nDevices>0){
                     flag_pets_near = pet_proximity_check(p_ble_evt);
+                    if(flag_pets_near){
+                         closeCounter = 0;
+                         flag_close_door = false;
+                         if(flag_debug) NRF_LOG_INFO("Opening Door...\r\n");
+                    }else{
+                         closeCounter++;
+                         if(closeCounter >= closeCounterThresh){
+                              flag_close_door = true;
+                              if(flag_debug) NRF_LOG_INFO("Closing Door...\r\n");
+                         }
+                    }
+               }else{
+                    closeCounter = 0;
+                    flag_close_door = true;
                }
                if (is_already_connected(&p_gap_evt->params.adv_report.peer_addr)){
                     NRF_LOG_INFO("central Already connected to something...\r\n");
@@ -1027,11 +1102,20 @@ static void log_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
+void calendar_updated()
+{
+    if(true)
+    {
+        print_current_time();
+    }
+}
+
 /**@brief Function for placing the application in low power state while waiting for events.
  */
 
 
 static uint8_t target_mac_rev[] = {0x55,0x6d,0xf7,0x22,0x91,0xb0};
+static uint8_t target_mac2[] = {0xf2,0x9e,0x74,0x92,0xfb,0xe5};
 static char* name2 = "add_dev tkr C3:CE:5E:26:AD:0A";
 int tmpDuty;
 uint8_t new_duty_cycle = 255;
@@ -1041,26 +1125,30 @@ int main(void)
 {
     uint32_t err_code;
     bool     erase_bonds;
+    nTimeUpdates = 0;
+    closeCounter = 0;
     vec_deinit(&addrs); vec_deinit(&names);
     vec_init(&addrs); vec_init(&names);
 
 //    vec_byte_t testAddr;
+//    vec_byte_t testAddr2;
 //    vec_bytes_t testAddrs;
-//    vec_init(&testAddr); vec_init(&testAddrs);
+//    vec_init(&testAddr); vec_init(&testAddr2); vec_init(&testAddrs);
 //    vec_push(&testAddr,0xb0); vec_push(&testAddr,0x91); vec_push(&testAddr,0x22);
 //    vec_push(&testAddr,0xf7); vec_push(&testAddr,0x6d); vec_push(&testAddr,0x55);
 //    vec_push(&testAddrs,testAddr);
+//
+//    vec_push(&testAddr2,0xf2); vec_push(&testAddr2,0x9e); vec_push(&testAddr2,0x74);
+//    vec_push(&testAddr2,0x92); vec_push(&testAddr2,0xfb); vec_push(&testAddr2,0xe5);
+//    vec_push(&testAddrs,testAddr2);
 //    bool isMatch;
-//    isMatch = check_addr_vecs(&testAddrs,target_mac);
+//    int fndIdx;
+//    isMatch = check_addr_vecs(&testAddrs,target_mac,&fndIdx);
 //    if (isMatch){printf("check_addr_vec: Addresses Match...\n");
 //    }else{printf("check_addr_vec: Addresses Don't Match...\n");}
-//    vec_deinit(&testAddrs);
-//    vec_init(&testAddrs);
-//    vec_reverse(&testAddr);
-//    vec_push(&testAddrs,testAddr);
-//    isMatch = check_addr_vecs(&testAddrs,target_mac);
-//    if (isMatch){printf("check_addr_vec (Reversed): Addresses Match...\n");
-//    }else{printf("check_addr_vec (Reversed): Addresses Don't Match...\n");}
+//
+//    printf("\tvec_find returned = %d\n",fndIdx);
+//    vec_splice(&testAddrs, fndIdx, 1);
 
     // Initialize.
     APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
@@ -1077,6 +1165,13 @@ int main(void)
     advertising_init();
     conn_params_init();
 
+//    NRF_CLOCK->EVENTS_LFCLKSTARTED = 0;
+//    NRF_CLOCK->TASKS_LFCLKSTART = 1;
+//    while(NRF_CLOCK->EVENTS_LFCLKSTARTED == 0);
+//
+//    nrf_cal_init();
+//    nrf_cal_set_callback(calendar_updated, 4);
+
     printf("\r\nUART Start!\r\n");
     NRF_LOG_INFO("UART Start!\r\n");
     err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
@@ -1090,6 +1185,8 @@ int main(void)
     battery_monitor_init(300000, battery_monitor_handler, &battery);
     new_duty_cycle = motor.pwm.period;
      
+     drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_LIGHTWELL,&color_green);
+
     NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"===== Thingy demo started! =====  \r\n"NRF_LOG_COLOR_CODE_DEFAULT);
      
     nrf_gpio_cfg_input(BUTTON, NRF_GPIO_PIN_PULLUP);
@@ -1099,12 +1196,22 @@ int main(void)
     drv_ext_gpio_cfg_input(SX_IOEXT_3,DRV_EXT_GPIO_PIN_PULLUP);
     
     uint32_t tmpLevel;
-
+//     lights_init();
     // Enter main loop.
+//    begin = time(NULL);
+//    begin = clock();
+//    print_current_time();
+    struct tm* tmpT2 = nrf_cal_get_time_calibrated();
+    begin = mktime(tmpT2);
+    printf("Start Time = %d\n",begin);
+    
+    nrf_delay_ms(1000);
+
     for (;;)
     {
+        
         app_sched_execute();
-
+        
         level = !nrf_gpio_pin_read(11);
         tmpLevel = drv_ext_gpio_pin_read(SX_IOEXT_0,&level2);
         tmpLevel = drv_ext_gpio_pin_read(SX_IOEXT_1,&level3);
@@ -1113,28 +1220,29 @@ int main(void)
 
         if((level == 1) && (level3 == 1)){
          tmpDuty = new_duty_cycle - 1;
-         drv_ext_light_rgb_intensity_set(0,&color_purple);
+         drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_LIGHTWELL,&color_purple);
        }else if((level == 0) && (level3 == 0)){
          tmpDuty = new_duty_cycle + 1;
-         drv_ext_light_rgb_intensity_set(0,&color_darkpurple);
+         drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_LIGHTWELL,&color_darkpurple);
        }else if((level == 1) && (level3 == 0)){
-          drv_ext_light_rgb_intensity_set(0,&color_aqua);
+          drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_LIGHTWELL,&color_aqua);
           initiate_alarm_sequence(2500,50,5,500,1000);
        }else{
-//          drv_ext_light_rgb_intensity_set(0,&color_black);
-         // Nothing
-//              nrf_delay_ms(500);
-//               drv_ext_light_rgb_intensity_set(0,&color_yellow);
-//               nrf_delay_ms(500);
-//               drv_ext_light_rgb_intensity_set(0,&color_orange);
-//               nrf_delay_ms(500);
+          // Nothing
+//          NRF_LOG_INFO("Turning off DRV_EXT_RGB_LED_LIGHTWELL...\r\n");
+//          drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_LIGHTWELL,&color_black);
        }
-          if((tags_detected) && (!tags_nearby)){
-               drv_ext_light_rgb_intensity_set(0,&color_blue);
-          }else if(tags_nearby){
-               drv_ext_light_rgb_intensity_set(0,&color_green);
+//          if((tags_detected) && (!tags_nearby)){
+//               drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_SENSE,&color_blue);
+//          }else if(tags_nearby){
+//               drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_SENSE,&color_green);
+//          }else{
+////               drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_SENSE,&color_black);
+//          }
+          if(flag_close_door){
+               drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_SENSE,&color_red);
           }else{
-               drv_ext_light_rgb_intensity_set(0,&color_black);
+               drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_SENSE,&color_green);
           }
 
          if(tmpDuty >= 255){
@@ -1147,6 +1255,7 @@ int main(void)
 
        err_code = low_power_pwm_duty_set(&motor.pwm, new_duty_cycle);
         power_manage();
+//        nrf_delay_ms(1000);
     }
 }
 
