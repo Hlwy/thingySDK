@@ -200,7 +200,6 @@ static uint32_t parse_nus_data(uint8_t * p_data){
                     memset(tmpStr, 0, sizeof(tmpStr));
                     memcpy(&tmpStr[0], (char*)pch, sizeof(uint8_t)*(strlen(pch)));
                     const char* tmpName = (const char*)tmpStr;
-//                    printf("Adding Device Name: %s\n", tmpStr);
                     vec_insert(&names,0,tmpName);
                }else if(action_id == 3){
                     if(strcmp(pch,"rssi_thresh") == 0){
