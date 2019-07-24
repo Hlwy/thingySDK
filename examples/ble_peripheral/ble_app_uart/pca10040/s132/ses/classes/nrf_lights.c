@@ -63,7 +63,4 @@ void board_init(void){
 //    err_code = m_ui_init(&m_ble_service_handles[THINGY_SERVICE_UI],&ui_params);
 //    APP_ERROR_CHECK(err_code);
 //   led_set(&led_search, NULL);
-
-//     drv_ext_light_rgb_intensity_set(0,&color_blue);
-//     nrf_delay_ms(100);
 }

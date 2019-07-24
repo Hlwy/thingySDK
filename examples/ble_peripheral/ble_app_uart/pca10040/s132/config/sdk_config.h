@@ -3993,6 +3993,11 @@
 #define ARM_MATH_CM4
 #endif
 
+#define DEBUG 0
+//#define NRF_LOG_USES_RTT 1
+//#define NRF_LOG_ENABLED 1
+
+
 // <<< end of configuration section >>>
 #endif //SDK_CONFIG_H
 

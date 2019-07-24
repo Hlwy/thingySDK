@@ -2,11 +2,7 @@
 <session>
  <Bookmarks/>
  <Breakpoints groups="Breakpoints" active_group="Breakpoints">
-  <BreakpointListItem trigger="Execute" line="-1" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="0x1faf0" group="Breakpoints" type="Breakpoint" state="2" filename="" useHWbreakpoint="false"/>
   <BreakpointListItem trigger="" line="53" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="2" filename="../../../../../../components/libraries/util/app_error_weak.c" useHWbreakpoint="false"/>
-  <BreakpointListItem trigger="" line="181" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../main.c" useHWbreakpoint="false"/>
-  <BreakpointListItem trigger="" line="183" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../main.c" useHWbreakpoint="false"/>
-  <BreakpointListItem trigger="" line="189" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../main.c" useHWbreakpoint="false"/>
   <BreakpointListItem trigger="" line="76" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="additions/modules/m_ble.h" useHWbreakpoint="false"/>
   <Exceptions set="MemManage;UsageFault_Coprocessor;UsageFault_CheckingError;UsageFault_StateError;BusFault;ExceptionEntryReturnFault;HardFault"/>
  </Breakpoints>
@@ -32,12 +28,9 @@
   <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;Additions"/>
   <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;Application"/>
   <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;Classes"/>
-  <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;Internal Files"/>
-  <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;nRF_BLE_Services"/>
-  <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;nRF_Libraries"/>
  </Project>
  <Register1>
-  <RegisterWindow visibleNodes="CPU - Current Context/r0;CPU - Current Context/r1;CPU - Current Context/r2;CPU - Current Context/r3;CPU - Current Context/r4;CPU - Current Context/r5;CPU - Current Context/r6;CPU - Current Context/r7;CPU - Current Context/r8;CPU - Current Context/r9;CPU - Current Context/r10;CPU - Current Context/r11;CPU - Current Context/r12;CPU - Current Context/sp(r13);CPU - Current Context/lr(r14);CPU - Current Context/pc(r15);CPU - Current Context/apsr;CPU/r0;CPU/r1;CPU/r2;CPU/r3;CPU/r4;CPU/r5;CPU/r6;CPU/r7;CPU/r8;CPU/r9;CPU/r10;CPU/r11;CPU/r12;CPU/sp(r13);CPU/lr(r14);CPU/pc(r15);CPU/xpsr;CPU/msp;CPU/psp;CPU/cfbp;CPU/internal" binaryNodes="" asciiNodes="" openNodes="CPU - Current Context" name="ble_app_uart_pca10040_s132" decimalNodes="" octalNodes="" unsignedNodes=""/>
+  <RegisterWindow visibleNodes="CPU - Current Context/r0;CPU - Current Context/r1;CPU - Current Context/r2;CPU - Current Context/r3;CPU - Current Context/r4;CPU - Current Context/r5;CPU - Current Context/r6;CPU - Current Context/r7;CPU - Current Context/r8;CPU - Current Context/r9;CPU - Current Context/r10;CPU - Current Context/r11;CPU - Current Context/r12;CPU - Current Context/sp(r13);CPU - Current Context/lr(r14);CPU - Current Context/pc(r15);CPU - Current Context/apsr;CPU/r0;CPU/r1;CPU/r2;CPU/r3;CPU/r4;CPU/r5;CPU/r6;CPU/r7;CPU/r8;CPU/r9;CPU/r10;CPU/r11;CPU/r12;CPU/sp(r13);CPU/lr(r14);CPU/pc(r15);CPU/xpsr;CPU/msp;CPU/psp;CPU/cfbp;CPU/internal" binaryNodes="" asciiNodes="" openNodes="CPU - Current Context;CPU" name="ble_app_uart_pca10040_s132" decimalNodes="" octalNodes="" unsignedNodes=""/>
  </Register1>
  <Register2>
   <RegisterWindow visibleNodes="CPU - Current Context/r0;CPU - Current Context/r1;CPU - Current Context/r2;CPU - Current Context/r3;CPU - Current Context/r4;CPU - Current Context/r5;CPU - Current Context/r6;CPU - Current Context/r7;CPU - Current Context/r8;CPU - Current Context/r9;CPU - Current Context/r10;CPU - Current Context/r11;CPU - Current Context/r12;CPU - Current Context/sp(r13);CPU - Current Context/lr(r14);CPU - Current Context/pc(r15);CPU - Current Context/apsr;CPU/r0;CPU/r1;CPU/r2;CPU/r3;CPU/r4;CPU/r5;CPU/r6;CPU/r7;CPU/r8;CPU/r9;CPU/r10;CPU/r11;CPU/r12;CPU/sp(r13);CPU/lr(r14);CPU/pc(r15);CPU/xpsr;CPU/msp;CPU/psp;CPU/cfbp;CPU/internal" binaryNodes="" asciiNodes="" openNodes="CPU - Current Context" name="ble_app_uart_pca10040_s132" decimalNodes="" octalNodes="" unsignedNodes=""/>
@@ -56,17 +49,17 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Twice a Second">
-   <Watchpoint expression="tags_detected" name="tags_detected" radix="-1" linenumber="1132" filename="../../../main.c"/>
-   <Watchpoint expression="tags_nearby" name="tags_nearby" radix="-1" linenumber="1134" filename="../../../main.c"/>
-   <Watchpoint expression="names" name="names" radix="16" linenumber="1049" filename="../../../main.c"/>
-   <Watchpoint expression="addrs" name="addrs" radix="-1" linenumber="1046" filename="../../../main.c"/>
-   <Watchpoint numelements="6" expression="tmpAddr" evalMode="2" name="tmpAddr" radix="-1" linenumber="363" filename="../../../main.c" list=""/>
-   <Watchpoint expression="tmp" name="tmp" radix="16" linenumber="1055" filename="../../../main.c"/>
-   <Watchpoint numelements="0" expression="addr" evalMode="1" name="addr" radix="-1" linenumber="176" filename="../../../main.c" list=""/>
-   <Watchpoint numelements="0" expression="tmpB" evalMode="1" name="tmpB" radix="-1" linenumber="182" filename="../../../main.c" list=""/>
-   <Watchpoint expression="byte" name="byte" radix="-1" linenumber="137" filename="../../../main.c"/>
-   <Watchpoint expression="testAddr" name="testAddr" radix="-1" linenumber="1060" filename="../../../main.c"/>
-   <Watchpoint expression="testAddrs" name="testAddrs" radix="-1" linenumber="1061" filename="../../../main.c"/>
+   <Watchpoint expression="tags_detected" name="tags_detected" radix="-1" linenumber="1117" filename="../../../main.c"/>
+   <Watchpoint expression="tags_nearby" name="tags_nearby" radix="-1" linenumber="1119" filename="../../../main.c"/>
+   <Watchpoint expression="names" name="names" radix="16" linenumber="1042" filename="../../../main.c"/>
+   <Watchpoint expression="addrs" name="addrs" radix="-1" linenumber="1039" filename="../../../main.c"/>
+   <Watchpoint numelements="6" expression="tmpAddr" evalMode="2" name="tmpAddr" radix="-1" linenumber="352" filename="../../../main.c" list=""/>
+   <Watchpoint expression="tmp" name="tmp" radix="16" linenumber="1048" filename="../../../main.c"/>
+   <Watchpoint numelements="0" expression="addr" evalMode="1" name="addr" radix="-1" linenumber="166" filename="../../../main.c" list=""/>
+   <Watchpoint numelements="0" expression="tmpB" evalMode="1" name="tmpB" radix="-1" linenumber="172" filename="../../../main.c" list=""/>
+   <Watchpoint expression="byte" name="byte" radix="-1" linenumber="127" filename="../../../main.c"/>
+   <Watchpoint expression="testAddr" name="testAddr" radix="-1" linenumber="1053" filename="../../../main.c"/>
+   <Watchpoint expression="testAddrs" name="testAddrs" radix="16" linenumber="1054" filename="../../../main.c"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -79,22 +72,12 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="2" y="28" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/vector_c.h" selected="0" top="20" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="104" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/vector_c.c" selected="0" top="79" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1032" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="1" top="1021" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="24" y="7" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_lights.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="17" y="167" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/modules/m_ui_demo.h" selected="0" top="20" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="203" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/modules/m_ui_demo.c" selected="0" top="168" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="3" y="995" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/drivers_ext/drv_ext_light.c" selected="0" top="978" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="24" y="263" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/drivers_ext/drv_sx1509.c" selected="0" top="255" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="61" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/drivers_ext/drv_sx1509.h" selected="0" top="43" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="62" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/thingy_config.h" selected="0" top="51" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="41" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/modules/m_ui.c" selected="0" top="36" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="22" y="133" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/modules/m_ui.h" selected="0" top="114" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="88" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/modules/m_ble.h" selected="0" top="67" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="52" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/util/app_error_weak.c" selected="0" top="32" codecName=""/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="74" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/util/app_error.c" selected="0" top="55" codecName=""/>
-  <SessionOpenFile windowGroup="DockRightTop" x="0" y="51" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_lights.c" selected="0" top="17" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="217" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="0" top="201" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="427" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_ble_main.h" selected="0" top="398" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="22" y="199" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nus_helpers.h" selected="1" top="172" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="3998" useTextEdit="1" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="3967" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="64" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_lights.c" selected="0" top="39" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="36" y="47" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_lights.h" selected="0" top="21" codecName="Default"/>
  </Files>
- <ARMCrossStudioWindow activeProject="ble_app_uart_pca10040_s132" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="nrf52832_xxaa" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions/modules" debugSearchPath="" autoConnectCapabilities="3711"/>
+ <ARMCrossStudioWindow activeProject="ble_app_uart_pca10040_s132" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="nrf52832_xxaa" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/classes" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>

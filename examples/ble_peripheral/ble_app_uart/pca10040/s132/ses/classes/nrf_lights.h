@@ -12,24 +12,6 @@
 static const nrf_drv_twi_t     m_twi_sensors = NRF_DRV_TWI_INSTANCE(TWI_SENSOR_INSTANCE);
 static m_ble_service_handle_t  m_ble_service_handles[THINGY_SERVICES_MAX];
 
-//static const drv_ext_light_conf_t led_cfg = {
-//    .type = DRV_EXT_LIGHT_TYPE_RGB,
-//    .pin.rgb = {
-//        .r = SX_LIGHTWELL_R,
-//        .g = SX_LIGHTWELL_G,
-//        .b = SX_LIGHTWELL_B },
-//    .p_data = &my_led_1
-//};
-
-//static const drv_ext_light_conf_t led_cfg2 = {
-//    .type = DRV_EXT_LIGHT_TYPE_RGB,
-//    .pin.rgb = {
-//        .r = SX_SENSE_LED_R,
-//        .g = SX_SENSE_LED_G,
-//        .b = SX_SENSE_LED_B },
-//    .p_data = &my_led_0
-//};
-
 static const drv_ext_light_conf_t led_cfg[2] = DRV_EXT_LIGHT_CFG;
 
 static const drv_ext_light_rgb_intensity_t color_white = {.r = 255, .g = 255, .b = 255};
