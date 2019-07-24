@@ -6,6 +6,7 @@
 #include "app_error.h"
 #include "pca20020.h"
 #include "nrf_log.h"
+#include "ble_bas.h"
 
 typedef struct{
      uint16_t voltage;

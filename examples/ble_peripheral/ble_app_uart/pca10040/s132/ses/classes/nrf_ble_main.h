@@ -20,11 +20,7 @@
 #include "app_button.h"
 #include "app_util_platform.h"
 
-#include "twi_manager.h"
 #include "nrf_lights.h"
-#include "support_func.h"
-#include "pca20020.h"
-#include "app_error.h"
 #include "nus_helpers.h"
 
 #define NUS_SERVICE_UUID_TYPE           BLE_UUID_TYPE_VENDOR_BEGIN                  /**< UUID type for the Nordic UART Service (vendor specific). */
@@ -150,24 +146,24 @@ static void scan_start(void)
     APP_ERROR_CHECK(ret);
 }
 
-static uint32_t adv_report_parse(uint8_t type, data_t * p_advdata, data_t * p_typedata){
-    uint32_t   index = 0;
-    uint8_t* p_data;
-
-    p_data = p_advdata->p_data;
-    while (index < p_advdata->data_len){
-        uint8_t field_length = p_data[index];
-        uint8_t field_type   = p_data[index + 1];
-
-        if (field_type == type){
-            p_typedata->p_data   = &p_data[index + 2];
-            p_typedata->data_len = field_length - 1;
-            return NRF_SUCCESS;
-        }
-        index += field_length + 1;
-    }
-    return NRF_ERROR_NOT_FOUND;
-}
+//static uint32_t adv_report_parse(uint8_t type, data_t * p_advdata, data_t * p_typedata){
+//    uint32_t   index = 0;
+//    uint8_t* p_data;
+//
+//    p_data = p_advdata->p_data;
+//    while (index < p_advdata->data_len){
+//        uint8_t field_length = p_data[index];
+//        uint8_t field_type   = p_data[index + 1];
+//
+//        if (field_type == type){
+//            p_typedata->p_data   = &p_data[index + 2];
+//            p_typedata->data_len = field_length - 1;
+//            return NRF_SUCCESS;
+//        }
+//        index += field_length + 1;
+//    }
+//    return NRF_ERROR_NOT_FOUND;
+//}
 
 // static bool find_adv_name(ble_gap_evt_adv_report_t const * p_adv_report, char const * name_to_find){
 //     ret_code_t err_code;
@@ -197,30 +193,30 @@ static uint32_t adv_report_parse(uint8_t type, data_t * p_advdata, data_t * p_ty
 //     return false;
 // }
 
-static bool find_adv_uuid(ble_gap_evt_adv_report_t const * p_adv_report, uint16_t uuid_to_find){
-    ret_code_t err_code;
-    data_t     adv_data;
-    data_t     type_data;
-
-    // Initialize advertisement report for parsing.
-    adv_data.p_data   = (uint8_t *)p_adv_report->data;
-    adv_data.data_len = p_adv_report->dlen;
-
-    err_code = adv_report_parse(BLE_GAP_AD_TYPE_16BIT_SERVICE_UUID_MORE_AVAILABLE,&adv_data, &type_data);
-
-    if (err_code != NRF_SUCCESS){
-        // Look for the services in 'complete' if it was not found in 'more available'.
-        err_code = adv_report_parse(BLE_GAP_AD_TYPE_16BIT_SERVICE_UUID_COMPLETE, &adv_data, &type_data);
-        if (err_code != NRF_SUCCESS){return false;}
-    }
-
-    // Verify if any UUID match the given UUID.
-    for (uint32_t i = 0; i < (type_data.data_len / sizeof(uint16_t)); i++){
-        uint16_t extracted_uuid = uint16_decode(&type_data.p_data[i * sizeof(uint16_t)]);
-        if (extracted_uuid == uuid_to_find){return true;}
-    }
-    return false;
-}
+//static bool find_adv_uuid(ble_gap_evt_adv_report_t const * p_adv_report, uint16_t uuid_to_find){
+//    ret_code_t err_code;
+//    data_t     adv_data;
+//    data_t     type_data;
+//
+//    // Initialize advertisement report for parsing.
+//    adv_data.p_data   = (uint8_t *)p_adv_report->data;
+//    adv_data.data_len = p_adv_report->dlen;
+//
+//    err_code = adv_report_parse(BLE_GAP_AD_TYPE_16BIT_SERVICE_UUID_MORE_AVAILABLE,&adv_data, &type_data);
+//
+//    if (err_code != NRF_SUCCESS){
+//        // Look for the services in 'complete' if it was not found in 'more available'.
+//        err_code = adv_report_parse(BLE_GAP_AD_TYPE_16BIT_SERVICE_UUID_COMPLETE, &adv_data, &type_data);
+//        if (err_code != NRF_SUCCESS){return false;}
+//    }
+//
+//    // Verify if any UUID match the given UUID.
+//    for (uint32_t i = 0; i < (type_data.data_len / sizeof(uint16_t)); i++){
+//        uint16_t extracted_uuid = uint16_decode(&type_data.p_data[i * sizeof(uint16_t)]);
+//        if (extracted_uuid == uuid_to_find){return true;}
+//    }
+//    return false;
+//}
 
 /**@brief Function for handling the data from the Nordic UART Service.
  *

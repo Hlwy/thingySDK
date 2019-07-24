@@ -1,4 +1,6 @@
 examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/Output/nrf52832_xxaa/Exe/*.elf
 examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/Output/nrf52832_xxaa/Exe/*.map
 examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/Output/*/Obj
+examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/Output/*/Obj/
+examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/Output/*/Obj/*
 examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/Output/ble_app_uart_pca10040_s132 nrf52832_xxaa

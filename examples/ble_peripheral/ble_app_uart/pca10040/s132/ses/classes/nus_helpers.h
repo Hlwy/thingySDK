@@ -42,7 +42,7 @@ static int curRssi;
 static bool were_tags_nearby = false;
 static bool name_found = false;
 
-static const int rssiThresh = -40;
+static const int rssiThresh = -70;
 
 static time_t begin;
 static time_t last_time;
@@ -164,16 +164,19 @@ static uint32_t parse_nus_data(uint8_t * p_data){
      char * pch;
      char tmpStr[4096];
      bool flag_stop = false;
-     bool flag_get_info = false;
+//     bool flag_get_info = false;
      vec_string_t strings;
+     vec_string_t cmds;
      vec_byte_t tmps;
      vec_init(&strings);
+     vec_init(&cmds);
      vec_init(&tmps);
 
      uint16_t num;
 //     printf ("Splitting string \"%s\" into tokens:\n",(char*) p_data);
      pch = strtok ((char*) p_data," :");
      while(pch != NULL){
+          vec_push(&cmds, pch);
           if(i == 0){
 //               printf ("%s", pch);
                if(strcmp(pch,"add_dev") == 0){
@@ -187,12 +190,15 @@ static uint32_t parse_nus_data(uint8_t * p_data){
                }else if(strcmp(pch,"query") == 0){
                     send_stored_info();
                }else if(strcmp(pch,"get") == 0){
-                    flag_get_info = true;
+//                    flag_get_info = true;
                     action_id = 3;
+               }else if(strcmp(pch,"set") == 0){
+//                    flag_set_info = true;
+                    action_id = 4;
                }else{
                     action_id = 0;
                     flag_stop = true;
-                    flag_get_info = false;
+//                    flag_get_info = false;
                }
           }
           if(i == 1){
@@ -209,9 +215,7 @@ static uint32_t parse_nus_data(uint8_t * p_data){
           }
           if(i>1){
                num = (uint16_t)strtol(pch, NULL, 16);       // number base 16
-//               printf("%d (%X) \n", num,num);                        // print it as decimal
                vec_push(&tmps, num);
-//               printf ("%s\n", pch);
           }
           pch = strtok (NULL, " :");
           if(flag_stop)
@@ -233,9 +237,18 @@ static uint32_t parse_nus_data(uint8_t * p_data){
 
 //     print_vec_str(&names);
 //     print_vec_bytes(&addrs);
+
+//     printf ("%s\t", cmds.data[0]);
+//     printf ("%s\t", cmds.data[1]);
+//     printf ("%s", cmds.data[2]);
+//     printf ("\r\n");
+     vec_deinit(&cmds);
+
      return NRF_SUCCESS;
 }
 
+//static uint32_t now;
+static uint32_t myTimeStamp;
 
 static bool pet_proximity_check(ble_evt_t const * p_ble_evt){
 //     NRF_LOG_INFO("pet_proximity_check: --------- \r\n");
@@ -254,6 +267,7 @@ static bool pet_proximity_check(ble_evt_t const * p_ble_evt){
           tmpRssi = temp_report->rssi;
           tags_detected = true;
           if(flag_debug) NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN" Found Target Device! =====  %d\r\n"NRF_LOG_COLOR_CODE_DEFAULT,tmpRssi);
+//          printf(NRF_LOG_COLOR_CODE_GREEN" Found Target Device! =====  %d\r\n"NRF_LOG_COLOR_CODE_DEFAULT,tmpRssi);
           if(tmpRssi >= rssiThresh){
                tags_nearby = true;
                return true;
@@ -378,6 +392,11 @@ static void on_ble_evt(ble_evt_t * p_ble_evt)
                bool do_connect = false;
                bool flag_pets_near = false;
                NRF_LOG_DEBUG("on_ble_evt: ===== SCANNING ADVERTISING PEERS...\r\n");
+               uint32_t now = millis();
+               uint32_t tmpdt = compareMillis(myTimeStamp, now);
+               float dt = tmpdt/(float)1000.0;
+//               printf(NRF_LOG_FLOAT_MARKER" seconds have passed\n",NRF_LOG_FLOAT(dt));
+               myTimeStamp = now;
                if(nDevices>0){
                     flag_pets_near = pet_proximity_check(p_ble_evt);
                     if(flag_pets_near){

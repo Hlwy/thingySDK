@@ -16,12 +16,14 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "time.h"
+#include "app_timer.h"
 
 // Change the following defines to change the RTC timer used or the interrupt priority
 #define CAL_RTC                 NRF_RTC0
 #define CAL_RTC_IRQn            RTC0_IRQn
 #define CAL_RTC_IRQHandler      RTC0_IRQHandler
 #define CAL_RTC_IRQ_Priority    3
+#define OVERFLOW ((uint32_t)(0xFFFFFFFF/32.768))
 
 // Initializes the calendar library. Run this before calling any other functions. 
 void nrf_cal_init(void);
@@ -44,5 +46,17 @@ struct tm *nrf_cal_get_time_calibrated(void);
 
 // Returns a string for printing the date and time. Turn the calibration on/off by setting the calibrate parameter. 
 char *nrf_cal_get_time_string(bool calibrated);
+
+
+static uint32_t millis(void)
+{
+  return(app_timer_cnt_get() / 32.768);
+}
+
+static uint32_t compareMillis(uint32_t previousMillis, uint32_t currentMillis)
+{
+  if(currentMillis < previousMillis) return(currentMillis + OVERFLOW + 1 - previousMillis);
+  return(currentMillis - previousMillis);
+}
 
 #endif

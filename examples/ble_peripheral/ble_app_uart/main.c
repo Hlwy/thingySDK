@@ -22,6 +22,7 @@
 #include "nrf_buzzer.h"
 
 #include "nrf_battery_monitor.h"
+
 #include "nrf_ble_main.h"
 //#include "vector_c.h"
 
@@ -47,7 +48,7 @@ static char const m_target_periph_name[] = "BlueCharm";
 static char const m_target_phone_name[] = "Samsung Galaxy S7";
 static uint8_t target_mac[] = {0xb0,0x91,0x22,0xf7,0x6d,0x55};
 static uint8_t const target_mac_rvr[] = {0x55,0x6d,0xf7,0x22,0x91,0xb0};
-
+static ble_bas_t m_bas;                                   /**< Structure used to identify the battery service. */
 
 void print_current_time()
 {
@@ -65,7 +66,40 @@ static void power_manage(void)
     APP_ERROR_CHECK(err_code);
 }
 
+/**@brief Function for performing battery measurement and updating the Battery Level characteristic
+ *        in Battery Service.
+ */
+static void battery_level_update(void)
+{
+    ret_code_t err_code;
+    uint8_t  battery_level;
 
+//    battery_level = (uint8_t)sensorsim_measure(&m_battery_sim_state, &m_battery_sim_cfg);
+
+    err_code = ble_bas_battery_level_update(&m_bas, battery_level);
+    if ((err_code != NRF_SUCCESS) &&
+        (err_code != NRF_ERROR_INVALID_STATE) &&
+        (err_code != NRF_ERROR_RESOURCES) &&
+        (err_code != BLE_ERROR_GATTS_SYS_ATTR_MISSING)
+       )
+    {
+        APP_ERROR_HANDLER(err_code);
+    }
+}
+
+
+/**@brief Function for handling the Battery measurement timer timeout.
+ *
+ * @details This function will be called each time the battery level measurement timer expires.
+ *
+ * @param[in] p_context  Pointer used for passing some arbitrary information (context) from the
+ *                       app_start_timer() call to the timeout handler.
+ */
+static void battery_level_meas_timeout_handler(void * p_context)
+{
+    UNUSED_PARAMETER(p_context);
+    battery_level_update();
+}
 
 
 /**@brief Function for assert macro callback.
@@ -104,6 +138,9 @@ static void sleep_mode_enter(void)
     APP_ERROR_CHECK(err_code);
 }
 
+
+
+
 /**@brief Function for initializing the nrf log module.
  */
 static void log_init(void)
@@ -117,6 +154,7 @@ static uint8_t target_mac2[] = {0xf2,0x9e,0x74,0x92,0xfb,0xe5};
 static char* name2 = "add_dev tkr C3:CE:5E:26:AD:0A";
 int tmpDuty;
 uint8_t new_duty_cycle = 255;
+uint32_t pwroff_t0;
 /**@brief Application main function.*/
 int main(void)
 {
@@ -151,7 +189,9 @@ int main(void)
     APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
     err_code = app_timer_init();
     APP_ERROR_CHECK(err_code);
-
+    
+//    err_code = app_timer_create(&m_battery_timer_id,APP_TIMER_MODE_REPEATED,battery_level_meas_timeout_handler);
+    
     uart_init();
     log_init();
 
@@ -191,8 +231,10 @@ int main(void)
     begin = mktime(tmpT2);
 //    printf("Start Time = %d\n",begin);
 //     led_set(&led_search, NULL);
+    
     nrf_delay_ms(1000);
-
+    myTimeStamp = millis();
+    pwroff_t0 = -1;
     for (;;)
     {
         app_sched_execute();
@@ -206,13 +248,19 @@ int main(void)
         if((level == 1) && (level3 == 1)){
          tmpDuty = new_duty_cycle - 1;
          drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_LIGHTWELL,&color_purple);
+          if(pwroff_t0 < 0){ pwroff_t0 = millis();}
+          if(compareMillis(pwroff_t0, millis()) > 5000)
+          {
+            drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_LIGHTWELL,&color_white);
+            nrf_delay_ms(1000);
+            sd_nvic_SystemReset();
+          }
        }else if((level == 0) && (level3 == 0)){
          tmpDuty = new_duty_cycle + 1;
          drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_LIGHTWELL,&color_darkpurple);
        }else if((level == 1) && (level3 == 0)){
           drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_LIGHTWELL,&color_aqua);
           initiate_alarm_sequence(2500,50,5,500,1000);
-          sd_nvic_SystemReset();
        }else{
           // Nothing
           drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_LIGHTWELL,&color_black);
