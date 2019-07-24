@@ -83,7 +83,7 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/main.o: \
  ../../../../../../components/drivers_nrf/delay/nrf_delay.h \
  classes/nrf_buzzer.h additions/drivers_ext/drv_speaker.h \
  classes/nrf_battery_monitor.h additions/modules/m_batt_meas.h \
- classes/nrf_ble_main.h additions/modules/m_ble.h \
+ additions/ble/ble_bas.h classes/nrf_ble_main.h additions/modules/m_ble.h \
  ../../../../../../components/libraries/bsp/bsp.h \
  ../../../../../../components/boards/boards.h \
  ../../../../../../components/libraries/button/app_button.h \
@@ -104,10 +104,10 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/main.o: \
  ../../../../../../components/softdevice/common/softdevice_handler/ant_stack_handler_types.h \
  ../../../../../../components/libraries/uart/app_uart.h \
  ../../../../../../components/libraries/scheduler/app_scheduler.h \
- additions/drivers_ext/twi_manager.h classes/nrf_lights.h \
- additions/support_func.h classes/nus_helpers.h \
+ classes/nrf_lights.h classes/nus_helpers.h \
  ../../../../../../components/ble/ble_services/ble_nus/ble_nus.h \
  ../../../../../../components/softdevice/common/softdevice_handler/ble_stack_handler_types.h \
  ../../../../../../components/ble/nrf_ble_gatt/nrf_ble_gatt.h \
  ../../../../../../components/softdevice/s132/headers/ble_hci.h \
- additions/vector_c.h additions/nrf_calender.h
+ additions/vector_c.h additions/nrf_calender.h \
+ classes/nrf_battery_monitor.h

@@ -8,6 +8,9 @@
 #include "nrf_log.h"
 #include "ble_bas.h"
 
+static uint8_t bat_percent;
+static uint16_t voltage;
+
 typedef struct{
      uint16_t voltage;
      uint8_t remaining_percent;
@@ -17,15 +20,13 @@ typedef struct{
 void battery_monitor_init(uint32_t period_ms, void (*handler)(m_batt_meas_event_t const *), battery_t* h_battery);
 
 static void battery_monitor_handler(m_batt_meas_event_t const * p_event){
-     uint8_t percent;
-     uint16_t voltage;
      m_batt_meas_event_type_t evt_type = p_event->type;
 
      switch(evt_type){
           case M_BATT_MEAS_EVENT_DATA:{
-               percent = p_event->level_percent;
+               bat_percent = p_event->level_percent;
                voltage = p_event->voltage_mv;
-               NRF_LOG_INFO("----- Battery Monitor --- Event Data:\r\n\tVoltage (mV) = %d\r\n\tBattery Life (%%) = %d\r\n",voltage,percent);
+               NRF_LOG_INFO("----- Battery Monitor --- Event Data:\r\n\tVoltage (mV) = %d\r\n\tBattery Life (%%) = %d\r\n",voltage,bat_percent);
           }break; // M_BATT_MEAS_EVENT_DATA
 
           case M_BATT_MEAS_EVENT_LOW:{

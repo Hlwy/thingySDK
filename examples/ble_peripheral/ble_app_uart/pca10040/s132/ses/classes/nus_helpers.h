@@ -9,6 +9,7 @@
 
 #include "vector_c.h"
 #include "nrf_calender.h"
+#include "nrf_battery_monitor.h"
 
 #define CONN_CFG_TAG                    1                                           /**< A tag that refers to the BLE stack configuration we set with @ref sd_ble_cfg_set. Default tag is @ref BLE_CONN_CFG_TAG_DEFAULT. */
 #define APP_FEATURE_NOT_SUPPORTED       BLE_GATT_STATUS_ATTERR_APP_BEGIN + 2        /**< Reply when unsupported features are requested. */
@@ -42,7 +43,7 @@ static int curRssi;
 static bool were_tags_nearby = false;
 static bool name_found = false;
 
-static const int rssiThresh = -70;
+static int rssiThresh = -70;
 
 static time_t begin;
 static time_t last_time;
@@ -54,6 +55,20 @@ static float dtD;
 static float dt;
 static char _buffer[4096];
 
+typedef enum{
+     DD_CMD_TYPE_NONE,
+     DD_CMD_TYPE_ADD_DEV,
+     DD_CMD_TYPE_DEL_DEV,
+     DD_CMD_TYPE_QUERY,
+     DD_CMD_TYPE_GET,
+     DD_CMD_TYPE_SET,
+}dd_cmd_type_t;
+
+typedef enum{
+     DD_CMD_DATA_NONE,
+     DD_CMD_DATA_RSSI_THRESHOLD,
+     DD_CMD_DATA_BATTERY_INFO,
+}dd_cmd_data_t;
 
 static bool check_addr_vec(vec_byte_t* addr, uint8_t* target){
      uint8_t byte; size_t i;
@@ -149,9 +164,12 @@ static void send_stored_info(){
 static void send_misc_info(uint8_t type){
      uint8_t data[128];
 
-     if(type == 0){
+     if(type == DD_CMD_DATA_RSSI_THRESHOLD){
           sprintf((char *)data, "RSSI Threshold = %d\r\n",rssiThresh);
           ble_nus_string_send(&m_nus, data, 32);
+     }else if(type == DD_CMD_DATA_BATTERY_INFO){
+          sprintf((char *)data, "Battery Voltage (mV) = %d (%d%%)\r\n",voltage,bat_percent);
+          ble_nus_string_send(&m_nus, data, 34);
      }else{
 //          send_vec_bytes(&addrs);
      }
@@ -173,6 +191,7 @@ static uint32_t parse_nus_data(uint8_t * p_data){
      vec_init(&tmps);
 
      uint16_t num;
+     int32_t val;
 //     printf ("Splitting string \"%s\" into tokens:\n",(char*) p_data);
      pch = strtok ((char*) p_data," :");
      while(pch != NULL){
@@ -181,41 +200,46 @@ static uint32_t parse_nus_data(uint8_t * p_data){
 //               printf ("%s", pch);
                if(strcmp(pch,"add_dev") == 0){
 //                    printf("parse_nus_data: --- Adding device\r\n");
-                    action_id = 1;
+                    action_id = DD_CMD_TYPE_ADD_DEV;
                     nDevices++;
                }else if(strcmp(pch,"del_dev") == 0){
 //                    printf("parse_nus_data: --- Removing device\r\n");
-                    action_id = 2;
+                    action_id = DD_CMD_TYPE_DEL_DEV;
                     nDevices--;
                }else if(strcmp(pch,"query") == 0){
                     send_stored_info();
                }else if(strcmp(pch,"get") == 0){
-//                    flag_get_info = true;
-                    action_id = 3;
+                    action_id = DD_CMD_TYPE_GET;
                }else if(strcmp(pch,"set") == 0){
-//                    flag_set_info = true;
-                    action_id = 4;
+                    action_id = DD_CMD_TYPE_SET;
                }else{
-                    action_id = 0;
+                    action_id = DD_CMD_TYPE_NONE;
                     flag_stop = true;
-//                    flag_get_info = false;
                }
           }
           if(i == 1){
-               if(action_id == 1){
+               if(action_id == DD_CMD_TYPE_ADD_DEV){
                     memset(tmpStr, 0, sizeof(tmpStr));
                     memcpy(&tmpStr[0], (char*)pch, sizeof(uint8_t)*(strlen(pch)));
                     const char* tmpName = (const char*)tmpStr;
                     vec_insert(&names,0,tmpName);
-               }else if(action_id == 3){
+               }else if(action_id == DD_CMD_TYPE_GET){
                     if(strcmp(pch,"rssi_thresh") == 0){
-                         send_misc_info(0);
+                         send_misc_info(DD_CMD_DATA_RSSI_THRESHOLD);
+                    }else if(strcmp(pch,"battery") == 0){
+                         send_misc_info(DD_CMD_DATA_BATTERY_INFO);
                     }
                }
           }
           if(i>1){
-               num = (uint16_t)strtol(pch, NULL, 16);       // number base 16
-               vec_push(&tmps, num);
+               if(action_id == DD_CMD_TYPE_ADD_DEV){
+                    num = (uint16_t)strtol(pch, NULL, 16);       // number base 16
+                    vec_push(&tmps, num);
+               }else if(action_id == DD_CMD_TYPE_SET){
+                    val = (int32_t)strtol(pch, NULL, 10);
+//                    printf("Setting Value to %d...",val);
+                    rssiThresh = val;
+               }
           }
           pch = strtok (NULL, " :");
           if(flag_stop)
