@@ -20,11 +20,10 @@
 #include "nrf_motor_driver.h"
 #include "nrf_lights.h"
 #include "nrf_buzzer.h"
-
+// #include "dd_cmd_relay.h"
+//#include "nus_helpers.h"
 #include "nrf_battery_monitor.h"
-
 #include "nrf_ble_main.h"
-//#include "vector_c.h"
 
 //#define DEVICE_NAME                     "Nordic_UART"                               /**< Name of device. Will be included in the advertising data. */
 
@@ -49,6 +48,13 @@ static char const m_target_phone_name[] = "Samsung Galaxy S7";
 static uint8_t target_mac[] = {0xb0,0x91,0x22,0xf7,0x6d,0x55};
 static uint8_t const target_mac_rvr[] = {0x55,0x6d,0xf7,0x22,0x91,0xb0};
 static ble_bas_t m_bas;                                   /**< Structure used to identify the battery service. */
+
+//extern vec_bytes_t tagAddrs;
+//extern vec_string_t tagNames;
+
+//ble_nus_t m_nus;
+//vec_bytes_t tagAddrs;
+//vec_string_t tagNames;
 
 void print_current_time()
 {
@@ -159,11 +165,10 @@ uint32_t pwroff_t0;
 int main(void)
 {
     uint32_t err_code;
-    bool     erase_bonds;
-    nTimeUpdates = 0;
-    closeCounter = 0;
-    vec_deinit(&addrs); vec_deinit(&names);
-    vec_init(&addrs); vec_init(&names);
+    nBleUpdates = 0;
+    debounceCounter = 0;
+    vec_deinit(&tagAddrs); vec_init(&tagAddrs);
+    vec_deinit(&tagNames); vec_init(&tagNames);
 
 //    vec_byte_t testAddr;
 //    vec_byte_t testAddr2;
@@ -189,9 +194,9 @@ int main(void)
     APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
     err_code = app_timer_init();
     APP_ERROR_CHECK(err_code);
-    
+
 //    err_code = app_timer_create(&m_battery_timer_id,APP_TIMER_MODE_REPEATED,battery_level_meas_timeout_handler);
-    
+
     uart_init();
     log_init();
 
@@ -231,7 +236,7 @@ int main(void)
     begin = mktime(tmpT2);
 //    printf("Start Time = %d\n",begin);
 //     led_set(&led_search, NULL);
-    
+
     nrf_delay_ms(1000);
     myTimeStamp = millis();
     pwroff_t0 = -1;

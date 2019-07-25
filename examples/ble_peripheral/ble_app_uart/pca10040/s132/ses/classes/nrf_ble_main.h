@@ -21,7 +21,8 @@
 #include "app_util_platform.h"
 
 #include "nrf_lights.h"
-#include "nus_helpers.h"
+// #include "nus_helpers.h"
+#include "dd_cmd_relay.h"
 
 #define NUS_SERVICE_UUID_TYPE           BLE_UUID_TYPE_VENDOR_BEGIN                  /**< UUID type for the Nordic UART Service (vendor specific). */
 
@@ -40,6 +41,7 @@
 #define UART_RX_BUF_SIZE                256
 #define NRF_BLE_LINK_COUNT              (NRF_BLE_PERIPHERAL_LINK_COUNT + NRF_BLE_CENTRAL_LINK_COUNT)
 
+//extern ble_nus_t m_nus;
 
 typedef struct
 {
@@ -237,9 +239,9 @@ static void nus_data_handler(ble_nus_t * p_nus, uint8_t * p_data, uint16_t lengt
 
     err_code = parse_nus_data(p_data);
 
-    memset(_buffer, 0, sizeof(_buffer));
-    memcpy(&_buffer[0], (char*)p_data, sizeof(uint8_t)*length);
-    NRF_LOG_INFO("nus_data_handler(): ----- Data = %s\r\n",_buffer);
+//    memset(_buffer, 0, sizeof(_buffer));
+//    memcpy(&_buffer[0], (char*)p_data, sizeof(uint8_t)*length);
+//    NRF_LOG_INFO("nus_data_handler(): ----- Data = %s\r\n",_buffer);
 
     for (uint32_t i = 0; i < length; i++)
     {

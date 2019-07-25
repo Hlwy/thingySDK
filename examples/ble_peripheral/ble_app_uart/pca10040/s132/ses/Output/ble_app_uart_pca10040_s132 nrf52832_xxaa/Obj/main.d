@@ -104,10 +104,10 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/main.o: \
  ../../../../../../components/softdevice/common/softdevice_handler/ant_stack_handler_types.h \
  ../../../../../../components/libraries/uart/app_uart.h \
  ../../../../../../components/libraries/scheduler/app_scheduler.h \
- classes/nrf_lights.h classes/nus_helpers.h \
+ classes/nrf_lights.h classes/dd_cmd_relay.h \
  ../../../../../../components/ble/ble_services/ble_nus/ble_nus.h \
  ../../../../../../components/softdevice/common/softdevice_handler/ble_stack_handler_types.h \
  ../../../../../../components/ble/nrf_ble_gatt/nrf_ble_gatt.h \
  ../../../../../../components/softdevice/s132/headers/ble_hci.h \
- additions/vector_c.h additions/nrf_calender.h \
- classes/nrf_battery_monitor.h
+ additions/nrf_calender.h classes/nrf_battery_monitor.h \
+ additions/vector_c.h

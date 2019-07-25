@@ -498,15 +498,15 @@ static uint32_t advertising_init(void)
 
     return NRF_SUCCESS;
 }
-static char _buffer[4096];
+//static char _buffer[4096];
 static void nus_data_handler(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length){
      ret_code_t ret_val;
      NRF_LOG_DEBUG("Received data from BLE NUS. Writing data on UART.\r\n");
      NRF_LOG_HEXDUMP_DEBUG(p_data, length);
 
-     memset(_buffer, 0, sizeof(_buffer));
-     memcpy(&_buffer[0], (char*)p_data, sizeof(uint8_t)*length);
-     NRF_LOG_INFO("nus_data_handler(): ----- Data = %s\r\n",_buffer);
+//     memset(_buffer, 0, sizeof(_buffer));
+//     memcpy(&_buffer[0], (char*)p_data, sizeof(uint8_t)*length);
+//     NRF_LOG_INFO("nus_data_handler(): ----- Data = %s\r\n",_buffer);
 
      for(uint32_t i = 0; i < length; i++){
           do{

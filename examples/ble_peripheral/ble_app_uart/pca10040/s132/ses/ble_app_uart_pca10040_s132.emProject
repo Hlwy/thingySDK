@@ -122,13 +122,10 @@
       <file file_name="additions/drivers_ext/nrf_drv_twi.c" />
       <file file_name="additions/drivers_ext/sx150x_led_drv_calc.c" />
       <file file_name="additions/support_func.c" />
-      <file file_name="additions/vector_c.c" />
       <file file_name="additions/modules/m_ui.c" />
       <file file_name="additions/modules/m_ui_demo.c" />
       <file file_name="additions/nrf_calender.c" />
       <file file_name="additions/nrf_calender.h" />
-      <file file_name="classes/nrf_ble_main.c" />
-      <file file_name="classes/nus_helpers.c" />
     </folder>
     <folder Name="Classes">
       <file file_name="classes/nrf_battery_monitor.c" />
@@ -136,6 +133,10 @@
       <file file_name="classes/nrf_buzzer.c" />
       <file file_name="classes/nrf_lights.c" />
       <file file_name="classes/nrf_motor_driver.c" />
+      <file file_name="additions/vector_c.c" />
+      <file file_name="classes/dd_cmd_relay.c" />
+      <file file_name="classes/dd_cmd_relay.h" />
+      <file file_name="classes/nrf_ble_main.c" />
     </folder>
   </project>
   <configuration Name="Internal" hidden="Yes" />
