@@ -43,10 +43,6 @@ static uint32_t level3;
 static uint32_t level4;
 static uint32_t level5;
 
-static char const m_target_periph_name[] = "BlueCharm";
-static char const m_target_phone_name[] = "Samsung Galaxy S7";
-static uint8_t target_mac[] = {0xb0,0x91,0x22,0xf7,0x6d,0x55};
-static uint8_t const target_mac_rvr[] = {0x55,0x6d,0xf7,0x22,0x91,0xb0};
 static ble_bas_t m_bas;                                   /**< Structure used to identify the battery service. */
 
 //extern vec_bytes_t tagAddrs;
@@ -144,9 +140,6 @@ static void sleep_mode_enter(void)
     APP_ERROR_CHECK(err_code);
 }
 
-
-
-
 /**@brief Function for initializing the nrf log module.
  */
 static void log_init(void)
@@ -155,9 +148,73 @@ static void log_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
-static uint8_t target_mac_rev[] = {0x55,0x6d,0xf7,0x22,0x91,0xb0};
-static uint8_t target_mac2[] = {0xf2,0x9e,0x74,0x92,0xfb,0xe5};
-static char* name2 = "add_dev tkr C3:CE:5E:26:AD:0A";
+
+//void test_vecs(void){
+//     vec_byte_t testAddr;
+//     vec_byte_t testAddr2;
+//     vec_bytes_t testAddrs;
+//     vec_init(&testAddr); vec_init(&testAddr2); vec_init(&testAddrs);
+//     vec_push(&testAddr,0xb0); vec_push(&testAddr,0x91); vec_push(&testAddr,0x22);
+//     vec_push(&testAddr,0xf7); vec_push(&testAddr,0x6d); vec_push(&testAddr,0x55);
+//     vec_push(&testAddrs,testAddr);
+//
+//     vec_push(&testAddr2,0xf2); vec_push(&testAddr2,0x9e); vec_push(&testAddr2,0x74);
+//     vec_push(&testAddr2,0x92); vec_push(&testAddr2,0xfb); vec_push(&testAddr2,0xe5);
+//     vec_push(&testAddrs,testAddr2);
+//     bool isMatch;
+//     int fndIdx;
+//     isMatch = check_addr_vecs(&testAddrs,target_mac,&fndIdx);
+//     if (isMatch){printf("check_addr_vec: Addresses Match...\n");
+//     }else{printf("check_addr_vec: Addresses Don't Match...\n");}
+//
+//     printf("\tvec_find returned = %d\n",fndIdx);
+//     vec_splice(&testAddrs, fndIdx, 1);
+//}
+
+void test_vecs(void){
+     int fndIdx;
+     bool isMatch;
+
+     const char* target_tag_name = "BlueCharm";
+     const char* target_tag_name2 = "tkr";
+     const uint8_t target_mac[] = {0xb0,0x91,0x22,0xf7,0x6d,0x55};
+     const uint8_t target_mac_rev[] = {0x55,0x6d,0xf7,0x22,0x91,0xb0};
+     const uint8_t target_mac2[] = {0xf2,0x9e,0x74,0x92,0xfb,0xe5};
+
+     const uint8_t testAddr[6] = {0xb0,0x91,0x22,0xf7,0x6d,0x55};
+     const uint8_t testAddr2[6] = {0xf2,0x9e,0x74,0x92,0xfb,0xe5};
+     
+     const dd_tag_t tag1 = {
+          .name = "tkr",
+          .addr = {0xf2,0x9e,0x74,0x92,0xfb,0xe5},
+          .thresh = -10
+     };
+
+     const dd_tag_t tag2 = {
+          .name = "BlueCharm",
+          .addr = {0xb0,0x91,0x22,0xf7,0x6d,0x55},
+          .thresh = -20
+     };
+
+     const dd_tag_t tag2_rev = {
+          .name = "BlueCharm",
+          .addr = {0x55,0x6d,0xf7,0x22,0x91,0xb0},
+          .thresh = -20
+     };
+     
+     vec_tags_t testTags; vec_init(&testTags);
+     vec_push(&testTags,tag1);vec_push(&testTags,tag2);
+     
+     isMatch = check_tag_addrs(&testTags,target_mac,&fndIdx);
+     if(isMatch){printf("check_tag_addrs: Addresses Match...\n");
+     }else{printf("check_tag_addrs: Addresses Don't Match...\n");}
+
+     printf("\tvec_find returned = %d\n",fndIdx);
+     vec_splice(&testTags, fndIdx, 1);
+}
+
+
+
 int tmpDuty;
 uint8_t new_duty_cycle = 255;
 uint32_t pwroff_t0;
@@ -169,26 +226,9 @@ int main(void)
     debounceCounter = 0;
     vec_deinit(&tagAddrs); vec_init(&tagAddrs);
     vec_deinit(&tagNames); vec_init(&tagNames);
+    vec_deinit(&m_tags); vec_init(&m_tags);
 
-//    vec_byte_t testAddr;
-//    vec_byte_t testAddr2;
-//    vec_bytes_t testAddrs;
-//    vec_init(&testAddr); vec_init(&testAddr2); vec_init(&testAddrs);
-//    vec_push(&testAddr,0xb0); vec_push(&testAddr,0x91); vec_push(&testAddr,0x22);
-//    vec_push(&testAddr,0xf7); vec_push(&testAddr,0x6d); vec_push(&testAddr,0x55);
-//    vec_push(&testAddrs,testAddr);
-//
-//    vec_push(&testAddr2,0xf2); vec_push(&testAddr2,0x9e); vec_push(&testAddr2,0x74);
-//    vec_push(&testAddr2,0x92); vec_push(&testAddr2,0xfb); vec_push(&testAddr2,0xe5);
-//    vec_push(&testAddrs,testAddr2);
-//    bool isMatch;
-//    int fndIdx;
-//    isMatch = check_addr_vecs(&testAddrs,target_mac,&fndIdx);
-//    if (isMatch){printf("check_addr_vec: Addresses Match...\n");
-//    }else{printf("check_addr_vec: Addresses Don't Match...\n");}
-//
-//    printf("\tvec_find returned = %d\n",fndIdx);
-//    vec_splice(&testAddrs, fndIdx, 1);
+//    test_vecs();
 
     // Initialize.
     APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);

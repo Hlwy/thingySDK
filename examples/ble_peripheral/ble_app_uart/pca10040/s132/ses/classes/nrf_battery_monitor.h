@@ -10,6 +10,7 @@
 
 static uint8_t bat_percent;
 static uint16_t voltage;
+static m_batt_meas_event_type_t m_bat_status;
 
 typedef struct{
      uint16_t voltage;
@@ -21,36 +22,37 @@ void battery_monitor_init(uint32_t period_ms, void (*handler)(m_batt_meas_event_
 
 static void battery_monitor_handler(m_batt_meas_event_t const * p_event){
      m_batt_meas_event_type_t evt_type = p_event->type;
+     m_bat_status = evt_type;
 
      switch(evt_type){
           case M_BATT_MEAS_EVENT_DATA:{
                bat_percent = p_event->level_percent;
                voltage = p_event->voltage_mv;
-               NRF_LOG_INFO("----- Battery Monitor --- Event Data:\r\n\tVoltage (mV) = %d\r\n\tBattery Life (%%) = %d\r\n",voltage,bat_percent);
+               printf("Battery Monitor (%d) --- Voltage (mV) = %d (%d%%)\r\n",M_BATT_MEAS_EVENT_DATA,voltage,bat_percent);
           }break; // M_BATT_MEAS_EVENT_DATA
 
           case M_BATT_MEAS_EVENT_LOW:{
-               NRF_LOG_INFO("----- Battery Monitor: BATTERY LOW!\r\n");
+               printf("Battery Monitor (%d): BATTERY LOW!\r\n",M_BATT_MEAS_EVENT_LOW);
           }break; // M_BATT_MEAS_EVENT_LOW
 
           case M_BATT_MEAS_EVENT_FULL:{
-               NRF_LOG_INFO("----- Battery Monitor: Battery Full!\r\n");
+               printf("----- Battery Monitor (%d): Battery Full!\r\n",M_BATT_MEAS_EVENT_FULL);
           }break; // M_BATT_MEAS_EVENT_FULL
 
           case M_BATT_MEAS_EVENT_USB_CONN_CHARGING:{
-               NRF_LOG_INFO("----- Battery Monitor: Charging...\r\n");
+               printf("----- Battery Monitor (%d): Charging...\r\n",M_BATT_MEAS_EVENT_USB_CONN_CHARGING);
           }break; // M_BATT_MEAS_EVENT_USB_CONN_CHARGING
 
           case M_BATT_MEAS_EVENT_USB_CONN_CHARGING_FINISHED:{
-               NRF_LOG_INFO("----- Battery Monitor: Charging Finished!\r\n");
+               printf("----- Battery Monitor (%d): Charging Finished!\r\n",M_BATT_MEAS_EVENT_USB_CONN_CHARGING_FINISHED);
           }break; // M_BATT_MEAS_EVENT_USB_CONN_CHARGING_FINISHED
 
           case M_BATT_MEAS_EVENT_USB_DISCONN:{
-               NRF_LOG_INFO("----- Battery Monitor: Charging Stopped (USB Disconnected).\r\n");
+               printf("----- Battery Monitor (%d): Charging Stopped (USB Disconnected).\r\n",M_BATT_MEAS_EVENT_USB_DISCONN);
           }break; // M_BATT_MEAS_EVENT_USB_DISCONN
 
           case M_BATT_MEAS_EVENT_ERROR:{
-               NRF_LOG_INFO("----- Battery Monitor: Error occurred!\r\n");
+               printf("----- Battery Monitor (%d): Error occurred!\r\n",M_BATT_MEAS_EVENT_ERROR);
           }break; // M_BATT_MEAS_EVENT_ERROR
 
           default:{

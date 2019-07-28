@@ -21,7 +21,6 @@
 #include "app_util_platform.h"
 
 #include "nrf_lights.h"
-// #include "nus_helpers.h"
 #include "dd_cmd_relay.h"
 
 #define NUS_SERVICE_UUID_TYPE           BLE_UUID_TYPE_VENDOR_BEGIN                  /**< UUID type for the Nordic UART Service (vendor specific). */
@@ -41,16 +40,13 @@
 #define UART_RX_BUF_SIZE                256
 #define NRF_BLE_LINK_COUNT              (NRF_BLE_PERIPHERAL_LINK_COUNT + NRF_BLE_CENTRAL_LINK_COUNT)
 
-//extern ble_nus_t m_nus;
-
-typedef struct
-{
+typedef struct{
     uint8_t  * p_data;    /**< Pointer to data. */
     uint16_t   data_len;  /**< Length of data. */
 } data_t;
 
 /**< Structure to identify the Nordic UART Service. */
-
+static ble_nus_t                        m_nus;
 static nrf_ble_gatt_t                   m_gatt;                                     /**< GATT module instance. */
 static ble_uuid_t                       m_adv_uuids[] = {{BLE_UUID_NUS_SERVICE, NUS_SERVICE_UUID_TYPE}};  /**< Universally unique service identifier. */
 static uint16_t                         m_ble_nus_max_data_len = BLE_GATT_ATT_MTU_DEFAULT - 3;  /**< Maximum length of data (in bytes) that can be transmitted to the peer by the Nordic UART service module. */
@@ -131,12 +127,7 @@ static void uart_init(void)
         .baud_rate    = UART_BAUDRATE_BAUDRATE_Baud115200
     };
 
-    APP_UART_FIFO_INIT(&comm_params,
-                       UART_RX_BUF_SIZE,
-                       UART_TX_BUF_SIZE,
-                       uart_event_handle,
-                       APP_IRQ_PRIORITY_LOWEST,
-                       err_code);
+    APP_UART_FIFO_INIT(&comm_params,UART_RX_BUF_SIZE,UART_TX_BUF_SIZE,uart_event_handle,APP_IRQ_PRIORITY_LOWEST,err_code);
     APP_ERROR_CHECK(err_code);
 }
 
@@ -237,7 +228,7 @@ static void nus_data_handler(ble_nus_t * p_nus, uint8_t * p_data, uint16_t lengt
     NRF_LOG_INFO("Received data from BLE NUS. Handling data on UART....\r\n");
     NRF_LOG_HEXDUMP_DEBUG(p_data, length);
 
-    err_code = parse_nus_data(p_data);
+    err_code = parse_nus_data(p_nus, p_data);
 
 //    memset(_buffer, 0, sizeof(_buffer));
 //    memcpy(&_buffer[0], (char*)p_data, sizeof(uint8_t)*length);
@@ -273,16 +264,12 @@ static void gap_params_init(void)
     uint32_t                err_code;
     ble_gap_conn_params_t   gap_conn_params;
     ble_gap_conn_sec_mode_t sec_mode;
-
     BLE_GAP_CONN_SEC_MODE_SET_OPEN(&sec_mode);
 
-    err_code = sd_ble_gap_device_name_set(&sec_mode,
-                                          (const uint8_t *) DEVICE_NAME,
-                                          strlen(DEVICE_NAME));
+    err_code = sd_ble_gap_device_name_set(&sec_mode,(const uint8_t *) DEVICE_NAME,strlen(DEVICE_NAME));
     APP_ERROR_CHECK(err_code);
 
     memset(&gap_conn_params, 0, sizeof(gap_conn_params));
-
     gap_conn_params.min_conn_interval = MIN_CONN_INTERVAL;
     gap_conn_params.max_conn_interval = MAX_CONN_INTERVAL;
     gap_conn_params.slave_latency     = SLAVE_LATENCY;
@@ -422,6 +409,7 @@ static void ble_evt_dispatch(ble_evt_t * p_ble_evt)
     nrf_ble_gatt_on_ble_evt(&m_gatt, p_ble_evt);
     ble_nus_on_ble_evt(&m_nus, p_ble_evt);
     on_ble_evt(p_ble_evt);
+//    on_ble_evt(p_ble_evt, &m_nus);
     ble_advertising_on_ble_evt(p_ble_evt);
     bsp_btn_ble_on_ble_evt(p_ble_evt);
 }

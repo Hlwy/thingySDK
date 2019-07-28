@@ -1,21 +1,21 @@
 #include "dd_cmd_relay.h"
 
-void print_addr(uint8_t* addr){
+void print_addr(const uint8_t* addr){
      for(uint8_t i = 0; i < 6; i++){ printf("%02x ", addr[i]); }
 }
 
-void print_vec_str(vec_string_t * strings){
+void print_vec_str(const vec_string_t * strings){
      size_t i; const char * string;
      vec_foreach(strings, string, i){ printf("Names[%zu] = \"%s\"\n", i, string); }
 }
 
-void print_vec_byte(vec_byte_t * bytes){
+void print_vec_byte(const vec_byte_t * bytes){
      size_t i; uint8_t byte;
      printf("Bytes[%zu] = ", i);
      vec_foreach(bytes, byte, i) {printf("%02x ", byte);}
 }
 
-void print_vec_bytes(vec_bytes_t * bytes){
+void print_vec_bytes(const vec_bytes_t * bytes){
      size_t i; size_t j;
      uint8_t byte;
      vec_byte_t byte2;
