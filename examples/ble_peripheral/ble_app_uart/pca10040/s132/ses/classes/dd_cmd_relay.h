@@ -19,7 +19,7 @@
 
 #define DEBUGGING
 //#define DEBUG_CHECKING
-#define DEBUG_COMMANDS
+//#define DEBUG_COMMANDS
 
 typedef enum{
      DD_CMD_TYPE_NONE,
@@ -32,30 +32,30 @@ typedef enum{
 
 typedef enum{
      DD_CMD_NONE,                       /** Id = 0 */
-     DD_CMD_BATTERY_LEVEL,              /** Id = 1 */
-     DD_CMD_CHARGE_STATUS,              /** Id = 2 */
-     DD_CMD_BATTERY_INFO,               /** Id = 3 */
-     DD_CMD_BLE_UPDATE_RATE,            /** Id = 4 */
-     DD_CMD_DOOR_UPDATE_RATE,           /** Id = 5 */
-     DD_CMD_TAG_CHECK_UPDATE_RATE,      /** Id = 6 */
-     DD_CMD_TOGGLE_DOOR_OPEN,           /** Id = 7 */
-     DD_CMD_OPEN_DOOR,                  /** Id = 8 */
-     DD_CMD_CLOSE_DOOR,                 /** Id = 9 */
-     DD_CMD_TOGGLE_DOOR_LOCK,           /** Id = 10 */
-     DD_CMD_LOCK_DOOR,                  /** Id = 11 */
-     DD_CMD_UNLOCK_DOOR,                /** Id = 12 */
-     DD_CMD_DOOR_ENCODER_LIMIT,         /** Id = 13 */
-     DD_CMD_DOOR_SPEED,                 /** Id = 14 */
-     DD_CMD_DOOR_STATUS,                /** Id = 15 */
-     DD_CMD_TAG_ID,                     /** Id = 16 */
-     DD_CMD_TAG_ALIAS,                  /** Id = 18 */
-     DD_CMD_TAG_ADDRESS,                /** Id = 19 */
-     DD_CMD_TAG_RSSI,                   /** Id = 20 */
-     DD_CMD_TAG_RSSI_THRESHOLD,         /** Id = 21 */
-     DD_CMD_TAG_DEBOUNCE_THRESHOLD,     /** Id = 22 */
-     DD_CMD_TAG_TIMEOUT,                /** Id = 23 */
-     DD_CMD_TAG_LAST_ACTIVITY,          /** Id = 24 */
-     DD_CMD_TAG_STATISTICS,             /** Id = 25 */
+     DD_CMD_BATTERY_LEVEL,              /** Id = 1 (R) */
+     DD_CMD_CHARGE_STATUS,              /** Id = 2 (R) */
+     DD_CMD_BATTERY_INFO,               /** Id = 3 (R) */
+     DD_CMD_BLE_UPDATE_RATE,            /** Id = 4 (R/W) */
+     DD_CMD_DOOR_UPDATE_RATE,           /** Id = 5 (R/W) */
+     DD_CMD_TAG_CHECK_UPDATE_RATE,      /** Id = 6 (R/W) */
+     DD_CMD_TOGGLE_DOOR_OPEN,           /** Id = 7 (W) */
+     DD_CMD_OPEN_DOOR,                  /** Id = 8 (W) */
+     DD_CMD_CLOSE_DOOR,                 /** Id = 9 (W) */
+     DD_CMD_TOGGLE_DOOR_LOCK,           /** Id = 10 (W) */
+     DD_CMD_LOCK_DOOR,                  /** Id = 11 (W) */
+     DD_CMD_UNLOCK_DOOR,                /** Id = 12 (W) */
+     DD_CMD_DOOR_ENCODER_LIMIT,         /** Id = 13 (R/W) */
+     DD_CMD_DOOR_SPEED,                 /** Id = 14 (R/W) */
+     DD_CMD_DOOR_STATUS,                /** Id = 15 (R) */
+     DD_CMD_TAG_ID,                     /** Id = 16 (R) */
+     DD_CMD_TAG_ALIAS,                  /** Id = 18 (R/W) */
+     DD_CMD_TAG_ADDRESS,                /** Id = 19 (R) */
+     DD_CMD_TAG_RSSI,                   /** Id = 20 (R) */
+     DD_CMD_TAG_RSSI_THRESHOLD,         /** Id = 21 (R/W) */
+     DD_CMD_TAG_DEBOUNCE_THRESHOLD,     /** Id = 22 (R/W) */
+     DD_CMD_TAG_TIMEOUT,                /** Id = 23 (R/W) */
+     DD_CMD_TAG_LAST_ACTIVITY,          /** Id = 24 (R) */
+     DD_CMD_TAG_STATISTICS,             /** Id = 25 (R) */
 }dd_cmd_t;
 
 typedef struct{
@@ -65,6 +65,7 @@ typedef struct{
      int thresh;
      int rssi;
      int timeout;
+     int times_seen;
 }dd_tag_t;
 
 typedef vec_t(const char*) vec_string_t;
@@ -84,7 +85,7 @@ static uint8_t* ble_addr;
 static int action_id;
 static int nDevices = 0;
 static int nBleUpdates = 0;
-static int rssiThresh = -70;
+//static int rssiThresh = -70;
 static int debounceCounter = 0;
 static int debounceThresh = 35;
 
@@ -95,6 +96,7 @@ static bool tags_nearby = false;
 static bool tags_detected = false;
 static bool were_tags_nearby = false;
 static bool name_found = false;
+static bool isDoorOpen = false;
 
 static float dt;
 static time_t begin;
@@ -267,14 +269,22 @@ static bool check_tag_addrs(const vec_tags_t* tags_, const uint8_t* target, int*
      for(int i = 0; i < nTags;i++){
           uint8_t* testAddr = tags_->data[i].addr;
           isMatch = check_addr_vec(testAddr,target);
-          vec_push(&matches, isMatch);
+//          vec_push(&matches, isMatch);
+          if(isMatch){
+               *foundIdx = i;
+               return true;
+          }
 #ifdef DEBUG_CHECKING
           char* descMatch = (isMatch ? "True":"False");
           printf("\tChecking address [");print_addr(target); printf("] - isMatch = %s\r\n",descMatch);
 #endif
      }
-     vec_find(&matches, true, idx);
-     *foundIdx = idx;
+//     vec_find(&matches, true, idx);
+//     *foundIdx = idx;
+     if(!isMatch){
+          *foundIdx = -1;
+          return false;
+     }     
      if(idx == -1){
           flag_out = false;
      }else{
@@ -283,7 +293,7 @@ static bool check_tag_addrs(const vec_tags_t* tags_, const uint8_t* target, int*
           printf("\check_tag_addrs - Found match at %d\n",idx);
 #endif
      }
-     vec_deinit(&matches);
+//     vec_deinit(&matches);
      return flag_out;
 }
 
@@ -401,20 +411,6 @@ static uint32_t send_stored_info(ble_nus_t* p_nus, const vec_tags_t* tags_, uint
      return NRF_SUCCESS;
 }
 
-static void send_misc_info(ble_nus_t* p_nus, uint8_t type){
-     uint8_t data[128];
-
-     if(type == DD_CMD_TAG_RSSI_THRESHOLD){
-          sprintf((char *)data, "RSSI Threshold = %d\r\n",rssiThresh);
-          ble_nus_string_send(p_nus, data, 32);
-     }else if(type == DD_CMD_BATTERY_INFO){
-          sprintf((char *)data, "Battery Voltage (mV) = %d (%d%%)\r\n",voltage,bat_percent);
-          ble_nus_string_send(p_nus, data, 34);
-     }else{
-          // send_vec_bytes(&tagAddrs);
-     }
-}
-
 static int compare_cmds(const void *s1, const void *s2){
      const struct cmd_entry *e1 = s1;
      const struct cmd_entry *e2 = s2;
@@ -433,6 +429,225 @@ static dd_cmd_t interpret_cmd(ble_nus_t* p_nus, const char* cmd_){
      // if(result->n == DD_CMD_TAG_RSSI_THRESHOLD) printf(" Matched\r\n");
      // else printf(" No Match\r\n");
      return (dd_cmd_t) result->n;
+}
+
+// TODO: Implement dd_parameter_handler() function
+static uint32_t dd_parameter_handler(dd_cmd_t cmd_id_, int target_tag_index, bool isSetOp, const char* raw_str_value, ble_nus_t * p_nus){
+     // Ensure a valid tag id is given when tag-specific commands are recognized
+     if((cmd_id_ >= DD_CMD_TAG_ID) && (target_tag_index < 0)){
+          printf("[ERROR] parse_nus_data() ---- The DoggyTag ID given [%d] is invalid, or not recognized.\r\n",target_tag_index);
+          return NRF_ERROR_INVALID_PARAM;
+     }
+     // Return error if null/empty values are given, when setting parameters
+     if(isSetOp){     /** if(strcmp(e1->str, e2->str) == 0){}*/ }
+
+     uint8_t buffer[496];
+     size_t sz = 0;
+     // TODO: Verify proper manipulation of parameter and storage (i.e. pointers)
+     dd_tag_t* targetTag = &m_tags.data[target_tag_index];
+
+     switch(cmd_id_){
+          case DD_CMD_NONE:{
+               // printf("DD_CMD_NONE\r\n");
+               return NRF_SUCCESS;
+          } break;
+
+          /** ***************       WRITE ONLY  COMMANDS     **************** */
+          case DD_CMD_TOGGLE_DOOR_OPEN:{
+               // printf("DD_CMD_TOGGLE_DOOR_OPEN\r\n");
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_OPEN_DOOR:{
+               // printf("DD_CMD_OPEN_DOOR\r\n");
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_CLOSE_DOOR:{
+               // printf("DD_CMD_CLOSE_DOOR\r\n");
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_TOGGLE_DOOR_LOCK:{
+               // printf("DD_CMD_TOGGLE_DOOR_LOCK\r\n");
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_LOCK_DOOR:{
+               // printf("DD_CMD_LOCK_DOOR\r\n");
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_UNLOCK_DOOR:{
+               // printf("DD_CMD_UNLOCK_DOOR\r\n");
+               return NRF_SUCCESS;
+          } break;
+
+          /** **********   Tag-Independent READ ONLY  COMMANDS   ************ */
+          case DD_CMD_BATTERY_LEVEL:{
+               // printf("DD_CMD_BATTERY_LEVEL\r\n");
+               memset(buffer, 0, sizeof(buffer));
+               sz = snprintf(NULL, 0, "[DoggyDoor] -- Current Battery Voltage (mV): %d (%d%%)\r\n",voltage,bat_percent);
+               sprintf((char *)buffer, "[DoggyDoor] -- Current Battery Voltage (mV): %d (%d%%)\r\n",voltage,bat_percent);
+               ble_nus_string_send(p_nus, buffer,sz+1);
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_CHARGE_STATUS:{                                 // TODO
+               // printf("DD_CMD_CHARGE_STATUS\r\n");
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_BATTERY_INFO:{
+               // printf("DD_CMD_BATTERY_INFO\r\n");
+               memset(buffer, 0, sizeof(buffer));
+               sz = snprintf(NULL, 0, "[DoggyDoor] -- Current Battery Voltage (mV): %d (%d%%)\r\n",voltage,bat_percent);
+               sprintf((char *)buffer, "[DoggyDoor] -- Current Battery Voltage (mV): %d (%d%%)\r\n",voltage,bat_percent);
+               ble_nus_string_send(p_nus, buffer,sz+1);
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_DOOR_STATUS:{                                   // TODO
+               // printf("DD_CMD_DOOR_STATUS\r\n");
+               return NRF_SUCCESS;
+          } break;
+
+          /** **********   Tag-Independent R/W  COMMANDS   ************ */
+          case DD_CMD_BLE_UPDATE_RATE:{                               // TODO
+               // printf("DD_CMD_BLE_UPDATE_RATE\r\n");
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_DOOR_UPDATE_RATE:{                              // TODO
+               // printf("DD_CMD_DOOR_UPDATE_RATE\r\n");
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_TAG_CHECK_UPDATE_RATE:{                         // TODO
+               // printf("DD_CMD_TAG_CHECK_UPDATE_RATE\r\n");
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_DOOR_ENCODER_LIMIT:{                            // TODO
+               // printf("DD_CMD_DOOR_ENCODER_LIMIT\r\n");
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_DOOR_SPEED:{                                    // TODO
+               // printf("DD_CMD_DOOR_SPEED\r\n");
+               return NRF_SUCCESS;
+          } break;
+
+          /** **********   Tag-Dependent READ Only  COMMANDS   ************ */
+          case DD_CMD_TAG_ID:{
+               // printf("DD_CMD_TAG_ID\r\n");
+               memset(buffer, 0, sizeof(buffer));
+               sz = snprintf(NULL, 0, "Specified Pet Tag's Internally stored ID is \'%s\'\r\n",targetTag->name);
+               sprintf((char *)buffer, "Specified Pet Tag's Internally stored ID is \'%s\'\r\n",targetTag->name);
+               ble_nus_string_send(p_nus, buffer,sz+1);
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_TAG_ADDRESS:{
+               // printf("DD_CMD_TAG_ADDRESS\r\n");
+               memset(buffer, 0, sizeof(buffer));
+               sz = snprintf(NULL, 0, "Specified Pet Tag's Address is stored as %02x:%02x:%02x:%02x:%02x:%02x\r\n",targetTag->addr[0],targetTag->addr[1],targetTag->addr[2],targetTag->addr[3],targetTag->addr[4],targetTag->addr[5]);
+               sprintf((char *)buffer, "Specified Pet Tag's Address is stored as %02x:%02x:%02x:%02x:%02x:%02x\r\n",targetTag->addr[0],targetTag->addr[1],targetTag->addr[2],targetTag->addr[3],targetTag->addr[4],targetTag->addr[5]);
+               ble_nus_string_send(p_nus, buffer,sz+1);
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_TAG_RSSI:{
+               // printf("DD_CMD_TAG_RSSI\r\n");
+               memset(buffer, 0, sizeof(buffer));
+               sz = snprintf(NULL, 0, "Specified Pet Tag's detected RSSI value is \'Not Yet Implemented\'.\r\n");
+               sprintf((char *)buffer, "Specified Pet Tag's detected RSSI value is \'Not Yet Implemented\'.\r\n");
+               ble_nus_string_send(p_nus, buffer,sz+1);
+               return NRF_SUCCESS;
+          } break;
+
+          /** **********   Tag-Dependent R/W  COMMANDS   ************ */
+          case DD_CMD_TAG_ALIAS:{
+               if(isSetOp){
+                    // printf("Setting - DD_CMD_TAG_ALIAS...\r\n");
+                    char prevVal[128];                 memset(prevVal, '\0', sizeof(prevVal));
+                    strcpy(prevVal, targetTag->alias);
+                    memset(&targetTag->alias, '\0', 128);
+                    strcpy(&targetTag->alias[0], raw_str_value);
+                    memset(buffer, 0, sizeof(buffer));
+                    sz = snprintf(NULL, 0, "Modified specified pet tag's stored alias from \'%s\' to \'%s\'.\r\n",prevVal,targetTag->alias);
+                    sprintf((char *)buffer, "Modified specified pet tag's stored alias from \'%s\' to \'%s\'.\r\n",prevVal,targetTag->alias);
+                    ble_nus_string_send(p_nus, buffer,sz+1);
+               }else{
+                    // printf("Getting - DD_CMD_TAG_ALIAS...\r\n");
+                    memset(buffer, 0, sizeof(buffer));
+                    sz = snprintf(NULL, 0, "Specified Pet Tag's stored alias is %s.\r\n",targetTag->alias);
+                    sprintf((char *)buffer, "Specified Pet Tag's stored alias is %s.\r\n",targetTag->alias);
+                    ble_nus_string_send(p_nus, buffer,sz+1);
+               }
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_TAG_RSSI_THRESHOLD:{
+               if(isSetOp){
+                    // printf("Setting - DD_CMD_TAG_RSSI_THRESHOLD...\r\n");
+                    int prevVal = targetTag->thresh;
+                    int32_t newVal = (int32_t)strtol(raw_str_value, NULL, 10);
+                    targetTag->thresh = newVal;
+                    memset(buffer, 0, sizeof(buffer));
+                    sz = snprintf(NULL, 0, "Modified specified pet tag's stored RSSI threshold from %d to %d.\r\n",prevVal,newVal);
+                    sprintf((char *)buffer, "Modified specified pet tag's stored RSSI threshold from %d to %d.\r\n",prevVal,newVal);
+                    ble_nus_string_send(p_nus, buffer,sz+1);
+               }else{
+                    // printf("Getting - DD_CMD_TAG_RSSI_THRESHOLD...\r\n");
+                    memset(buffer, 0, sizeof(buffer));
+                    sz = snprintf(NULL, 0, "Specified Pet Tag's stored RSSI threshold is %d.\r\n",targetTag->thresh);
+                    sprintf((char *)buffer, "Specified Pet Tag's stored RSSI threshold is %d.\r\n",targetTag->thresh);
+                    ble_nus_string_send(p_nus, buffer,sz+1);
+               }
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_TAG_DEBOUNCE_THRESHOLD:{
+               if(isSetOp){
+                    // printf("Setting - DD_CMD_TAG_DEBOUNCE_THRESHOLD...\r\n");
+                    int prevVal = targetTag->timeout;
+                    int32_t newVal = (int32_t)strtol(raw_str_value, NULL, 10);
+                    targetTag->timeout = newVal;
+                    memset(buffer, 0, sizeof(buffer));
+                    sz = snprintf(NULL, 0, "Modified specified pet tag's stored debounce threshold from %d to %d.\r\n",prevVal,newVal);
+                    sprintf((char *)buffer, "Modified specified pet tag's stored debounce threshold from %d to %d.\r\n",prevVal,newVal);
+                    ble_nus_string_send(p_nus, buffer,sz+1);
+               }else{
+                    // printf("Getting - DD_CMD_TAG_DEBOUNCE_THRESHOLD...\r\n");
+                    memset(buffer, 0, sizeof(buffer));
+                    sz = snprintf(NULL, 0, "Specified Pet Tag's stored debounce threshold is %d.\r\n",targetTag->timeout);
+                    sprintf((char *)buffer, "Specified Pet Tag's stored debounce threshold is %d.\r\n",targetTag->timeout);
+                    ble_nus_string_send(p_nus, buffer,sz+1);
+               }
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_TAG_TIMEOUT:{
+               if(isSetOp){
+                    // printf("Setting - DD_CMD_TAG_TIMEOUT...\r\n");
+                    memset(buffer, 0, sizeof(buffer));
+                    sz = snprintf(NULL, 0, "TODO: Sorry this feature has not been implemented yet. For now use the debounce threshold.\r\n");
+                    sprintf((char *)buffer, "TODO: Sorry this feature has not been implemented yet. For now use the debounce threshold.\r\n");
+                    ble_nus_string_send(p_nus, buffer,sz+1);
+               }else{
+                    // printf("Getting - DD_CMD_TAG_TIMEOUT...\r\n");
+                    memset(buffer, 0, sizeof(buffer));
+                    sz = snprintf(NULL, 0, "TODO: Sorry this feature has not been implemented yet. For now use the debounce threshold, which is set to %d.\r\n",targetTag->timeout);
+                    sprintf((char *)buffer, "TODO: Sorry this feature has not been implemented yet. For now use the debounce threshold, which is set to %d.\r\n",targetTag->timeout);
+                    ble_nus_string_send(p_nus, buffer,sz+1);
+               }
+               return NRF_SUCCESS;
+          } break;
+
+          /** ******** TODO: Commands that need to be implemented ********** */
+          case DD_CMD_TAG_LAST_ACTIVITY:{
+               // printf("DD_CMD_TAG_LAST_ACTIVITY\r\n");
+               memset(buffer, 0, sizeof(buffer));
+               sz = snprintf(NULL, 0, "TODO: Not Yet Implemented. Sorry\r\n");
+               sprintf((char *)buffer, "TODO: Not Yet Implemented. Sorry\r\n");
+               ble_nus_string_send(p_nus, buffer,sz+1);
+               return NRF_SUCCESS;
+          } break;
+          case DD_CMD_TAG_STATISTICS:{
+               // printf("DD_CMD_TAG_STATISTICS\r\n");
+               memset(buffer, 0, sizeof(buffer));
+               sz = snprintf(NULL, 0, "TODO: Not Yet Implemented. Sorry\r\n");
+               sprintf((char *)buffer, "TODO: Not Yet Implemented. Sorry\r\n");
+               ble_nus_string_send(p_nus, buffer,sz+1);
+               return NRF_SUCCESS;
+          } break;
+     }
+
+     return NRF_SUCCESS;
 }
 
 static uint32_t parse_nus_data(ble_nus_t * p_nus, const uint8_t * p_data){
@@ -487,11 +702,9 @@ static uint32_t parse_nus_data(ble_nus_t * p_nus, const uint8_t * p_data){
 
      // TODO: Implement dd_parameter_handler() function
      if(cmd_type == DD_CMD_TYPE_GET){
-          // dd_parameter_handler(cmd_id, targetIdx, false, NULL, p_nus);
+          dd_parameter_handler(cmd_id, targetIdx, false, "NULL", p_nus);
      }else if(cmd_type == DD_CMD_TYPE_SET){
-          // dd_parameter_handler(cmd_id, targetIdx, true, cmds.data[3], p_nus);
-          // int32_t val = (int32_t)strtol(cmds.data[3], NULL, 10);
-          // printf("Setting Value to %d...",val);
+          dd_parameter_handler(cmd_id, targetIdx, true, cmds.data[3], p_nus);
      }
 
      if(cmd_type == DD_CMD_TYPE_ADD_DEV){
@@ -521,116 +734,6 @@ static uint32_t parse_nus_data(ble_nus_t * p_nus, const uint8_t * p_data){
      return NRF_SUCCESS;
 }
 
-//static uint32_t parse_nus_data(uint8_t * p_data){
-//     int i = 0;
-//     char * pch;
-//     int defaultRssiThresh = -70;
-//
-//     bool flag_stop = false;
-//     char tmpStr[4096];
-//     memset(tmpStr, '\0', sizeof(tmpStr));
-//
-//     vec_string_t strings;
-//     vec_string_t cmds;
-//     vec_byte_t tmps;
-//     vec_init(&strings);
-//     vec_init(&cmds);
-//     vec_init(&tmps);
-//
-//     // printf ("Splitting string \"%s\" into tokens:\n",(char*) p_data);
-//     pch = strtok ((char*) p_data," :");
-//     while(pch != NULL){
-//          vec_push(&cmds, pch);
-//          if(i == 0){
-//               // printf ("%s", pch);
-//               if(strcmp(pch,"add_dev") == 0){
-//                    // printf("parse_nus_data: --- Adding device\r\n");
-//                    action_id = DD_CMD_TYPE_ADD_DEV;
-//                    nDevices++;
-//               }else if(strcmp(pch,"del_dev") == 0){
-//                    // printf("parse_nus_data: --- Removing device\r\n");
-//                    action_id = DD_CMD_TYPE_DEL_DEV;
-//                    nDevices--;
-//               }else if(strcmp(pch,"query") == 0){
-//                    action_id = DD_CMD_TYPE_QUERY;
-//                    send_stored_info(nDevices);
-//               }else if(strcmp(pch,"get") == 0){
-//                    action_id = DD_CMD_TYPE_GET;
-//               }else if(strcmp(pch,"set") == 0){
-//                    action_id = DD_CMD_TYPE_SET;
-//               }else{
-//                    action_id = DD_CMD_TYPE_NONE;
-//                    flag_stop = true;
-//               }
-//          }
-//          if(i == 1){
-//               if(action_id == DD_CMD_TYPE_ADD_DEV){
-//                    strcpy(tmpStr, pch);
-//                    // printf("parse_nus_data: --- Adding device name = %s\r\n",tmpStr);
-//                    vec_insert(&tagNames,0,tmpStr);
-//               }else if(action_id == DD_CMD_TYPE_GET){
-//                    if(strcmp(pch,"rssi_thresh") == 0){
-//                         send_misc_info(DD_CMD_DATA_RSSI_THRESHOLD);
-//                    }else if(strcmp(pch,"battery") == 0){
-//                         send_misc_info(DD_CMD_DATA_BATTERY_INFO);
-//                    }
-//               }
-//          }
-//          if(i>1){
-//               if((action_id == DD_CMD_TYPE_ADD_DEV) || (action_id == DD_CMD_TYPE_DEL_DEV)){
-//                    uint16_t num = (uint16_t)strtol(pch, NULL, 16);
-//                    vec_push(&tmps, num);
-//               }else if(action_id == DD_CMD_TYPE_SET){
-//                    int32_t val = (int32_t)strtol(pch, NULL, 10);
-//                    rssiThresh = val;
-//                    // printf("Setting Value to %d...",val);
-//               }
-//          }
-//          pch = strtok (NULL, " :");
-//          if(flag_stop)
-//               break;
-//          i++;
-//     }
-//     if(action_id == DD_CMD_TYPE_ADD_DEV){
-//          dd_tag_t tmpTag;
-//          memset(&tmpTag, 0, sizeof(tmpTag));
-//          strcpy(&tmpTag.name[0], tmpStr);
-//          tmpTag.addr[0] = tmps.data[0];
-//          tmpTag.addr[1] = tmps.data[1];
-//          tmpTag.addr[2] = tmps.data[2];
-//          tmpTag.addr[3] = tmps.data[3];
-//          tmpTag.addr[4] = tmps.data[4];
-//          tmpTag.addr[5] = tmps.data[5];
-//          tmpTag.thresh = defaultRssiThresh;
-//          vec_insert(&m_tags,0,tmpTag);
-//          // vec_push(&tagAddrs,tmps);
-//          vec_insert(&tagAddrs,0,tmps);
-//     }else if(action_id == DD_CMD_TYPE_DEL_DEV){
-//          int tmpIdx;
-//          bool isMatch;
-//          uint8_t tmpVec[6] = {tmps.data[0],tmps.data[1],tmps.data[2],tmps.data[3],tmps.data[4],tmps.data[5]};
-//          isMatch = check_addr_vecs(&tagAddrs,tmpVec,&tmpIdx);
-//          if(isMatch){
-//               bool dum = false;
-//               vec_splice(&tagAddrs, tmpIdx, 1);
-//               vec_compact(&tagAddrs);
-//          }
-//     }
-//
-//     // printf ("%s\t", cmds.data[0]);
-//     // printf ("%s\t", cmds.data[1]);
-//     // printf ("%s", cmds.data[2]);
-//     // printf ("\r\n");
-//
-//     // print_vec_str(&tagNames);
-//     // print_vec_bytes(&tagAddrs);
-//
-//     // vec_deinit(&strings);
-//     // vec_deinit(&tmps);
-//     vec_deinit(&cmds);
-//     return NRF_SUCCESS;
-//}
-
 
 static bool pet_proximity_check(ble_evt_t const * p_ble_evt){
      int dump;
@@ -644,9 +747,12 @@ static bool pet_proximity_check(ble_evt_t const * p_ble_evt){
 
      bool isMatch = check_tag_addrs(&m_tags,ble_addr,&dump);
      if(isMatch){
+          dd_tag_t* foundTag = &m_tags.data[dump];
+          foundTag->rssi = tmpRssi;
+          foundTag->times_seen++;
           if(flag_debug_rssi) printf(NRF_LOG_COLOR_CODE_GREEN" Found Target Device! =====  %d\r\n"NRF_LOG_COLOR_CODE_DEFAULT,tmpRssi);
           tags_detected = true;
-          if(tmpRssi >= rssiThresh){
+          if(tmpRssi >= foundTag->thresh){
                tags_nearby = true;
                return true;
           }else
@@ -692,7 +798,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt){//, ble_nus_t * p_nus){
                uint32_t tmpdt = compareMillis(myTimeStamp, now);
                float dt = tmpdt/(float)1000.0;
                myTimeStamp = now;
-               // printf(NRF_LOG_FLOAT_MARKER" seconds have passed\n",NRF_LOG_FLOAT(dt));
+               printf(NRF_LOG_FLOAT_MARKER" seconds have passed\n",NRF_LOG_FLOAT(dt));
                if(nDevices>0){
                     flag_pets_near = pet_proximity_check(p_ble_evt);
                     if(flag_pets_near){

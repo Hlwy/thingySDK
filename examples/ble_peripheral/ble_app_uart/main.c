@@ -45,19 +45,6 @@ static uint32_t level5;
 
 static ble_bas_t m_bas;                                   /**< Structure used to identify the battery service. */
 
-//extern vec_bytes_t tagAddrs;
-//extern vec_string_t tagNames;
-
-//ble_nus_t m_nus;
-//vec_bytes_t tagAddrs;
-//vec_string_t tagNames;
-
-void print_current_time()
-{
-//    printf("Uncalibrated time:\t%s\r\n", nrf_cal_get_time_string(false));
-//    printf("Calibrated time:\t%s (%d, %d, %d)\r\n", nrf_cal_get_time_string(true),MSEC_TO_UNITS(1000,UNIT_0_625_MS),MSEC_TO_UNITS(1000,UNIT_1_25_MS),MSEC_TO_UNITS(1000,UNIT_10_MS));
-}
-
 #define FPU_EXCEPTION_MASK 0x0000009F
 static void power_manage(void)
 {
@@ -71,37 +58,29 @@ static void power_manage(void)
 /**@brief Function for performing battery measurement and updating the Battery Level characteristic
  *        in Battery Service.
  */
-static void battery_level_update(void)
-{
-    ret_code_t err_code;
-    uint8_t  battery_level;
+//static void battery_level_update(void)
+//{
+//    ret_code_t err_code;
+//    uint8_t  battery_level;
+//
+////    battery_level = (uint8_t)sensorsim_measure(&m_battery_sim_state, &m_battery_sim_cfg);
+//
+//    err_code = ble_bas_battery_level_update(&m_bas, battery_level);
+//    if ((err_code != NRF_SUCCESS) &&
+//        (err_code != NRF_ERROR_INVALID_STATE) &&
+//        (err_code != NRF_ERROR_RESOURCES) &&
+//        (err_code != BLE_ERROR_GATTS_SYS_ATTR_MISSING)
+//       )
+//    {
+//        APP_ERROR_HANDLER(err_code);
+//    }
+//}
 
-//    battery_level = (uint8_t)sensorsim_measure(&m_battery_sim_state, &m_battery_sim_cfg);
-
-    err_code = ble_bas_battery_level_update(&m_bas, battery_level);
-    if ((err_code != NRF_SUCCESS) &&
-        (err_code != NRF_ERROR_INVALID_STATE) &&
-        (err_code != NRF_ERROR_RESOURCES) &&
-        (err_code != BLE_ERROR_GATTS_SYS_ATTR_MISSING)
-       )
-    {
-        APP_ERROR_HANDLER(err_code);
-    }
-}
-
-
-/**@brief Function for handling the Battery measurement timer timeout.
- *
- * @details This function will be called each time the battery level measurement timer expires.
- *
- * @param[in] p_context  Pointer used for passing some arbitrary information (context) from the
- *                       app_start_timer() call to the timeout handler.
- */
-static void battery_level_meas_timeout_handler(void * p_context)
-{
-    UNUSED_PARAMETER(p_context);
-    battery_level_update();
-}
+//static void battery_level_meas_timeout_handler(void * p_context)
+//{
+//    UNUSED_PARAMETER(p_context);
+//    battery_level_update();
+//}
 
 
 /**@brief Function for assert macro callback.
@@ -224,8 +203,8 @@ int main(void)
     uint32_t err_code;
     nBleUpdates = 0;
     debounceCounter = 0;
-    vec_deinit(&tagAddrs); vec_init(&tagAddrs);
-    vec_deinit(&tagNames); vec_init(&tagNames);
+//    vec_deinit(&tagAddrs); vec_init(&tagAddrs);
+//    vec_deinit(&tagNames); vec_init(&tagNames);
     vec_deinit(&m_tags); vec_init(&m_tags);
 
 //    test_vecs();

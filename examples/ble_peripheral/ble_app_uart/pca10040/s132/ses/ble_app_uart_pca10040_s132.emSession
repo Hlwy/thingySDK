@@ -50,8 +50,8 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Twice a Second">
-   <Watchpoint expression="tags_detected" name="tags_detected" radix="10" linenumber="1207" filename="../../../main.c"/>
-   <Watchpoint expression="tags_nearby" name="tags_nearby" radix="-1" linenumber="1209" filename="../../../main.c"/>
+   <Watchpoint expression="tags_detected" name="tags_detected" radix="10" linenumber="1186" filename="../../../main.c"/>
+   <Watchpoint expression="tags_nearby" name="tags_nearby" radix="-1" linenumber="1188" filename="../../../main.c"/>
    <Watchpoint expression="bat_percent" name="bat_percent" radix="10" linenumber="11" filename="classes/nrf_battery_monitor.h"/>
    <Watchpoint expression="voltage" name="voltage" radix="10" linenumber="12" filename="classes/nrf_battery_monitor.h"/>
    <Watchpoint expression="rssiThresh" name="rssiThresh" radix="10" linenumber="243" filename="classes/nus_helpers.h"/>
@@ -72,16 +72,16 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="25" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="0" top="25" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="9" y="212" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="1" top="202" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="3998" useTextEdit="1" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="3967" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="27" y="17" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/dd_cmd_relay.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="1" y="32" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_ble_main.h" selected="0" top="29" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="46" y="473" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/dd_cmd_relay.h" selected="1" top="459" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="43" y="15" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_battery_monitor.c" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="17" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/dd_cmd_relay.c" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="16" y="53" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_ble_main.h" selected="0" top="23" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="800" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/dd_cmd_relay.h" selected="0" top="784" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="15" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_battery_monitor.c" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="54" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_battery_monitor.h" selected="0" top="21" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="78" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/modules/m_batt_meas.h" selected="0" top="53" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="23" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_ble_main.h" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="65" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/softdevice/s132/headers/nrf_error.h" selected="0" top="38" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="595" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/softdevice/s132/headers/ble_gap.h" selected="0" top="555" codecName="Default"/>
  </Files>
  <ARMCrossStudioWindow activeProject="ble_app_uart_pca10040_s132" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="nrf52832_xxaa" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/classes" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>
