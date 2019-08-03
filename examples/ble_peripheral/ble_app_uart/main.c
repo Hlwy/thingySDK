@@ -235,12 +235,12 @@ int main(void)
 
     pwm_init(pwm_pin,dir_pin,&motor);
     buzzer_init(speaker_handler);
-    battery_monitor_init(300000, battery_monitor_handler, &battery);
+    battery_monitor_init(900000, battery_monitor_handler, &battery);
     new_duty_cycle = motor.pwm.period;
 
 //     drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_SENSE,&color_green);
 
-//    NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"===== Thingy demo started! =====  \r\n"NRF_LOG_COLOR_CODE_DEFAULT);
+    NRF_LOG_INFO(NRF_LOG_COLOR_CODE_GREEN"===== Thingy demo started! =====  \r\n"NRF_LOG_COLOR_CODE_DEFAULT);
 
     nrf_gpio_cfg_input(BUTTON, NRF_GPIO_PIN_PULLUP);
     drv_ext_gpio_cfg_input(SX_IOEXT_0,DRV_EXT_GPIO_PIN_PULLUP);

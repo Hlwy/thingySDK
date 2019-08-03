@@ -28,6 +28,7 @@
   <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;Additions"/>
   <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;Application"/>
   <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;Classes"/>
+  <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;nRF_BLE"/>
   <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;nRF_BLE_Services"/>
  </Project>
  <Register1>
@@ -52,14 +53,20 @@
   <Watches active="1" update="Twice a Second">
    <Watchpoint expression="tags_detected" name="tags_detected" radix="10" linenumber="1186" filename="../../../main.c"/>
    <Watchpoint expression="tags_nearby" name="tags_nearby" radix="-1" linenumber="1188" filename="../../../main.c"/>
-   <Watchpoint expression="bat_percent" name="bat_percent" radix="10" linenumber="11" filename="classes/nrf_battery_monitor.h"/>
-   <Watchpoint expression="voltage" name="voltage" radix="10" linenumber="12" filename="classes/nrf_battery_monitor.h"/>
+   <Watchpoint expression="bat_percent" name="bat_percent" radix="10" linenumber="13" filename="classes/nrf_battery_monitor.h"/>
+   <Watchpoint expression="voltage" name="voltage" radix="10" linenumber="13" filename="classes/nrf_battery_monitor.h"/>
    <Watchpoint expression="rssiThresh" name="rssiThresh" radix="10" linenumber="243" filename="classes/nus_helpers.h"/>
-   <Watchpoint expression="debounceCounter" name="debounceCounter" radix="10" linenumber="34" filename="classes/dd_cmd_relay.h"/>
-   <Watchpoint expression="nBleUpdates" name="nBleUpdates" radix="10" linenumber="32" filename="classes/dd_cmd_relay.h"/>
-   <Watchpoint expression="nDevices" name="nDevices" radix="10" linenumber="31" filename="classes/dd_cmd_relay.h"/>
-   <Watchpoint expression="m_tags" name="m_tags" radix="16" linenumber="49" filename="classes/dd_cmd_relay.h"/>
-   <Watchpoint expression="debounceThresh" name="debounceThresh" radix="10" linenumber="58" filename="classes/dd_cmd_relay.h"/>
+   <Watchpoint expression="debounceCounter" name="debounceCounter" radix="10" linenumber="36" filename="classes/dd_cmd_relay.h"/>
+   <Watchpoint expression="nBleUpdates" name="nBleUpdates" radix="10" linenumber="34" filename="classes/dd_cmd_relay.h"/>
+   <Watchpoint expression="nDevices" name="nDevices" radix="10" linenumber="33" filename="classes/dd_cmd_relay.h"/>
+   <Watchpoint expression="m_tags" name="m_tags" radix="16" linenumber="54" filename="classes/dd_cmd_relay.h"/>
+   <Watchpoint expression="debounceThresh" name="debounceThresh" radix="10" linenumber="62" filename="classes/dd_cmd_relay.h"/>
+   <Watchpoint expression="flag_force_door_open" name="flag_force_door_open" radix="-1" linenumber="114" filename="classes/dd_cmd_relay.h"/>
+   <Watchpoint expression="flag_force_door_close" name="flag_force_door_close" radix="-1" linenumber="115" filename="classes/dd_cmd_relay.h"/>
+   <Watchpoint expression="motor_speed" name="motor_speed" radix="-1" linenumber="121" filename="classes/dd_cmd_relay.h"/>
+   <Watchpoint expression="encoder_limit" name="encoder_limit" radix="10" linenumber="122" filename="classes/dd_cmd_relay.h"/>
+   <Watchpoint expression="flag_door_locked" name="flag_door_locked" radix="-1" linenumber="118" filename="classes/dd_cmd_relay.h"/>
+   <Watchpoint expression="dd_bat_status" name="dd_bat_status" radix="-1" linenumber="33" filename="classes/nrf_battery_monitor.h"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -72,16 +79,18 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="9" y="212" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="1" top="202" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="3998" useTextEdit="1" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="3967" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="242" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="0" top="237" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="28" y="3996" useTextEdit="1" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="3439" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="17" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/dd_cmd_relay.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="16" y="53" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_ble_main.h" selected="0" top="23" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="800" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/dd_cmd_relay.h" selected="0" top="784" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="25" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_ble_main.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="442" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/dd_cmd_relay.h" selected="0" top="434" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="15" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_battery_monitor.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="54" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_battery_monitor.h" selected="0" top="21" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="13" y="12" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_battery_monitor.h" selected="1" top="6" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="78" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/modules/m_batt_meas.h" selected="0" top="53" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="65" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/softdevice/s132/headers/nrf_error.h" selected="0" top="38" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="595" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/softdevice/s132/headers/ble_gap.h" selected="0" top="555" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="56" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/softdevice/s132/headers/ble_gatt.h" selected="0" top="38" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="62" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/ble/nrf_ble_gatt/nrf_ble_gatt.c" selected="0" top="47" codecName="Default"/>
  </Files>
  <ARMCrossStudioWindow activeProject="ble_app_uart_pca10040_s132" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="nrf52832_xxaa" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/classes" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>
