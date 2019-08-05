@@ -31,7 +31,6 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/sx150x_led_drv_calc.o: \
  ../../../../../../components/device/nrf52_name_change.h \
  ../../../../../../components/device/compiler_abstraction.h \
  ../../../../../../components/libraries/util/sdk_macros.h \
- ../../../../../../components/libraries/strerror/nrf_strerror.h \
  ../../../../../../components/libraries/log/src/nrf_log_internal.h \
  ../../../../../../components/libraries/util/app_util.h \
  additions/macros_common.h

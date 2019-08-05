@@ -42,7 +42,6 @@ void board_init(void){
     ext_light_init.num_lights = 2;
     ext_light_init.resync_pin = DRV_EXT_LIGHT_INVALID_RESYNC_PIN;
     ext_light_init.clkx_div = DRV_EXT_LIGHT_CLKX_DIV_8;
-//    ext_light_init.p_light_conf = &led_cfg;
     ext_light_init.p_light_conf = led_cfg;
 
     err_code = drv_ext_light_init(&ext_light_init,true);
@@ -50,14 +49,12 @@ void board_init(void){
 
     nrf_delay_ms(100);
 
-//    drv_ext_light_rgb_intensity_set(0,&color_green);
-
      /**@brief Initialize the TWI manager. */
-    err_code = twi_manager_init(APP_IRQ_PRIORITY_THREAD);
-    APP_ERROR_CHECK(err_code);
-
-    /**@brief Initialize LED and button UI module. */
-    ui_params.p_twi_instance = &m_twi_sensors;
+//    err_code = twi_manager_init(APP_IRQ_PRIORITY_THREAD);
+//    APP_ERROR_CHECK(err_code);
+//
+//    /**@brief Initialize LED and button UI module. */
+//    ui_params.p_twi_instance = &m_twi_sensors;
 
     /** Begin Original*/
 //    err_code = m_ui_init(&m_ble_service_handles[THINGY_SERVICE_UI],&ui_params);

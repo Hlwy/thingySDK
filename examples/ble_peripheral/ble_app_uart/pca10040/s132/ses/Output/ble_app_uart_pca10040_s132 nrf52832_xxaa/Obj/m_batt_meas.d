@@ -70,6 +70,5 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/m_batt_meas.o: \
  ../../../../../../components/softdevice/s132/headers/ble_gap.h \
  ../../../../../../components/softdevice/s132/headers/ble_gatt.h \
  ../../../../../../components/libraries/log/nrf_log.h \
- ../../../../../../components/libraries/strerror/nrf_strerror.h \
  ../../../../../../components/libraries/log/src/nrf_log_internal.h \
  additions/macros_common.h

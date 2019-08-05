@@ -7,6 +7,7 @@
 #include "pca20020.h"
 #include "nrf_log.h"
 #include "ble_bas.h"
+#include "nrf_buzzer.h"
 
 //#define DEBUG_BATTERY
 
@@ -31,6 +32,7 @@ static uint8_t bat_percent;
 static uint16_t voltage;
 static m_batt_meas_event_type_t m_bat_status;
 static bat_charge_status_t dd_bat_status;
+static bool flag_low_battery = false;
 
 void battery_monitor_init(uint32_t period_ms, void (*handler)(m_batt_meas_event_t const *), battery_t* h_battery);
 
@@ -49,37 +51,39 @@ static void battery_monitor_handler(m_batt_meas_event_t const * p_event){
           }break; // M_BATT_MEAS_EVENT_DATA
 
           case M_BATT_MEAS_EVENT_LOW:{
-               printf("Battery Monitor (%d): BATTERY LOW!\r\n",M_BATT_MEAS_EVENT_LOW);
+               // printf("Battery Monitor (%d): BATTERY LOW!\r\n",M_BATT_MEAS_EVENT_LOW);
+               initiate_alarm_sequence(2500,100,5,500,1000);
+               flag_low_battery = true;
                dd_bat_status = DD_BAT_LOW;
           }break; // M_BATT_MEAS_EVENT_LOW
 
           case M_BATT_MEAS_EVENT_FULL:{
-               printf("----- Battery Monitor (%d): Battery Full!\r\n",M_BATT_MEAS_EVENT_FULL);
+               // printf("----- Battery Monitor (%d): Battery Full!\r\n",M_BATT_MEAS_EVENT_FULL);
                dd_bat_status = DD_BAT_FULL;
           }break; // M_BATT_MEAS_EVENT_FULL
 
           case M_BATT_MEAS_EVENT_USB_CONN_CHARGING:{
-               printf("----- Battery Monitor (%d): Charging...\r\n",M_BATT_MEAS_EVENT_USB_CONN_CHARGING);
+               // printf("----- Battery Monitor (%d): Charging...\r\n",M_BATT_MEAS_EVENT_USB_CONN_CHARGING);
                dd_bat_status = DD_BAT_CHARGING;
           }break; // M_BATT_MEAS_EVENT_USB_CONN_CHARGING
 
           case M_BATT_MEAS_EVENT_USB_CONN_CHARGING_FINISHED:{
-               printf("----- Battery Monitor (%d): Charging Finished!\r\n",M_BATT_MEAS_EVENT_USB_CONN_CHARGING_FINISHED);
+               // printf("----- Battery Monitor (%d): Charging Finished!\r\n",M_BATT_MEAS_EVENT_USB_CONN_CHARGING_FINISHED);
                dd_bat_status = DD_BAT_CHARGING_FINISHED;
           }break; // M_BATT_MEAS_EVENT_USB_CONN_CHARGING_FINISHED
 
           case M_BATT_MEAS_EVENT_USB_DISCONN:{
-               printf("----- Battery Monitor (%d): Charging Stopped (USB Disconnected).\r\n",M_BATT_MEAS_EVENT_USB_DISCONN);
+               // printf("----- Battery Monitor (%d): Charging Stopped (USB Disconnected).\r\n",M_BATT_MEAS_EVENT_USB_DISCONN);
                dd_bat_status = DD_BAT_CHARGING_DISCONNECTED;
           }break; // M_BATT_MEAS_EVENT_USB_DISCONN
 
           case M_BATT_MEAS_EVENT_ERROR:{
-               printf("----- Battery Monitor (%d): Error occurred!\r\n",M_BATT_MEAS_EVENT_ERROR);
+               // printf("----- Battery Monitor (%d): Error occurred!\r\n",M_BATT_MEAS_EVENT_ERROR);
                dd_bat_status = DD_BAT_ERROR;
           }break; // M_BATT_MEAS_EVENT_ERROR
 
           default:{
-               NRF_LOG_INFO("----- Battery Monitor: Default Case!\r\n");
+               // NRF_LOG_INFO("----- Battery Monitor: Default Case!\r\n");
                dd_bat_status = DD_BAT_NOT_CHARGING;
           }break;
      }

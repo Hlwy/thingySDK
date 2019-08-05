@@ -54,6 +54,7 @@
 "Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/m_ui.o"
 "Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/m_ui_demo.o"
 "Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_calender.o"
+"Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_drv_timer.o"
 "Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_battery_monitor.o"
 "Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_button.o"
 "Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_buzzer.o"

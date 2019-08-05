@@ -5,23 +5,19 @@
 #include <stdlib.h>
 
 #include "ble_nus.h"
-#include "nrf_ble_gatt.h"
-#include "ble_hci.h"
-
-#include "nrf_calender.h"
-#include "nrf_battery_monitor.h"
-#include "vector_c.h"
 #include "nrf_log.h"
+#include "vector_c.h"
+#include "nrf_lights.h"
+#include "nrf_calender.h"
+#include "nrf_drv_gpiote.h"
+#include "nrf_battery_monitor.h"
 
-#define CONN_CFG_TAG                    1
-#define APP_FEATURE_NOT_SUPPORTED       BLE_GATT_STATUS_ATTERR_APP_BEGIN + 2
 #define DEFAULT_RSSI_THRESHOLD          -70
 #define DEFAULT_DEBOUNCE_THRESHOLD       35
 
-#define DEBUGGING
 //#define DEBUG_CHECKING
 //#define DEBUG_COMMANDS
-#define DEBUG_DD_MSGS
+//#define DEBUG_DD_MSGS
 
 typedef enum{
      DD_MSG_TYPE_NONE,
@@ -89,7 +85,6 @@ typedef vec_t(vec_byte_t) vec_bytes_t;
 typedef vec_t(bool) vec_bool_t;
 typedef vec_t(dd_tag_t) vec_tags_t;
 
-static uint16_t m_conn_handle = BLE_CONN_HANDLE_INVALID;
 static ble_gap_evt_adv_report_t const* ble_report;
 
 static vec_bytes_t tagAddrs;
@@ -98,17 +93,13 @@ static vec_tags_t m_tags;
 
 static uint8_t* ble_addr;
 static int nDevices = 0;
-static int nBleUpdates = 0;
-//static int rssiThresh = -70;
+
 static int debounceCounter = 0;
 static int debounceThresh = DEFAULT_DEBOUNCE_THRESHOLD;
 
 static bool flag_debug = false;
 static bool flag_debug_rssi = false;
-static bool tags_nearby = false;
 static bool tags_detected = false;
-static bool were_tags_nearby = false;
-static bool name_found = false;
 
 static bool isDoorOpen = false;
 static bool flag_close_door = true;
@@ -117,7 +108,7 @@ static bool flag_force_door_close = false;
 static bool flag_upper_limit_switch_activated = false;
 static bool flag_lower_limit_switch_activated = false;
 static bool flag_door_locked = false;
-static bool flag_low_battery = false;
+static bool flag_force_door_stop = false;
 
 static float motor_speed = 0.5;
 static int32_t encoder_limit = 2945;
@@ -369,7 +360,6 @@ static void report_limit_switch_state(ble_nus_t* p_nus, const char* switch_id, b
 //      memset(data, 0, sizeof(data));
 // }
 
-// TODO
 static void report_open_status(ble_nus_t* p_nus, bool isOpen){
      uint8_t data[4096];
      size_t sz = 0;
@@ -422,7 +412,7 @@ static dd_msg_data_t interpret_msg_data_type(ble_nus_t* p_nus, const char* cmd_)
 static uint32_t dd_msg_handler(dd_msg_data_t cmd_id_, int target_tag_index, bool isSetOp, const char* raw_str_value, ble_nus_t * p_nus){
      // Ensure a valid tag id is given when tag-specific commands are recognized
      if((cmd_id_ >= DD_MSG_DATA_TAG_ID) && (target_tag_index < 0)){
-          printf("[ERROR] parse_nus_data() ---- The DoggyTag ID given [%d] is invalid, or not recognized.\n",target_tag_index);
+          // printf("[ERROR] parse_nus_data() ---- The DoggyTag ID given [%d] is invalid, or not recognized.\n",target_tag_index);
           return NRF_ERROR_INVALID_PARAM;
      }
 
@@ -439,30 +429,31 @@ static uint32_t dd_msg_handler(dd_msg_data_t cmd_id_, int target_tag_index, bool
 
           /** ***************       WRITE ONLY  COMMANDS     **************** */
           case DD_MSG_DATA_STOP_MOTOR:{
-               printf("DD_MSG_DATA_STOP_MOTOR\n");
+               // printf("DD_MSG_DATA_STOP_MOTOR\n");
                flag_force_door_open = false;
                flag_force_door_close = false;
+               flag_force_door_stop = !flag_force_door_stop;
                return NRF_SUCCESS;
           } break;
           case DD_MSG_DATA_OPEN_DOOR:{
-               printf("DD_MSG_DATA_OPEN_DOOR\n");
-               flag_force_door_open = true;
+               // printf("DD_MSG_DATA_OPEN_DOOR\n");
+               flag_force_door_open = !flag_force_door_open;
                flag_force_door_close = false;
                return NRF_SUCCESS;
           } break;
           case DD_MSG_DATA_CLOSE_DOOR:{
-               printf("DD_MSG_DATA_CLOSE_DOOR\n");
+               // printf("DD_MSG_DATA_CLOSE_DOOR\n");
                flag_force_door_open = false;
-               flag_force_door_close = true;
+               flag_force_door_close = !flag_force_door_close;
                return NRF_SUCCESS;
           } break;
           case DD_MSG_DATA_LOCK_DOOR:{
-               printf("DD_MSG_DATA_LOCK_DOOR\n");
+               // printf("DD_MSG_DATA_LOCK_DOOR\n");
                flag_door_locked = true;
                return NRF_SUCCESS;
           } break;
           case DD_MSG_DATA_UNLOCK_DOOR:{
-               printf("DD_MSG_DATA_UNLOCK_DOOR\n");
+               // printf("DD_MSG_DATA_UNLOCK_DOOR\n");
                flag_door_locked = false;
                return NRF_SUCCESS;
           } break;
@@ -501,7 +492,7 @@ static uint32_t dd_msg_handler(dd_msg_data_t cmd_id_, int target_tag_index, bool
                return NRF_SUCCESS;
           } break;
           case DD_MSG_DATA_DOOR_STATUS:{
-               printf("DD_MSG_DATA_DOOR_STATUS\n");
+               // printf("DD_MSG_DATA_DOOR_STATUS\n");
                memset(buffer, 0, sizeof(buffer));
                sz = snprintf(NULL, 0, "report door_status %s %s\n",isDoorOpen ? "true" : "false",flag_door_locked ? "true" : "false");
                sprintf((char *)buffer, "report door_status %s %s\n",isDoorOpen ? "true" : "false",flag_door_locked ? "true" : "false");
@@ -518,12 +509,12 @@ static uint32_t dd_msg_handler(dd_msg_data_t cmd_id_, int target_tag_index, bool
           } break;
           // TODO:
          case DD_MSG_DATA_OPEN_STATUS:{
-              printf("DD_MSG_DATA_OPEN_STATUS\n");
+              // printf("DD_MSG_DATA_OPEN_STATUS\n");
               report_open_status(p_nus,isDoorOpen);
               return NRF_SUCCESS;
          } break;
          case DD_MSG_DATA_LOCK_STATUS:{
-              printf("DD_MSG_DATA_LOCK_STATUS\n");
+              // printf("DD_MSG_DATA_LOCK_STATUS\n");
               report_lock_status(p_nus,flag_door_locked);
               return NRF_SUCCESS;
          } break;
@@ -830,144 +821,10 @@ static bool pet_proximity_check(ble_evt_t const * p_ble_evt){
           if(flag_debug_rssi) printf(NRF_LOG_COLOR_CODE_GREEN" Found Target Device! =====  %d\r\n"NRF_LOG_COLOR_CODE_DEFAULT,tmpRssi);
           tags_detected = true;
           if(tmpRssi >= foundTag->thresh){
-               tags_nearby = true;
                return true;
-          }else
-               tags_nearby = false;
-     }else{
-          tags_detected = false;
-          tmpRssi = -10000;
+          }
      }
      return false;
-}
-
-
-/**@brief Function for the application's SoftDevice event handler. */
-static void on_ble_evt(ble_evt_t * p_ble_evt){//, ble_nus_t * p_nus){
-     uint32_t err_code;
-     ble_gap_evt_t const * p_gap_evt = &p_ble_evt->evt.gap_evt;
-
-     if(nBleUpdates == 0){ last_time = begin; }
-     tmpT = nrf_cal_get_time_calibrated();
-     now = mktime(tmpT);
-     dt = (now - last_time)/3925.0;
-
-     if(dt >= 1.0){
-          if(flag_debug) NRF_LOG_INFO("on_ble_evt(): --- Current Time = %d Time since last BLE update = " NRF_LOG_FLOAT_MARKER "\n", now, NRF_LOG_FLOAT(dt));
-          last_time = now;
-     }
-
-     switch(p_ble_evt->header.evt_id){
-          case BLE_GAP_EVT_CONNECTED:{
-               // printf("BLE_GAP_EVT_CONNECTED\r\n");
-               m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
-               if(flag_debug) NRF_LOG_INFO("Connected\r\n");
-          } break;
-
-          case BLE_GAP_EVT_DISCONNECTED:{
-               m_conn_handle = BLE_CONN_HANDLE_INVALID;
-               if(flag_debug) NRF_LOG_INFO("Disconnected\r\n");
-          } break;
-
-          case BLE_GAP_EVT_ADV_REPORT:{
-               bool flag_pets_near = false;
-               uint32_t now = millis();
-               uint32_t tmpdt = compareMillis(myTimeStamp, now);
-               float dt = tmpdt/(float)1000.0;
-               myTimeStamp = now;
-//               printf(NRF_LOG_FLOAT_MARKER" seconds have passed\n",NRF_LOG_FLOAT(dt));
-               if(nDevices>0){
-                    flag_pets_near = pet_proximity_check(p_ble_evt);
-                    if(flag_pets_near){
-                         debounceCounter = 0;
-                         flag_close_door = false;
-                         if(flag_debug) NRF_LOG_INFO("Opening Door...\r\n");
-                    }else{
-                         debounceCounter++;
-                         if(debounceCounter >= debounceThresh){
-                              flag_close_door = true;
-                              if(flag_debug) NRF_LOG_INFO("Closing Door...\r\n");
-                         }
-                    }
-               }else{
-                    debounceCounter = 0;
-                    flag_close_door = true;
-               }
-          } break;
-
-          /** Pairing not supported */
-          case BLE_GAP_EVT_SEC_PARAMS_REQUEST:{
-               // printf("BLE_GAP_EVT_SEC_PARAMS_REQUEST\r\n");
-               err_code = sd_ble_gap_sec_params_reply(m_conn_handle, BLE_GAP_SEC_STATUS_PAIRING_NOT_SUPP, NULL, NULL);
-               APP_ERROR_CHECK(err_code);
-          } break;
-
-          case BLE_GAP_EVT_DATA_LENGTH_UPDATE_REQUEST:{
-               // printf("BLE_GAP_EVT_DATA_LENGTH_UPDATE_REQUEST\r\n");
-               ble_gap_data_length_params_t dl_params;
-               // Clearing the struct will effectivly set members to @ref BLE_GAP_DATA_LENGTH_AUTO
-               memset(&dl_params, 0, sizeof(ble_gap_data_length_params_t));
-               err_code = sd_ble_gap_data_length_update(p_ble_evt->evt.gap_evt.conn_handle, &dl_params, NULL);
-               APP_ERROR_CHECK(err_code);
-          } break;
-
-          /** No system attributes have been stored. */
-          case BLE_GATTS_EVT_SYS_ATTR_MISSING:{
-               err_code = sd_ble_gatts_sys_attr_set(m_conn_handle, NULL, 0, 0);
-               APP_ERROR_CHECK(err_code);
-          } break;
-
-          /** Disconnect on GATT Client timeout event. */
-          case BLE_GATTC_EVT_TIMEOUT:{
-               err_code = sd_ble_gap_disconnect(p_ble_evt->evt.gattc_evt.conn_handle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
-               APP_ERROR_CHECK(err_code);
-          } break;
-
-          /** Disconnect on GATT Server timeout event. */
-          case BLE_GATTS_EVT_TIMEOUT:{
-               err_code = sd_ble_gap_disconnect(p_ble_evt->evt.gatts_evt.conn_handle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
-               APP_ERROR_CHECK(err_code);
-          } break;
-
-          case BLE_EVT_USER_MEM_REQUEST:{
-               // printf("BLE_EVT_USER_MEM_REQUEST\r\n");
-               err_code = sd_ble_user_mem_reply(p_ble_evt->evt.gattc_evt.conn_handle, NULL);
-               APP_ERROR_CHECK(err_code);
-          } break;
-
-          case BLE_GATTS_EVT_RW_AUTHORIZE_REQUEST:{
-               // printf("BLE_GATTS_EVT_RW_AUTHORIZE_REQUEST\r\n");
-               ble_gatts_evt_rw_authorize_request_t  req;
-               ble_gatts_rw_authorize_reply_params_t auth_reply;
-               req = p_ble_evt->evt.gatts_evt.params.authorize_request;
-
-               if(req.type != BLE_GATTS_AUTHORIZE_TYPE_INVALID){
-                    if(  (req.request.write.op == BLE_GATTS_OP_PREP_WRITE_REQ)     ||
-                         (req.request.write.op == BLE_GATTS_OP_EXEC_WRITE_REQ_NOW) ||
-                         (req.request.write.op == BLE_GATTS_OP_EXEC_WRITE_REQ_CANCEL) )
-                    {
-                         if(req.type == BLE_GATTS_AUTHORIZE_TYPE_WRITE)
-                              auth_reply.type = BLE_GATTS_AUTHORIZE_TYPE_WRITE;
-                         else
-                              auth_reply.type = BLE_GATTS_AUTHORIZE_TYPE_READ;
-                         auth_reply.params.write.gatt_status = APP_FEATURE_NOT_SUPPORTED;
-                         err_code = sd_ble_gatts_rw_authorize_reply(p_ble_evt->evt.gatts_evt.conn_handle, &auth_reply);
-                         APP_ERROR_CHECK(err_code);
-                    }
-               }
-          } break;
-
-          case BLE_GATTS_EVT_WRITE:{
-               // printf("BLE_GATTS_EVT_WRITE\r\n");
-          } break;
-          case BLE_GATTS_EVT_HVC:{
-               // printf("BLE_GATTS_EVT_HVC\r\n");
-          } break;
-          case BLE_GATTS_EVT_HVN_TX_COMPLETE:{
-               // printf("BLE_GATTS_EVT_HVN_TX_COMPLETE\r\n");
-          } break;
-     }
-     nBleUpdates++;
 }
 
 #endif // DD_MSG_RELAY_H__

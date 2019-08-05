@@ -43,9 +43,8 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/ble_advertising.o: \
  ../../../../../../components/softdevice/s132/headers/nrf_soc.h \
  ../../../../../../components/softdevice/s132/headers/nrf_error_soc.h \
  ../../../../../../components/libraries/log/nrf_log.h \
- ../../../../../../components/libraries/strerror/nrf_strerror.h \
- ../../../../../../components/libraries/util/sdk_errors.h \
  ../../../../../../components/libraries/log/src/nrf_log_internal.h \
  ../../../../../../components/libraries/fstorage/fstorage.h \
  ../../../../../../components/libraries/experimental_section_vars/nrf_section.h \
- ../../../../../../components/libraries/util/nordic_common.h
+ ../../../../../../components/libraries/util/nordic_common.h \
+ ../../../../../../components/libraries/util/sdk_errors.h

@@ -7,6 +7,10 @@
 
 #include "ble.h"
 #include "m_ble.h"
+#include "ble_nus.h"
+#include "ble_hci.h"
+#include "nrf_ble_gatt.h"
+
 #include "bsp.h"
 #include "bsp_btn_ble.h"
 #include "ble_advdata.h"
@@ -41,6 +45,9 @@
 #define UART_RX_BUF_SIZE                256
 #define NRF_BLE_LINK_COUNT              (NRF_BLE_PERIPHERAL_LINK_COUNT + NRF_BLE_CENTRAL_LINK_COUNT)
 
+#define CONN_CFG_TAG                    1
+#define APP_FEATURE_NOT_SUPPORTED       BLE_GATT_STATUS_ATTERR_APP_BEGIN + 2
+
 typedef struct{
     uint8_t  * p_data;    /**< Pointer to data. */
     uint16_t   data_len;  /**< Length of data. */
@@ -51,6 +58,10 @@ static ble_nus_t                        m_nus;
 static nrf_ble_gatt_t                   m_gatt;                                     /**< GATT module instance. */
 static ble_uuid_t                       m_adv_uuids[] = {{BLE_UUID_NUS_SERVICE, NUS_SERVICE_UUID_TYPE}};  /**< Universally unique service identifier. */
 static uint16_t                         m_ble_nus_max_data_len = BLE_GATT_ATT_MTU_DEFAULT - 3;  /**< Maximum length of data (in bytes) that can be transmitted to the peer by the Nordic UART service module. */
+static uint16_t m_conn_handle = BLE_CONN_HANDLE_INVALID;
+
+static int nBleUpdates = 0;
+static bool tags_nearby = false;
 
 static ble_gap_scan_params_t const m_scan_params =
 {
@@ -59,7 +70,6 @@ static ble_gap_scan_params_t const m_scan_params =
     .window   = 0x0050,
     .timeout  = 0x0000,
 };
-
 
 /**@brief   Function for handling app_uart events.
  *
@@ -231,10 +241,6 @@ static void nus_data_handler(ble_nus_t * p_nus, uint8_t * p_data, uint16_t lengt
 
     err_code = parse_nus_data(p_nus, p_data);
 
-//    memset(_buffer, 0, sizeof(_buffer));
-//    memcpy(&_buffer[0], (char*)p_data, sizeof(uint8_t)*length);
-//    NRF_LOG_INFO("nus_data_handler(): ----- Data = %s\r\n",_buffer);
-
     for (uint32_t i = 0; i < length; i++)
     {
         do
@@ -390,7 +396,130 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
     }
 }
 
+static void on_ble_evt(ble_evt_t * p_ble_evt){//, ble_nus_t * p_nus){
+     uint32_t err_code;
+     ble_gap_evt_t const * p_gap_evt = &p_ble_evt->evt.gap_evt;
 
+     if(nBleUpdates == 0){ last_time = begin; }
+     tmpT = nrf_cal_get_time_calibrated();
+     now = mktime(tmpT);
+     dt = (now - last_time)/3925.0;
+
+     if(dt >= 1.0){
+          if(flag_debug) NRF_LOG_INFO("on_ble_evt(): --- Current Time = %d Time since last BLE update = " NRF_LOG_FLOAT_MARKER "\n", now, NRF_LOG_FLOAT(dt));
+          last_time = now;
+     }
+
+     switch(p_ble_evt->header.evt_id){
+          case BLE_GAP_EVT_CONNECTED:{
+               // printf("BLE_GAP_EVT_CONNECTED\r\n");
+               m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
+               if(flag_debug) NRF_LOG_INFO("Connected\r\n");
+          } break;
+
+          case BLE_GAP_EVT_DISCONNECTED:{
+               m_conn_handle = BLE_CONN_HANDLE_INVALID;
+               if(flag_debug) NRF_LOG_INFO("Disconnected\r\n");
+          } break;
+
+          case BLE_GAP_EVT_ADV_REPORT:{
+               bool flag_pets_near = false;
+               uint32_t now = millis();
+               uint32_t tmpdt = compareMillis(myTimeStamp, now);
+               float dt = tmpdt/(float)1000.0;
+               myTimeStamp = now;
+//               printf(NRF_LOG_FLOAT_MARKER" seconds have passed\n",NRF_LOG_FLOAT(dt));
+               if(nDevices>0){
+                    flag_pets_near = pet_proximity_check(p_ble_evt);
+                    if(flag_pets_near){
+                         debounceCounter = 0;
+                         tags_nearby = true;
+                    }else{
+                         debounceCounter++;
+                         if(debounceCounter >= debounceThresh){
+                              tags_nearby = false;
+                         }
+                    }
+               }else{
+                    debounceCounter = 0;
+                    tags_nearby = false;
+               }
+          } break;
+
+          /** Pairing not supported */
+          case BLE_GAP_EVT_SEC_PARAMS_REQUEST:{
+               // printf("BLE_GAP_EVT_SEC_PARAMS_REQUEST\r\n");
+               err_code = sd_ble_gap_sec_params_reply(m_conn_handle, BLE_GAP_SEC_STATUS_PAIRING_NOT_SUPP, NULL, NULL);
+               APP_ERROR_CHECK(err_code);
+          } break;
+
+          case BLE_GAP_EVT_DATA_LENGTH_UPDATE_REQUEST:{
+               // printf("BLE_GAP_EVT_DATA_LENGTH_UPDATE_REQUEST\r\n");
+               ble_gap_data_length_params_t dl_params;
+               // Clearing the struct will effectivly set members to @ref BLE_GAP_DATA_LENGTH_AUTO
+               memset(&dl_params, 0, sizeof(ble_gap_data_length_params_t));
+               err_code = sd_ble_gap_data_length_update(p_ble_evt->evt.gap_evt.conn_handle, &dl_params, NULL);
+               APP_ERROR_CHECK(err_code);
+          } break;
+
+          /** No system attributes have been stored. */
+          case BLE_GATTS_EVT_SYS_ATTR_MISSING:{
+               err_code = sd_ble_gatts_sys_attr_set(m_conn_handle, NULL, 0, 0);
+               APP_ERROR_CHECK(err_code);
+          } break;
+
+          /** Disconnect on GATT Client timeout event. */
+          case BLE_GATTC_EVT_TIMEOUT:{
+               err_code = sd_ble_gap_disconnect(p_ble_evt->evt.gattc_evt.conn_handle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
+               APP_ERROR_CHECK(err_code);
+          } break;
+
+          /** Disconnect on GATT Server timeout event. */
+          case BLE_GATTS_EVT_TIMEOUT:{
+               err_code = sd_ble_gap_disconnect(p_ble_evt->evt.gatts_evt.conn_handle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
+               APP_ERROR_CHECK(err_code);
+          } break;
+
+          case BLE_EVT_USER_MEM_REQUEST:{
+               // printf("BLE_EVT_USER_MEM_REQUEST\r\n");
+               err_code = sd_ble_user_mem_reply(p_ble_evt->evt.gattc_evt.conn_handle, NULL);
+               APP_ERROR_CHECK(err_code);
+          } break;
+
+          case BLE_GATTS_EVT_RW_AUTHORIZE_REQUEST:{
+               // printf("BLE_GATTS_EVT_RW_AUTHORIZE_REQUEST\r\n");
+               ble_gatts_evt_rw_authorize_request_t  req;
+               ble_gatts_rw_authorize_reply_params_t auth_reply;
+               req = p_ble_evt->evt.gatts_evt.params.authorize_request;
+
+               if(req.type != BLE_GATTS_AUTHORIZE_TYPE_INVALID){
+                    if(  (req.request.write.op == BLE_GATTS_OP_PREP_WRITE_REQ)     ||
+                         (req.request.write.op == BLE_GATTS_OP_EXEC_WRITE_REQ_NOW) ||
+                         (req.request.write.op == BLE_GATTS_OP_EXEC_WRITE_REQ_CANCEL) )
+                    {
+                         if(req.type == BLE_GATTS_AUTHORIZE_TYPE_WRITE)
+                              auth_reply.type = BLE_GATTS_AUTHORIZE_TYPE_WRITE;
+                         else
+                              auth_reply.type = BLE_GATTS_AUTHORIZE_TYPE_READ;
+                         auth_reply.params.write.gatt_status = APP_FEATURE_NOT_SUPPORTED;
+                         err_code = sd_ble_gatts_rw_authorize_reply(p_ble_evt->evt.gatts_evt.conn_handle, &auth_reply);
+                         APP_ERROR_CHECK(err_code);
+                    }
+               }
+          } break;
+
+          case BLE_GATTS_EVT_WRITE:{
+               // printf("BLE_GATTS_EVT_WRITE\r\n");
+          } break;
+          case BLE_GATTS_EVT_HVC:{
+               // printf("BLE_GATTS_EVT_HVC\r\n");
+          } break;
+          case BLE_GATTS_EVT_HVN_TX_COMPLETE:{
+               // printf("BLE_GATTS_EVT_HVN_TX_COMPLETE\r\n");
+          } break;
+     }
+     nBleUpdates++;
+}
 
 /** ===========================================================================
 *      POSSIBLE INSERT HERE => on_ble_evt() && ble_evt_dispatch()
@@ -534,14 +663,9 @@ static void gatt_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
-
-
-
 /**@snippet [UART Initialization] */
 
-
-/**@brief Function for initializing the Advertising functionality.
- */
+/**@brief Function for initializing the Advertising functionality.*/
 static void advertising_init(void)
 {
     uint32_t               err_code;
@@ -568,6 +692,21 @@ static void advertising_init(void)
     APP_ERROR_CHECK(err_code);
 
     ble_advertising_conn_cfg_tag_set(CONN_CFG_TAG);
+}
+
+static uint32_t init_ble(){
+     ble_stack_init();
+     gap_params_init();
+     gatt_init();
+     services_init();
+     advertising_init();
+     conn_params_init();
+
+     NRF_LOG_INFO("BLE Initialized. Starting BLE Scanning...\r\n");
+     uint32_t err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
+     APP_ERROR_CHECK(err_code);
+     scan_start();
+     return err_code;
 }
 
 

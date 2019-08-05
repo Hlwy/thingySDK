@@ -2297,7 +2297,7 @@
 // <e> TIMER_ENABLED - nrf_drv_timer - TIMER periperal driver
 //==========================================================
 #ifndef TIMER_ENABLED
-#define TIMER_ENABLED 0
+#define TIMER_ENABLED 1
 #endif
 #if  TIMER_ENABLED
 // <o> TIMER_DEFAULT_CONFIG_FREQUENCY  - Timer frequency if in Timer mode
@@ -2358,7 +2358,7 @@
  
 
 #ifndef TIMER0_ENABLED
-#define TIMER0_ENABLED 0
+#define TIMER0_ENABLED 1
 #endif
 
 // <q> TIMER1_ENABLED  - Enable TIMER1 instance
@@ -3665,7 +3665,7 @@
  
 
 #ifndef RETARGET_ENABLED
-#define RETARGET_ENABLED 1
+#define RETARGET_ENABLED 0
 #endif
 
 // <q> SLIP_ENABLED  - slip - SLIP encoding and decoding
@@ -3724,7 +3724,7 @@
 // <e> NRF_LOG_ENABLED - nrf_log - Logging
 //==========================================================
 #ifndef NRF_LOG_ENABLED
-#define NRF_LOG_ENABLED 1
+#define NRF_LOG_ENABLED 0
 #endif
 #if  NRF_LOG_ENABLED
 // <e> NRF_LOG_USES_COLORS - If enabled then ANSI escape code for colors is prefixed to every string
@@ -3985,10 +3985,6 @@
 
 // </h> 
 //==========================================================
-#ifndef NRF_LOG_USES_RTT
-#define NRF_LOG_USES_RTT 1
-#endif
-
 #ifndef ARM_MATH_CM4
 #define ARM_MATH_CM4
 #endif
@@ -3996,7 +3992,7 @@
 //#define DEBUG 0
 //#define NRF_LOG_USES_RTT 1
 //#define NRF_LOG_ENABLED 1
-
+//#define RETARGET_ENABLED 1
 
 // <<< end of configuration section >>>
 #endif //SDK_CONFIG_H

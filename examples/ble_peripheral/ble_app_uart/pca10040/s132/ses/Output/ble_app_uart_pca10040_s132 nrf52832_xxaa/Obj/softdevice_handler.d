@@ -59,5 +59,4 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/softdevice_handler.o: \
  /usr/share/segger_embedded_studio_for_arm_4.16/include/stddef.h \
  ../../../../../../components/drivers_nrf/common/nrf_drv_common.h \
  ../../../../../../components/libraries/log/nrf_log.h \
- ../../../../../../components/libraries/strerror/nrf_strerror.h \
  ../../../../../../components/libraries/log/src/nrf_log_internal.h

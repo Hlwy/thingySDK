@@ -54,21 +54,17 @@ void set_speed(float spd_ratio, motor_t* h_motor){
      uint32_t err;
      uint8_t direction;
 
-     if(spd_ratio > 1.0){
-          spd_ratio = 1.0;
-          direction = MOTOR_DIRECTION_FORWARD;
-     }else if(spd_ratio < -1.0){
-          spd_ratio = -1.0;
-          direction = MOTOR_DIRECTION_BACKWARD;
-     }else{
-          spd_ratio = 0.0;
-          direction = MOTOR_DIRECTION_STOP;
-     }
+     if(spd_ratio < 0) direction = MOTOR_DIRECTION_BACKWARD;
+     else direction = MOTOR_DIRECTION_FORWARD;
+
+     if(spd_ratio >= 1.0) spd_ratio = 1.0;
+     else if(spd_ratio <= -1.0) spd_ratio = -1.0;
 
      set_motor_direction(direction,h_motor);
      h_motor->speed = spd_ratio;
      
      // Calculate the PWM Duty value to writeOut
-     uint8_t duty = fabs(spd_ratio) * 255;
+     float fduty = fabs(spd_ratio) * 255;
+     int duty = (int) fduty;
      err = low_power_pwm_duty_set(&h_motor->pwm, duty);
 }

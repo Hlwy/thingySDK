@@ -63,11 +63,12 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/nrf_battery_monitor.o: \
  ../../../../../../components/libraries/util/sdk_os.h \
  ../../../../../../components/libraries/util/app_util.h \
  ../../../../../../components/libraries/util/sdk_macros.h \
- ../../../../../../components/libraries/strerror/nrf_strerror.h \
  ../../../../../../components/libraries/log/src/nrf_log_internal.h \
  additions/ble/ble_bas.h \
  ../../../../../../components/ble/common/ble_srv_common.h \
  ../../../../../../components/softdevice/s132/headers/ble_types.h \
  ../../../../../../components/softdevice/s132/headers/ble_gap.h \
  ../../../../../../components/softdevice/s132/headers/ble_gatt.h \
+ /home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/classes/nrf_buzzer.h \
+ additions/drivers_ext/drv_speaker.h \
  ../../../../../../components/drivers_nrf/delay/nrf_delay.h

@@ -59,7 +59,6 @@ Output/ble_app_uart_pca10040_s132\ nrf52832_xxaa/Obj/support_func.o: \
  ../../../../../../components/libraries/util/sdk_os.h \
  ../../../../../../components/libraries/util/app_util.h \
  ../../../../../../components/libraries/util/sdk_macros.h \
- ../../../../../../components/libraries/strerror/nrf_strerror.h \
  ../../../../../../components/libraries/log/src/nrf_log_internal.h \
  ../../../../../../components/drivers_nrf/delay/nrf_delay.h \
  /home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions/pca20020.h \
