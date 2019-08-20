@@ -13,7 +13,7 @@
 #include "nrf_battery_monitor.h"
 
 #define DEFAULT_RSSI_THRESHOLD          -70
-#define DEFAULT_DEBOUNCE_THRESHOLD       35
+#define DEFAULT_DEBOUNCE_THRESHOLD       150
 
 //#define DEBUG_CHECKING
 //#define DEBUG_COMMANDS
@@ -37,7 +37,7 @@ typedef enum{
      DD_MSG_DATA_BLE_UPDATE_RATE,            /** Id = 4 (R/W) */
      DD_MSG_DATA_DOOR_UPDATE_RATE,           /** Id = 5 (R/W) */
      DD_MSG_DATA_TAG_CHECK_UPDATE_RATE,      /** Id = 6 (R/W) */
-     DD_MSG_DATA_TOGGLE_DOOR_OPEN,           /** Id = 7 (W) */
+     DD_MSG_DATA_NORMAL_DOOR_OPERATION,      /** Id = 7 (W) */
      DD_MSG_DATA_STOP_MOTOR,                 /** Id = 8 (W) */
      DD_MSG_DATA_OPEN_DOOR,                  /** Id = 8 (W) */
      DD_MSG_DATA_CLOSE_DOOR,                 /** Id = 9 (W) */
@@ -134,7 +134,7 @@ static struct dd_msg_data_entry dd_msg_data_dict[] = {
     "ble_rate", DD_MSG_DATA_BLE_UPDATE_RATE,
     "door_update_rate", DD_MSG_DATA_DOOR_UPDATE_RATE,
     "tag_check_rate", DD_MSG_DATA_TAG_CHECK_UPDATE_RATE,
-    "toggle_door_open", DD_MSG_DATA_TOGGLE_DOOR_OPEN,
+    "normal_door_operation", DD_MSG_DATA_NORMAL_DOOR_OPERATION,
     "stop_motor", DD_MSG_DATA_STOP_MOTOR,
     "open_door", DD_MSG_DATA_OPEN_DOOR,
     "close_door", DD_MSG_DATA_CLOSE_DOOR,
@@ -457,8 +457,9 @@ static uint32_t dd_msg_handler(dd_msg_data_t cmd_id_, int target_tag_index, bool
                flag_door_locked = false;
                return NRF_SUCCESS;
           } break;
-          case DD_MSG_DATA_TOGGLE_DOOR_OPEN:{
-               // printf("DD_MSG_DATA_TOGGLE_DOOR_OPEN\n");
+          case DD_MSG_DATA_NORMAL_DOOR_OPERATION:{
+               flag_force_door_open = false;
+               flag_force_door_close = false;
                return NRF_SUCCESS;
           } break;
           case DD_MSG_DATA_TOGGLE_DOOR_LOCK:{

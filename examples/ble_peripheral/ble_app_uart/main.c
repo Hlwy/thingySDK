@@ -116,10 +116,19 @@ static void log_init(void){
 
 void close_door(){
      uint32_t tmpLevel;
+     static bool last_lower_switch_value;
+     static bool last_upper_switch_value;
      tmpLevel = drv_ext_gpio_pin_read(low_limit_switch,&lower_limit_reached);
-     report_limit_switch_state(&m_nus, "lower",!lower_limit_reached);
+     if(last_lower_switch_value != lower_limit_reached){
+          report_limit_switch_state(&m_nus, "lower",!lower_limit_reached);
+          last_lower_switch_value = lower_limit_reached;
+     }
      tmpLevel = drv_ext_gpio_pin_read(up_limit_switch,&upper_limit_reached);
-     report_limit_switch_state(&m_nus, "upper",!upper_limit_reached);
+     if(last_upper_switch_value != upper_limit_reached){
+          report_limit_switch_state(&m_nus, "upper",!upper_limit_reached);
+          last_upper_switch_value = upper_limit_reached;
+     }
+     
      if(!lower_limit_reached){
           // drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_SENSE,&color_black);
      }else{
@@ -139,10 +148,18 @@ void close_door(){
 
 void open_door(){
      uint32_t tmpLevel;
+     static bool last_lower_switch_value;
+     static bool last_upper_switch_value;
      tmpLevel = drv_ext_gpio_pin_read(up_limit_switch,&upper_limit_reached);
-     report_limit_switch_state(&m_nus, "upper",!upper_limit_reached);
+     if(last_upper_switch_value != upper_limit_reached){
+          report_limit_switch_state(&m_nus, "upper",!upper_limit_reached);
+          last_upper_switch_value = upper_limit_reached;
+     }
      tmpLevel = drv_ext_gpio_pin_read(low_limit_switch,&lower_limit_reached);
-     report_limit_switch_state(&m_nus, "lower",!lower_limit_reached);
+     if(last_lower_switch_value != lower_limit_reached){
+          report_limit_switch_state(&m_nus, "lower",!lower_limit_reached);
+          last_lower_switch_value = lower_limit_reached;
+     }
      if(!upper_limit_reached){
           // drv_ext_light_rgb_intensity_set(DRV_EXT_RGB_LED_SENSE,&color_black);
      }else{
