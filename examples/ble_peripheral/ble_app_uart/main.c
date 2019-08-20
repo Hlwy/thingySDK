@@ -20,8 +20,6 @@
 #include "nrf_ble_main.h"
 #include "dd_cmd_relay.h"
 
-//#define DEVICE_NAME                     "Nordic_UART"                               /**< Name of device. Will be included in the advertising data. */
-
 #define DEAD_BEEF                       0xDEADBEEF                                  /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 #define SCHED_MAX_EVENT_DATA_SIZE   MAX(APP_TIMER_SCHED_EVENT_DATA_SIZE, BLE_STACK_HANDLER_SCHED_EVT_SIZE) /**< Maximum size of scheduler events. */
 #define SCHED_QUEUE_SIZE            60  /**< Maximum number of events in the scheduler queue. */

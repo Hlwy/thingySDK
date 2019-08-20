@@ -4159,7 +4159,7 @@ Discarded input sections
  .data.m_adv_uuids
                 0x0000000000000000        0x4 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/m_ble.o
  .bss.m_nus     0x0000000000000000       0x1c Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/m_ble.o
- .rodata        0x0000000000000000       0x10 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/m_ble.o
+ .rodata        0x0000000000000000       0x18 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/m_ble.o
  .text.gap_params_init
                 0x0000000000000000       0x8c Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/m_ble.o
  .text.on_conn_params_evt
@@ -12091,7 +12091,7 @@ Linker script and memory map
                 0x0000000000000001                . = ASSERT (((__ctors_start__ == __ctors_end__) || ((__ctors_end__ - __FLASH_segment_start__) <= __FLASH_segment_size__)), error: .ctors is too large to fit in FLASH memory segment)
                 0x0000000000032604                __rodata_load_start__ = ALIGN (__ctors_end__, 0x4)
 
-.rodata         0x0000000000032604     0x14fc
+.rodata         0x0000000000032604     0x1504
                 0x0000000000032604                __rodata_start__ = .
  *(.rodata .rodata.* .gnu.linkonce.r.*)
  .rodata.color_white
@@ -12106,163 +12106,163 @@ Linker script and memory map
  .rodata.color_green
                 0x0000000000032610        0x3 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/main.o
  *fill*         0x0000000000032613        0x1 
- .rodata        0x0000000000032614      0x766 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/main.o
- *fill*         0x0000000000032d7a        0x2 
+ .rodata        0x0000000000032614      0x76e Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/main.o
+ *fill*         0x0000000000032d82        0x2 
  .rodata.m_scan_params
-                0x0000000000032d7c        0x8 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/main.o
+                0x0000000000032d84        0x8 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/main.o
  .rodata.m_conn_params_timer_id
-                0x0000000000032d84        0x4 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/ble_conn_params.o
- .rodata        0x0000000000032d88       0x10 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/ble_nus.o
- .rodata        0x0000000000032d98       0x20 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/app_uart.o
- .rodata        0x0000000000032db8       0x17 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/SEGGER_RTT.o
- *fill*         0x0000000000032dcf        0x1 
+                0x0000000000032d8c        0x4 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/ble_conn_params.o
+ .rodata        0x0000000000032d90       0x10 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/ble_nus.o
+ .rodata        0x0000000000032da0       0x20 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/app_uart.o
+ .rodata        0x0000000000032dc0       0x17 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/SEGGER_RTT.o
+ *fill*         0x0000000000032dd7        0x1 
  .rodata.m_ioext_osc_status_use_matrix
-                0x0000000000032dd0        0x4 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/drv_ext_light.o
+                0x0000000000032dd8        0x4 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/drv_ext_light.o
  .rodata.batt_meas_app_timer_id
-                0x0000000000032dd4        0x4 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/m_batt_meas.o
- .rodata        0x0000000000032dd8        0x4 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/m_batt_meas.o
+                0x0000000000032ddc        0x4 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/m_batt_meas.o
+ .rodata        0x0000000000032de0        0x4 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/m_batt_meas.o
  .rodata.ramp_down_dat
-                0x0000000000032ddc       0x14 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/drv_speaker.o
- .rodata        0x0000000000032df0        0xc Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/drv_speaker.o
+                0x0000000000032de4       0x14 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/drv_speaker.o
+ .rodata        0x0000000000032df8        0xc Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/drv_speaker.o
  .rodata.m_default_config
-                0x0000000000032dfc        0x4 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_drv_saadc.o
- .rodata        0x0000000000032e00        0x4 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/drv_sx1509.o
- .rodata        0x0000000000032e04       0xcc Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/support_func.o
+                0x0000000000032e04        0x4 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_drv_saadc.o
+ .rodata        0x0000000000032e08        0x4 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/drv_sx1509.o
+ .rodata        0x0000000000032e0c       0xcc Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/support_func.o
  .rodata.BATT_MEAS_VOLTAGE_TO_SOC
-                0x0000000000032ed0       0x6f Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_battery_monitor.o
- *fill*         0x0000000000032f3f        0x1 
+                0x0000000000032ed8       0x6f Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_battery_monitor.o
+ *fill*         0x0000000000032f47        0x1 
  .rodata.m_twi_sensors
-                0x0000000000032f40        0x8 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_lights.o
+                0x0000000000032f48        0x8 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_lights.o
  .rodata.led_cfg
-                0x0000000000032f48       0x10 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_lights.o
+                0x0000000000032f50       0x10 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_lights.o
  .rodata.sx1509_cfg.10609
-                0x0000000000032f58        0xc Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_lights.o
+                0x0000000000032f60        0xc Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_lights.o
  .rodata.twi_config.10608
-                0x0000000000032f64       0x10 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_lights.o
+                0x0000000000032f6c       0x10 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_lights.o
  .rodata.lpp_timer.9350
-                0x0000000000032f74        0x4 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_motor_driver.o
+                0x0000000000032f7c        0x4 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/nrf_motor_driver.o
  .rodata.cmsis_dsp.sinTable_f32
-                0x0000000000032f78      0x804 /home/hunter/.segger/SEGGER Embedded Studio/v3/packages/CMSIS_5/CMSIS/Lib/ES/arm_cortex_math_v7em_fpv4_sp_d16_hard_t_le_eabi.a(CMSIS_DSP_unity.o)
-                0x0000000000032f78                sinTable_f32
+                0x0000000000032f80      0x804 /home/hunter/.segger/SEGGER Embedded Studio/v3/packages/CMSIS_5/CMSIS/Lib/ES/arm_cortex_math_v7em_fpv4_sp_d16_hard_t_le_eabi.a(CMSIS_DSP_unity.o)
+                0x0000000000032f80                sinTable_f32
  .rodata.libc.__float32_nan
-                0x000000000003377c        0x4 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libm_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libm_asm.o)
-                0x000000000003377c                __float32_nan
+                0x0000000000033784        0x4 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libm_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libm_asm.o)
+                0x0000000000033784                __float32_nan
  .rodata.libc.__float64_infinity
-                0x0000000000033780        0x8 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libm_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libm_asm.o)
-                0x0000000000033780                __float64_infinity
- .rodata.libc.__float64_nan
                 0x0000000000033788        0x8 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libm_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libm_asm.o)
-                0x0000000000033788                __float64_nan
+                0x0000000000033788                __float64_infinity
+ .rodata.libc.__float64_nan
+                0x0000000000033790        0x8 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libm_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libm_asm.o)
+                0x0000000000033790                __float64_nan
  .rodata.libc.__RAL_ascii_ctype_map
-                0x0000000000033790       0x80 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x0000000000033790                __RAL_ascii_ctype_map
+                0x0000000000033798       0x80 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x0000000000033798                __RAL_ascii_ctype_map
  .rodata.libc.__RAL_ascii_ctype_mask
-                0x0000000000033810        0xd /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
- *fill*         0x000000000003381d        0x3 
+                0x0000000000033818        0xd /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+ *fill*         0x0000000000033825        0x3 
  .rodata.libc.__RAL_c_locale
-                0x0000000000033820        0xc /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x0000000000033820                __RAL_c_locale
+                0x0000000000033828        0xc /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x0000000000033828                __RAL_c_locale
  .rodata.libc.__RAL_c_locale_abbrev_day_names
-                0x000000000003382c       0x1d /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x000000000003382c                __RAL_c_locale_abbrev_day_names
- *fill*         0x0000000000033849        0x3 
+                0x0000000000033834       0x1d /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x0000000000033834                __RAL_c_locale_abbrev_day_names
+ *fill*         0x0000000000033851        0x3 
  .rodata.libc.__RAL_c_locale_abbrev_month_names
-                0x000000000003384c       0x31 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x000000000003384c                __RAL_c_locale_abbrev_month_names
- *fill*         0x000000000003387d        0x3 
+                0x0000000000033854       0x31 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x0000000000033854                __RAL_c_locale_abbrev_month_names
+ *fill*         0x0000000000033885        0x3 
  .rodata.libc.__RAL_c_locale_am_pm_indicator
-                0x0000000000033880        0x7 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x0000000000033880                __RAL_c_locale_am_pm_indicator
- *fill*         0x0000000000033887        0x1 
+                0x0000000000033888        0x7 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x0000000000033888                __RAL_c_locale_am_pm_indicator
+ *fill*         0x000000000003388f        0x1 
  .rodata.libc.__RAL_c_locale_data
-                0x0000000000033888       0x58 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x0000000000033888                __RAL_c_locale_data
+                0x0000000000033890       0x58 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x0000000000033890                __RAL_c_locale_data
  .rodata.libc.__RAL_c_locale_date_format
-                0x00000000000338e0        0x9 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x00000000000338e0                __RAL_c_locale_date_format
- *fill*         0x00000000000338e9        0x3 
+                0x00000000000338e8        0x9 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x00000000000338e8                __RAL_c_locale_date_format
+ *fill*         0x00000000000338f1        0x3 
  .rodata.libc.__RAL_c_locale_date_time_format
-                0x00000000000338ec        0xf /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x00000000000338ec                __RAL_c_locale_date_time_format
- *fill*         0x00000000000338fb        0x1 
+                0x00000000000338f4        0xf /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x00000000000338f4                __RAL_c_locale_date_time_format
+ *fill*         0x0000000000033903        0x1 
  .rodata.libc.__RAL_c_locale_day_names
-                0x00000000000338fc       0x3a /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x00000000000338fc                __RAL_c_locale_day_names
- *fill*         0x0000000000033936        0x2 
+                0x0000000000033904       0x3a /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x0000000000033904                __RAL_c_locale_day_names
+ *fill*         0x000000000003393e        0x2 
  .rodata.libc.__RAL_c_locale_month_names
-                0x0000000000033938       0x57 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x0000000000033938                __RAL_c_locale_month_names
- *fill*         0x000000000003398f        0x1 
+                0x0000000000033940       0x57 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x0000000000033940                __RAL_c_locale_month_names
+ *fill*         0x0000000000033997        0x1 
  .rodata.libc.__RAL_c_locale_time_format
-                0x0000000000033990        0x9 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x0000000000033990                __RAL_c_locale_time_format
- *fill*         0x0000000000033999        0x3 
+                0x0000000000033998        0x9 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x0000000000033998                __RAL_c_locale_time_format
+ *fill*         0x00000000000339a1        0x3 
  .rodata.libc.__RAL_codeset_ascii
-                0x000000000003399c       0x20 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x000000000003399c                __RAL_codeset_ascii
+                0x00000000000339a4       0x20 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x00000000000339a4                __RAL_codeset_ascii
  .rodata.libc.__RAL_data_empty_string
-                0x00000000000339bc        0x1 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x00000000000339bc                __RAL_data_empty_string
- *fill*         0x00000000000339bd        0x3 
+                0x00000000000339c4        0x1 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x00000000000339c4                __RAL_data_empty_string
+ *fill*         0x00000000000339c5        0x3 
  .rodata.libc.__RAL_data_utf8_period
-                0x00000000000339c0        0x2 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x00000000000339c0                __RAL_data_utf8_period
- *fill*         0x00000000000339c2        0x2 
+                0x00000000000339c8        0x2 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x00000000000339c8                __RAL_data_utf8_period
+ *fill*         0x00000000000339ca        0x2 
  .rodata.libc.__RAL_find_locale.str1.4
-                0x00000000000339c4        0xa /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
- *fill*         0x00000000000339ce        0x2 
+                0x00000000000339cc        0xa /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+ *fill*         0x00000000000339d6        0x2 
  .rodata.libc.__RAL_hex_lc
-                0x00000000000339d0       0x10 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x00000000000339d0                __RAL_hex_lc
+                0x00000000000339d8       0x10 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x00000000000339d8                __RAL_hex_lc
  .rodata.libc.__RAL_hex_uc
-                0x00000000000339e0       0x10 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x00000000000339e0                __RAL_hex_uc
+                0x00000000000339e8       0x10 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x00000000000339e8                __RAL_hex_uc
  .rodata.libc.__RAL_mon_lengths
-                0x00000000000339f0       0x18 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x00000000000339f8       0x18 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
  .rodata.libc.__RAL_year_lengths
-                0x0000000000033a08        0x4 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
- .rodata.libc.__aeabi_EDOM
-                0x0000000000033a0c        0x4 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x0000000000033a0c                __aeabi_EDOM
- .rodata.libc.__aeabi_ERANGE
                 0x0000000000033a10        0x4 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
-                0x0000000000033a10                __aeabi_ERANGE
+ .rodata.libc.__aeabi_EDOM
+                0x0000000000033a14        0x4 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x0000000000033a14                __aeabi_EDOM
+ .rodata.libc.__aeabi_ERANGE
+                0x0000000000033a18        0x4 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x0000000000033a18                __aeabi_ERANGE
  .rodata.libc.powerf
-                0x0000000000033a14       0x18 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
+                0x0000000000033a1c       0x18 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
  .rodata.libc.__vfprintf_float_long.str1.4
-                0x0000000000033a2c       0x28 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libvfprintf_v7em_fpv4_sp_d16_hard_t_le_eabi.o
+                0x0000000000033a34       0x28 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libvfprintf_v7em_fpv4_sp_d16_hard_t_le_eabi.o
  .rodata.libc.__vfprintf_int.str1.4
-                0x0000000000033a54        0x8 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libvfprintf_v7em_fpv4_sp_d16_hard_t_le_eabi.o
+                0x0000000000033a5c        0x8 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libvfprintf_v7em_fpv4_sp_d16_hard_t_le_eabi.o
                                           0x7 (size before relaxing)
- *fill*         0x0000000000033a5c        0x4 
+ *fill*         0x0000000000033a64        0x4 
  .rodata.libc.ipow10
-                0x0000000000033a60       0xa0 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libvfprintf_v7em_fpv4_sp_d16_hard_t_le_eabi.o
-                0x0000000000033b00                __rodata_end__ = (__rodata_start__ + SIZEOF (.rodata))
-                0x00000000000014fc                __rodata_size__ = SIZEOF (.rodata)
-                0x0000000000033b00                __rodata_load_end__ = __rodata_end__
+                0x0000000000033a68       0xa0 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libvfprintf_v7em_fpv4_sp_d16_hard_t_le_eabi.o
+                0x0000000000033b08                __rodata_end__ = (__rodata_start__ + SIZEOF (.rodata))
+                0x0000000000001504                __rodata_size__ = SIZEOF (.rodata)
+                0x0000000000033b08                __rodata_load_end__ = __rodata_end__
 
 .rel.dyn        0x0000000000000000        0x0
  .rel.iplt      0x0000000000000000        0x0 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/ses_nrf52_startup.o
                 0x0000000000000001                . = ASSERT (((__rodata_start__ == __rodata_end__) || ((__rodata_end__ - __FLASH_segment_start__) <= __FLASH_segment_size__)), error: .rodata is too large to fit in FLASH memory segment)
-                0x0000000000033b00                __ARM.exidx_load_start__ = ALIGN (__rodata_end__, 0x4)
+                0x0000000000033b08                __ARM.exidx_load_start__ = ALIGN (__rodata_end__, 0x4)
 
-.ARM.exidx      0x0000000000033b00        0x0
-                0x0000000000033b00                __ARM.exidx_start__ = .
-                0x0000000000033b00                __exidx_start = __ARM.exidx_start__
+.ARM.exidx      0x0000000000033b08        0x0
+                0x0000000000033b08                __ARM.exidx_start__ = .
+                0x0000000000033b08                __exidx_start = __ARM.exidx_start__
  *(.ARM.exidx .ARM.exidx.*)
-                0x0000000000033b00                __ARM.exidx_end__ = (__ARM.exidx_start__ + SIZEOF (.ARM.exidx))
+                0x0000000000033b08                __ARM.exidx_end__ = (__ARM.exidx_start__ + SIZEOF (.ARM.exidx))
                 0x0000000000000000                __ARM.exidx_size__ = SIZEOF (.ARM.exidx)
-                0x0000000000033b00                __exidx_end = __ARM.exidx_end__
-                0x0000000000033b00                __ARM.exidx_load_end__ = __ARM.exidx_end__
+                0x0000000000033b08                __exidx_end = __ARM.exidx_end__
+                0x0000000000033b08                __ARM.exidx_load_end__ = __ARM.exidx_end__
                 0x0000000000000001                . = ASSERT (((__ARM.exidx_start__ == __ARM.exidx_end__) || ((__ARM.exidx_end__ - __FLASH_segment_start__) <= __FLASH_segment_size__)), error: .ARM.exidx is too large to fit in FLASH memory segment)
-                0x0000000000033b00                __fast_load_start__ = ALIGN (__ARM.exidx_end__, 0x4)
+                0x0000000000033b08                __fast_load_start__ = ALIGN (__ARM.exidx_end__, 0x4)
 
-.fast           0x00000000200025f8        0x0 load address 0x0000000000033b00
+.fast           0x00000000200025f8        0x0 load address 0x0000000000033b08
                 0x00000000200025f8                __fast_start__ = .
  *(.fast .fast.*)
                 0x00000000200025f8                __fast_end__ = (__fast_start__ + SIZEOF (.fast))
                 0x0000000000000000                __fast_size__ = SIZEOF (.fast)
-                0x0000000000033b00                __fast_load_end__ = (__fast_load_start__ + SIZEOF (.fast))
+                0x0000000000033b08                __fast_load_end__ = (__fast_load_start__ + SIZEOF (.fast))
                 0x0000000000000001                . = ASSERT (((__fast_load_start__ == __fast_load_end__) || ((__fast_load_end__ - __FLASH_segment_start__) <= __FLASH_segment_size__)), error: .fast is too large to fit in FLASH memory segment)
 
 .fast_run       0x00000000200025f8        0x0
@@ -12272,9 +12272,9 @@ Linker script and memory map
                 0x0000000000000000                __fast_run_size__ = SIZEOF (.fast_run)
                 0x00000000200025f8                __fast_run_load_end__ = __fast_run_end__
                 0x0000000000000001                . = ASSERT (((__fast_run_start__ == __fast_run_end__) || ((__fast_run_end__ - __RAM_segment_start__) <= __RAM_segment_size__)), error: .fast_run is too large to fit in RAM memory segment)
-                0x0000000000033b00                __data_load_start__ = ALIGN ((__fast_load_start__ + SIZEOF (.fast)), 0x4)
+                0x0000000000033b08                __data_load_start__ = ALIGN ((__fast_load_start__ + SIZEOF (.fast)), 0x4)
 
-.data           0x00000000200025f8      0x160 load address 0x0000000000033b00
+.data           0x00000000200025f8      0x160 load address 0x0000000000033b08
                 0x00000000200025f8                __data_start__ = .
  *(.data .data.* .gnu.linkonce.d.*)
  .data.SystemCoreClock
@@ -12316,13 +12316,13 @@ Linker script and memory map
                 0x0000000020002754        0x4 /usr/share/segger_embedded_studio_for_arm_4.16/lib/libc_v7em_fpv4_sp_d16_hard_t_le_eabi.a(libc2.o)
                 0x0000000020002758                __data_end__ = (__data_start__ + SIZEOF (.data))
                 0x0000000000000160                __data_size__ = SIZEOF (.data)
-                0x0000000000033c60                __data_load_end__ = (__data_load_start__ + SIZEOF (.data))
+                0x0000000000033c68                __data_load_end__ = (__data_load_start__ + SIZEOF (.data))
 
 .igot.plt       0x0000000100000000        0x0
  .igot.plt      0x0000000100000000        0x0 Output/ble_app_uart_pca10040_s132 nrf52832_xxaa/Obj/ses_nrf52_startup.o
                 0x0000000000000001                . = ASSERT (((__data_load_start__ == __data_load_end__) || ((__data_load_end__ - __FLASH_segment_start__) <= __FLASH_segment_size__)), error: .data is too large to fit in FLASH memory segment)
 
-.data_run       0x00000000200025f8      0x160 load address 0x0000000000033b00
+.data_run       0x00000000200025f8      0x160 load address 0x0000000000033b08
                 0x00000000200025f8                __data_run_start__ = .
                 0x0000000020002758                . = MAX ((__data_run_start__ + SIZEOF (.data)), .)
  *fill*         0x00000000200025f8      0x160 
@@ -12330,14 +12330,14 @@ Linker script and memory map
                 0x0000000000000160                __data_run_size__ = SIZEOF (.data_run)
                 0x0000000020002758                __data_run_load_end__ = __data_run_end__
                 0x0000000000000001                . = ASSERT (((__data_run_start__ == __data_run_end__) || ((__data_run_end__ - __RAM_segment_start__) <= __RAM_segment_size__)), error: .data_run is too large to fit in RAM memory segment)
-                0x0000000000033c60                __tdata_load_start__ = ALIGN ((__data_load_start__ + SIZEOF (.data)), 0x4)
+                0x0000000000033c68                __tdata_load_start__ = ALIGN ((__data_load_start__ + SIZEOF (.data)), 0x4)
 
-.tdata          0x0000000020002758        0x0 load address 0x0000000000033c60
+.tdata          0x0000000020002758        0x0 load address 0x0000000000033c68
                 0x0000000020002758                __tdata_start__ = .
  *(.tdata .tdata.*)
                 0x0000000020002758                __tdata_end__ = (__tdata_start__ + SIZEOF (.tdata))
                 0x0000000000000000                __tdata_size__ = SIZEOF (.tdata)
-                0x0000000000033c60                __tdata_load_end__ = (__tdata_load_start__ + SIZEOF (.tdata))
+                0x0000000000033c68                __tdata_load_end__ = (__tdata_load_start__ + SIZEOF (.tdata))
                 0x0000000000000001                . = ASSERT (((__tdata_load_start__ == __tdata_load_end__) || ((__tdata_load_end__ - __FLASH_segment_start__) <= __FLASH_segment_size__)), error: .tdata is too large to fit in FLASH memory segment)
 
 .tdata_run      0x0000000020002758        0x0
@@ -12347,16 +12347,16 @@ Linker script and memory map
                 0x0000000000000000                __tdata_run_size__ = SIZEOF (.tdata_run)
                 0x0000000020002758                __tdata_run_load_end__ = __tdata_run_end__
                 0x0000000000000001                . = ASSERT (((__tdata_run_start__ == __tdata_run_end__) || ((__tdata_run_end__ - __RAM_segment_start__) <= __RAM_segment_size__)), error: .tdata_run is too large to fit in RAM memory segment)
-                0x0000000000033c60                __fs_data_load_start__ = ALIGN ((__tdata_load_start__ + SIZEOF (.tdata)), 0x4)
+                0x0000000000033c68                __fs_data_load_start__ = ALIGN ((__tdata_load_start__ + SIZEOF (.tdata)), 0x4)
 
-.fs_data        0x0000000020002758        0x0 load address 0x0000000000033c60
+.fs_data        0x0000000020002758        0x0 load address 0x0000000000033c68
                 0x0000000020002758                __fs_data_start__ = .
  *(.fs_data .fs_data.*)
                 0x0000000020002758                __fs_data_end__ = (__fs_data_start__ + SIZEOF (.fs_data))
                 0x0000000000000000                __fs_data_size__ = SIZEOF (.fs_data)
-                0x0000000000033c60                __fs_data_load_end__ = (__fs_data_load_start__ + SIZEOF (.fs_data))
-                0x0000000000033c60                __FLASH_segment_used_end__ = (ALIGN ((__tdata_load_start__ + SIZEOF (.tdata)), 0x4) + SIZEOF (.fs_data))
-                0x0000000000033c60                __FLASH_segment_used_size__ = (__FLASH_segment_used_end__ - __FLASH_segment_start__)
+                0x0000000000033c68                __fs_data_load_end__ = (__fs_data_load_start__ + SIZEOF (.fs_data))
+                0x0000000000033c68                __FLASH_segment_used_end__ = (ALIGN ((__tdata_load_start__ + SIZEOF (.tdata)), 0x4) + SIZEOF (.fs_data))
+                0x0000000000033c68                __FLASH_segment_used_size__ = (__FLASH_segment_used_end__ - __FLASH_segment_start__)
                 0x0000000000000001                . = ASSERT (((__fs_data_load_start__ == __fs_data_load_end__) || ((__fs_data_load_end__ - __FLASH_segment_start__) <= __FLASH_segment_size__)), error: .fs_data is too large to fit in FLASH memory segment)
 
 .fs_data_run    0x0000000020002758        0x0

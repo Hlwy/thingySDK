@@ -1,7 +1,7 @@
 <!DOCTYPE CrossStudio_Session_File>
 <session>
  <Bookmarks/>
- <Breakpoints groups="Breakpoints" active_group="Breakpoints">
+ <Breakpoints groups="V7M Exceptions;Breakpoints" active_group="Breakpoints">
   <Exceptions set="MemManage;UsageFault_Coprocessor;UsageFault_CheckingError;UsageFault_StateError;BusFault;ExceptionEntryReturnFault;HardFault"/>
  </Breakpoints>
  <ExecutionProfileWindow/>
@@ -51,8 +51,8 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Twice a Second">
-   <Watchpoint expression="tags_detected" name="tags_detected" radix="10" linenumber="1100" filename="../../../main.c"/>
-   <Watchpoint expression="tags_nearby" name="tags_nearby" radix="-1" linenumber="1102" filename="../../../main.c"/>
+   <Watchpoint expression="tags_detected" name="tags_detected" radix="10" linenumber="1098" filename="../../../main.c"/>
+   <Watchpoint expression="tags_nearby" name="tags_nearby" radix="-1" linenumber="1100" filename="../../../main.c"/>
    <Watchpoint expression="bat_percent" name="bat_percent" radix="10" linenumber="14" filename="classes/nrf_battery_monitor.h"/>
    <Watchpoint expression="voltage" name="voltage" radix="10" linenumber="14" filename="classes/nrf_battery_monitor.h"/>
    <Watchpoint expression="debounceCounter" name="debounceCounter" radix="10" linenumber="32" filename="classes/dd_cmd_relay.h"/>
@@ -65,10 +65,10 @@
    <Watchpoint expression="encoder_limit" name="encoder_limit" radix="10" linenumber="122" filename="classes/dd_cmd_relay.h"/>
    <Watchpoint expression="flag_door_locked" name="flag_door_locked" radix="10" linenumber="118" filename="classes/dd_cmd_relay.h"/>
    <Watchpoint expression="dd_bat_status" name="dd_bat_status" radix="16" linenumber="33" filename="classes/nrf_battery_monitor.h"/>
-   <Watchpoint expression="flag_lower_limit_switch_activated" name="flag_lower_limit_switch_activated" radix="-1" linenumber="77" filename="../../../main.c"/>
-   <Watchpoint expression="flag_upper_limit_switch_activated" name="flag_upper_limit_switch_activated" radix="16" linenumber="72" filename="../../../main.c"/>
-   <Watchpoint expression="lower_limit_reached" name="lower_limit_reached" radix="10" linenumber="39" filename="../../../main.c"/>
-   <Watchpoint expression="upper_limit_reached" name="upper_limit_reached" radix="10" linenumber="162" filename="../../../main.c"/>
+   <Watchpoint expression="flag_lower_limit_switch_activated" name="flag_lower_limit_switch_activated" radix="-1" linenumber="75" filename="../../../main.c"/>
+   <Watchpoint expression="flag_upper_limit_switch_activated" name="flag_upper_limit_switch_activated" radix="16" linenumber="70" filename="../../../main.c"/>
+   <Watchpoint expression="lower_limit_reached" name="lower_limit_reached" radix="10" linenumber="37" filename="../../../main.c"/>
+   <Watchpoint expression="upper_limit_reached" name="upper_limit_reached" radix="10" linenumber="160" filename="../../../main.c"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -81,18 +81,13 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="15" y="180" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="0" top="11" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="3988" useTextEdit="1" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="3969" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="25" y="20" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="0" top="15" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="3988" useTextEdit="1" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="48" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="227" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/dd_cmd_relay.c" selected="0" top="197" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="21" y="446" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/dd_cmd_relay.h" selected="1" top="441" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="435" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_ble_main.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/addon_defines.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="5" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_motor_driver.c" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_motor_driver.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="98" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/drivers_nrf/timer/nrf_drv_timer.h" selected="0" top="87" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="119" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/nrf_drv_timer.c" selected="0" top="101" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="484" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/drivers_nrf/hal/nrf_timer.h" selected="0" top="466" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="63" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/uart/retarget.c" selected="0" top="48" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="446" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/dd_cmd_relay.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="70" y="275" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_ble_main.h" selected="0" top="250" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/addon_defines.h" selected="0" top="54" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="46" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/thingy_config.h" selected="1" top="36" codecName="Default"/>
  </Files>
  <ARMCrossStudioWindow activeProject="ble_app_uart_pca10040_s132" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="nrf52832_xxaa" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>
