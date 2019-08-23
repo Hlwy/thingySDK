@@ -1,7 +1,7 @@
 <!DOCTYPE CrossStudio_Session_File>
 <session>
  <Bookmarks/>
- <Breakpoints groups="V7M Exceptions;Breakpoints" active_group="Breakpoints">
+ <Breakpoints groups="Breakpoints" active_group="Breakpoints">
   <Exceptions set="MemManage;UsageFault_Coprocessor;UsageFault_CheckingError;UsageFault_StateError;BusFault;ExceptionEntryReturnFault;HardFault"/>
  </Breakpoints>
  <ExecutionProfileWindow/>
@@ -23,13 +23,9 @@
  <Project>
   <ProjectSessionItem path="ble_app_uart_pca10040_s132"/>
   <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132"/>
-  <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;Additions"/>
-  <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;Application"/>
   <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;Classes"/>
-  <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;nRF_BLE"/>
-  <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;nRF_BLE_Services"/>
-  <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;nRF_Drivers"/>
-  <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;nRF_Libraries"/>
+  <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;Application"/>
+  <ProjectSessionItem path="ble_app_uart_pca10040_s132;ble_app_uart_pca10040_s132;Additions"/>
  </Project>
  <Register1>
   <RegisterWindow visibleNodes="CPU - Current Context/r0;CPU - Current Context/r1;CPU - Current Context/r2;CPU - Current Context/r3;CPU - Current Context/r4;CPU - Current Context/r5;CPU - Current Context/r6;CPU - Current Context/r7;CPU - Current Context/r8;CPU - Current Context/r9;CPU - Current Context/r10;CPU - Current Context/r11;CPU - Current Context/r12;CPU - Current Context/sp(r13);CPU - Current Context/lr(r14);CPU - Current Context/pc(r15);CPU - Current Context/apsr;CPU/r0;CPU/r1;CPU/r2;CPU/r3;CPU/r4;CPU/r5;CPU/r6;CPU/r7;CPU/r8;CPU/r9;CPU/r10;CPU/r11;CPU/r12;CPU/sp(r13);CPU/lr(r14);CPU/pc(r15);CPU/xpsr;CPU/msp;CPU/psp;CPU/cfbp;CPU/internal" binaryNodes="" asciiNodes="" openNodes="CPU - Current Context;CPU" name="ble_app_uart_pca10040_s132" decimalNodes="" octalNodes="" unsignedNodes=""/>
@@ -59,16 +55,17 @@
    <Watchpoint expression="nBleUpdates" name="nBleUpdates" radix="10" linenumber="30" filename="classes/dd_cmd_relay.h"/>
    <Watchpoint expression="nDevices" name="nDevices" radix="10" linenumber="29" filename="classes/dd_cmd_relay.h"/>
    <Watchpoint expression="m_tags" name="m_tags" radix="16" linenumber="50" filename="classes/dd_cmd_relay.h"/>
-   <Watchpoint expression="flag_force_door_open" name="flag_force_door_open" radix="10" linenumber="114" filename="classes/dd_cmd_relay.h"/>
-   <Watchpoint expression="flag_force_door_close" name="flag_force_door_close" radix="16" linenumber="115" filename="classes/dd_cmd_relay.h"/>
-   <Watchpoint expression="motor_speed" name="motor_speed" radix="10" linenumber="121" filename="classes/dd_cmd_relay.h"/>
-   <Watchpoint expression="encoder_limit" name="encoder_limit" radix="10" linenumber="122" filename="classes/dd_cmd_relay.h"/>
-   <Watchpoint expression="flag_door_locked" name="flag_door_locked" radix="10" linenumber="118" filename="classes/dd_cmd_relay.h"/>
+   <Watchpoint expression="flag_force_door_open" name="flag_force_door_open" radix="10" linenumber="122" filename="classes/dd_cmd_relay.h"/>
+   <Watchpoint expression="flag_force_door_close" name="flag_force_door_close" radix="16" linenumber="123" filename="classes/dd_cmd_relay.h"/>
+   <Watchpoint expression="motor_speed" name="motor_speed" radix="10" linenumber="129" filename="classes/dd_cmd_relay.h"/>
+   <Watchpoint expression="encoder_limit" name="encoder_limit" radix="10" linenumber="130" filename="classes/dd_cmd_relay.h"/>
+   <Watchpoint expression="flag_door_locked" name="flag_door_locked" radix="10" linenumber="126" filename="classes/dd_cmd_relay.h"/>
    <Watchpoint expression="dd_bat_status" name="dd_bat_status" radix="16" linenumber="33" filename="classes/nrf_battery_monitor.h"/>
    <Watchpoint expression="flag_lower_limit_switch_activated" name="flag_lower_limit_switch_activated" radix="-1" linenumber="75" filename="../../../main.c"/>
    <Watchpoint expression="flag_upper_limit_switch_activated" name="flag_upper_limit_switch_activated" radix="16" linenumber="70" filename="../../../main.c"/>
    <Watchpoint expression="lower_limit_reached" name="lower_limit_reached" radix="10" linenumber="37" filename="../../../main.c"/>
    <Watchpoint expression="upper_limit_reached" name="upper_limit_reached" radix="10" linenumber="160" filename="../../../main.c"/>
+   <Watchpoint expression="debounceThresh" name="debounceThresh" radix="10" linenumber="98" filename="classes/dd_cmd_relay.h"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -81,13 +78,17 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="25" y="20" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="0" top="15" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="3988" useTextEdit="1" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="48" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="227" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/dd_cmd_relay.c" selected="0" top="197" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="446" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/dd_cmd_relay.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="70" y="275" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_ble_main.h" selected="0" top="250" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="178" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="0" top="142" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="3992" useTextEdit="1" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="3970" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="227" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/dd_cmd_relay.c" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="31" y="85" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/dd_cmd_relay.h" selected="1" top="75" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="408" useTextEdit="1" useBinaryEdit="0" left="0" path="classes/nrf_ble_main.h" selected="0" top="385" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/addon_defines.h" selected="0" top="54" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="46" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/thingy_config.h" selected="1" top="36" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="46" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/thingy_config.h" selected="0" top="36" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="27" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/toolchain/system_nrf52.c" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="9" y="45" useTextEdit="1" useBinaryEdit="0" left="0" path="additions/drivers_ext/drv_speaker.c" selected="0" top="28" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="884" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/softdevice/s132/headers/ble_gap.h" selected="0" top="855" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="341" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/drivers_nrf/hal/nrf_twi.h" selected="0" top="323" codecName=""/>
  </Files>
- <ARMCrossStudioWindow activeProject="ble_app_uart_pca10040_s132" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="nrf52832_xxaa" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/home/hunter/devel/thingySDK/examples/ble_peripheral/ble_app_uart/pca10040/s132/ses/additions" debugSearchPath="" autoConnectCapabilities="3711"/>
+ <ARMCrossStudioWindow activeProject="ble_app_uart_pca10040_s132" fileDialogDefaultFilter="*.h" autoConnectTarget="J-Link" buildConfiguration="nrf52832_xxaa" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/home/hunter/devel/thingySDK/components/toolchain/cmsis/include" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>

@@ -406,7 +406,7 @@ static void on_ble_evt(ble_evt_t * p_ble_evt){//, ble_nus_t * p_nus){
      dt = (now - last_time)/3925.0;
 
      if(dt >= 1.0){
-          if(flag_debug) NRF_LOG_INFO("on_ble_evt(): --- Current Time = %d Time since last BLE update = " NRF_LOG_FLOAT_MARKER "\n", now, NRF_LOG_FLOAT(dt));
+          if(flag_debug_ble_rate) NRF_LOG_INFO("on_ble_evt(): --- Current Time = %d Time since last BLE update = " NRF_LOG_FLOAT_MARKER "\n", now, NRF_LOG_FLOAT(dt));
           last_time = now;
      }
 
@@ -414,12 +414,12 @@ static void on_ble_evt(ble_evt_t * p_ble_evt){//, ble_nus_t * p_nus){
           case BLE_GAP_EVT_CONNECTED:{
                // printf("BLE_GAP_EVT_CONNECTED\r\n");
                m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
-               if(flag_debug) NRF_LOG_INFO("Connected\r\n");
+               if(flag_debug_ble) NRF_LOG_INFO("Connected\r\n");
           } break;
 
           case BLE_GAP_EVT_DISCONNECTED:{
                m_conn_handle = BLE_CONN_HANDLE_INVALID;
-               if(flag_debug) NRF_LOG_INFO("Disconnected\r\n");
+               if(flag_debug_ble) NRF_LOG_INFO(NRF_LOG_COLOR_CODE_RED"Disconnected\r\n"NRF_LOG_COLOR_CODE_DEFAULT);
           } break;
 
           case BLE_GAP_EVT_ADV_REPORT:{
@@ -428,7 +428,22 @@ static void on_ble_evt(ble_evt_t * p_ble_evt){//, ble_nus_t * p_nus){
                uint32_t tmpdt = compareMillis(myTimeStamp, now);
                float dt = tmpdt/(float)1000.0;
                myTimeStamp = now;
-//               printf(NRF_LOG_FLOAT_MARKER" seconds have passed\n",NRF_LOG_FLOAT(dt));
+               if(flag_debug_ble_time) printf(NRF_LOG_FLOAT_MARKER" seconds have passed\n",NRF_LOG_FLOAT(dt));
+               /** DEBUG: Purely for scanning and reporting available BLE devices */
+//               ble_gap_evt_t const * p_gap_evt = &p_ble_evt->evt.gap_evt;
+//               const ble_gap_evt_adv_report_t * p_adv_report = &p_gap_evt->params.adv_report;
+//     
+//               ble_report = &p_gap_evt->params.adv_report;
+//               ble_addr = (uint8_t*)ble_report->peer_addr.addr;
+//               int tmpRssi = ble_report->rssi;;
+     
+//               if(flag_debug_ble){
+//                    printf(NRF_LOG_COLOR_CODE_BLUE" Found BLE Device! ===== ");
+//                    print_addr(ble_addr);
+//                    printf(" -- RSSI = %d\r\n"NRF_LOG_COLOR_CODE_DEFAULT,tmpRssi);
+//               }
+               /** END Debug */
+
                if(nDevices>0){
                     flag_pets_near = pet_proximity_check(p_ble_evt);
                     if(flag_pets_near){
@@ -634,10 +649,6 @@ static void bsp_event_handler(bsp_event_t event)
             break;
     }
 }
-
-
-
-
 
 /**@brief Function for handling events from the GATT library. */
 static void gatt_evt_handler(nrf_ble_gatt_t * p_gatt, const nrf_ble_gatt_evt_t * p_evt)

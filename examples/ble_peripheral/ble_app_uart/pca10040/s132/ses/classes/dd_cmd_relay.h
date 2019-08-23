@@ -109,6 +109,14 @@ static bool flag_upper_limit_switch_activated = false;
 static bool flag_lower_limit_switch_activated = false;
 static bool flag_door_locked = false;
 static bool flag_force_door_stop = false;
+static bool flag_debug_ble_time = false;
+static bool flag_debug_ble_rate = false;
+
+#ifdef DEBUG_BLE
+static bool flag_debug_ble = true;
+#else
+static bool flag_debug_ble = false;
+#endif
 
 static float motor_speed = 0.5;
 static int32_t encoder_limit = 2945;
@@ -337,10 +345,10 @@ static void report_tags_data(ble_nus_t* p_nus, const vec_tags_t* tags_, uint16_t
      for(int i = 0; i < length; i++){
           memset(data, 0, sizeof(data));
           dd_tag_t tmpTag = tags_->data[i];
-          size_t sz = snprintf(NULL, 0, "report add_tag %s %02x:%02x:%02x:%02x:%02x:%02x\n",\
-                                        tmpTag.name,tmpTag.addr[0],tmpTag.addr[1],tmpTag.addr[2],tmpTag.addr[3],tmpTag.addr[4],tmpTag.addr[5]);
-          sprintf((char *)data, "report add_tag %s %02x:%02x:%02x:%02x:%02x:%02x\n",\
-                                        tmpTag.name,tmpTag.addr[0],tmpTag.addr[1],tmpTag.addr[2],tmpTag.addr[3],tmpTag.addr[4],tmpTag.addr[5]);
+          size_t sz = snprintf(NULL, 0, "report add_tag %s %02x:%02x:%02x:%02x:%02x:%02x %s\n",\
+                                        tmpTag.name,tmpTag.addr[0],tmpTag.addr[1],tmpTag.addr[2],tmpTag.addr[3],tmpTag.addr[4],tmpTag.addr[5],tmpTag.alias);
+          sprintf((char *)data, "report add_tag %s %02x:%02x:%02x:%02x:%02x:%02x %s\n",\
+                                        tmpTag.name,tmpTag.addr[0],tmpTag.addr[1],tmpTag.addr[2],tmpTag.addr[3],tmpTag.addr[4],tmpTag.addr[5],tmpTag.alias);
           ble_nus_string_send(p_nus, data,sz);
      }
 }
@@ -805,21 +813,27 @@ static uint32_t parse_nus_data(ble_nus_t * p_nus, const uint8_t * p_data){
 
 
 static bool pet_proximity_check(ble_evt_t const * p_ble_evt){
+     // if(flag_debug) NRF_LOG_INFO("pet_proximity_check: --------- \r\n");
      int dump;
      ble_gap_evt_t const * p_gap_evt = &p_ble_evt->evt.gap_evt;
      const ble_gap_evt_adv_report_t * p_adv_report = &p_gap_evt->params.adv_report;
-     if(flag_debug) NRF_LOG_INFO("pet_proximity_check: --------- \r\n");
-
+     
      ble_report = &p_gap_evt->params.adv_report;
      ble_addr = (uint8_t*)ble_report->peer_addr.addr;
      int tmpRssi = ble_report->rssi;;
+     
+//     if(flag_debug_ble){
+//          printf(NRF_LOG_COLOR_CODE_BLUE" Found BLE Device! ===== ");
+//          print_addr(ble_addr);
+//          printf(" -- RSSI = %d\r\n"NRF_LOG_COLOR_CODE_DEFAULT,tmpRssi);
+//     }
 
      bool isMatch = check_tag_addrs(&m_tags,ble_addr,&dump);
      if(isMatch){
           dd_tag_t* foundTag = &m_tags.data[dump];
           foundTag->rssi = tmpRssi;
           foundTag->times_seen++;
-          if(flag_debug_rssi) printf(NRF_LOG_COLOR_CODE_GREEN" Found Target Device! =====  %d\r\n"NRF_LOG_COLOR_CODE_DEFAULT,tmpRssi);
+          if(flag_debug_ble) printf(NRF_LOG_COLOR_CODE_GREEN" Found Target Device! =====  %d\r\n"NRF_LOG_COLOR_CODE_DEFAULT,tmpRssi);
           tags_detected = true;
           if(tmpRssi >= foundTag->thresh){
                return true;
