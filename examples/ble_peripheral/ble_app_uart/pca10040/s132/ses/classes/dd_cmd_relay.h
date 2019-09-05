@@ -12,7 +12,7 @@
 #include "nrf_drv_gpiote.h"
 #include "nrf_battery_monitor.h"
 
-#define DEFAULT_RSSI_THRESHOLD          -70
+#define DEFAULT_RSSI_THRESHOLD          -60
 #define DEFAULT_DEBOUNCE_THRESHOLD       150
 
 //#define DEBUG_CHECKING
@@ -118,7 +118,7 @@ static bool flag_debug_ble = true;
 static bool flag_debug_ble = false;
 #endif
 
-static float motor_speed = 0.5;
+static float motor_speed = 1.0;
 static int32_t encoder_limit = 2945;
 
 static float dt;
